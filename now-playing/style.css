@@ -11,617 +11,238 @@ body {
 
 body {
   font-family: Georgia, "Times New Roman", serif;
-  color: #4e4237;
 }
 
-
-/* ============================= */
-/* MAIN WIDGET                    */
-/* ============================= */
-
-.archive-music-widget {
+.now-playing-widget {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
 }
 
-.ornate-frame {
-  --gold: #b78a47;
-  --gold-dark: #926b34;
-  --gold-light: #d4b276;
-
-  --sage: #7f8d72;
-  --sage-dark: #65745c;
-
+.banner-shell {
   position: relative;
-
   width: 100%;
-
-  padding:
-    78px
-    38px
-    30px;
-
+  min-height: 500px;
   overflow: hidden;
+
+  padding: 115px 42px 52px;
 
   background:
     radial-gradient(
-      ellipse at 50% -10%,
-      rgba(196, 155, 84, 0.13),
-      transparent 38%
+      circle at 50% 5%,
+      rgba(185, 138, 71, 0.08),
+      transparent 30%
     ),
-    radial-gradient(
-      ellipse at 4% 8%,
-      rgba(127, 141, 114, 0.08),
-      transparent 25%
-    ),
-    radial-gradient(
-      ellipse at 96% 8%,
-      rgba(127, 141, 114, 0.08),
-      transparent 25%
-    ),
-    linear-gradient(
-      180deg,
-      #fffdf8 0%,
-      #fbf7ee 54%,
-      #f8f1e5 100%
-    );
+    #fbf6eb;
 
-  border:
-    1px
-    solid
-    var(--gold);
-
-  border-radius:
-    22px;
+  border: 1px solid #b78a47;
+  border-radius: 18px;
 
   box-shadow:
-    inset 0 0 0 5px rgba(183, 138, 71, 0.055),
-    inset 0 0 0 10px rgba(183, 138, 71, 0.03);
+    inset 0 0 0 5px rgba(183,138,71,0.05),
+    inset 0 0 0 10px rgba(183,138,71,0.025);
 }
 
-
-/* triple illustrated border */
-
-.ornate-frame::before {
+/* extra gold linework around the outside */
+.banner-shell::before {
   content: "";
-
   position: absolute;
   inset: 8px;
-
-  border:
-    1px
-    solid
-    rgba(183, 138, 71, 0.72);
-
-  border-radius:
-    16px;
-
+  border: 1px solid rgba(183,138,71,0.58);
+  border-radius: 13px;
   pointer-events: none;
 }
 
-.ornate-frame::after {
+.banner-shell::after {
   content: "";
-
   position: absolute;
   inset: 14px;
-
-  border:
-    1px
-    solid
-    rgba(183, 138, 71, 0.22);
-
-  border-radius:
-    12px;
-
+  border: 1px solid rgba(183,138,71,0.20);
+  border-radius: 10px;
   pointer-events: none;
 }
 
-
-/* ============================= */
-/* CREST                          */
-/* ============================= */
-
-.crest {
+/* decorative botanical corners */
+.corner-art {
   position: absolute;
+  top: 8px;
+  width: 250px;
+  max-width: 27%;
+  z-index: 2;
+  pointer-events: none;
+}
 
-  top: 2px;
+.corner-left {
+  left: 8px;
+}
+
+.corner-right {
+  right: 8px;
+}
+
+/* celestial top ornament */
+.celestial-crest {
+  position: absolute;
+  top: 8px;
   left: 50%;
 
   width: 420px;
-  max-width: 46%;
+  max-width: 38%;
 
-  transform:
-    translateX(-50%);
+  transform: translateX(-50%);
+  z-index: 2;
 
-  z-index: 3;
+  pointer-events: none;
 }
 
-.crest svg {
-  display: block;
-  width: 100%;
-}
-
-.gold-line {
-  fill: none;
-
-  stroke:
-    var(--gold);
-
-  stroke-width:
-    1.3;
-}
-
-.gold-line.light {
-  opacity: 0.35;
-}
-
-.crest-star {
-  fill:
-    var(--gold);
-}
-
-.crescent {
-  fill:
-    rgba(183, 138, 71, 0.78);
-}
-
-
-/* ============================= */
-/* BOTANICALS                     */
-/* ============================= */
-
-.flourish {
-  position: absolute;
-
-  top: 13px;
-
-  width: 135px;
-
-  z-index: 3;
-
-  overflow: visible;
-}
-
-.flourish-left {
-  left: 19px;
-}
-
-.flourish-right {
-  right: 19px;
-}
-
-.stem {
-  fill: none;
-
-  stroke:
-    var(--gold-dark);
-
-  stroke-width:
-    1.4;
-}
-
-.leaf {
-  fill:
-    rgba(127, 141, 114, 0.72);
-
-  stroke:
-    var(--sage-dark);
-
-  stroke-width:
-    0.5;
-}
-
-.flower {
-  fill:
-    #f6efe2;
-
-  stroke:
-    var(--gold);
-
-  stroke-width:
-    1.2;
-}
-
-.flower-small {
-  fill:
-    var(--gold-light);
-}
-
-
-/* ============================= */
-/* HEADER                         */
-/* ============================= */
-
-.music-header {
+/* title */
+h1 {
   position: relative;
-  z-index: 5;
+  z-index: 4;
+
+  margin: 0 0 24px;
 
   text-align: center;
 
-  margin-bottom:
-    17px;
+  font-size: clamp(25px, 2.5vw, 38px);
+  font-weight: 500;
+
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+
+  color: #4b3b2d;
 }
 
-.kicker {
+/* spotify area */
+.player-stage {
+  position: relative;
+  z-index: 4;
+
+  width: 100%;
+  min-height: 205px;
+  margin: 0 auto;
+}
+
+/* ornate generated frame */
+.player-frame-art {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: fill;
+
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* actual functioning player */
+.spotify-player {
+  position: absolute;
+
+  left: 5.2%;
+  right: 5.2%;
+  top: 18%;
+  bottom: 15%;
+
+  z-index: 4;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  border-radius: 12px;
+}
+
+.spotify-player iframe {
+  display: block;
+  width: 100%;
+  height: 152px;
+  border-radius: 9px;
+}
+
+/* bottom illustrated flourish */
+.bottom-flourish {
+  position: relative;
+  z-index: 3;
+
   display: block;
 
-  margin-bottom:
-    6px;
+  width: 620px;
+  max-width: 65%;
 
-  font-size:
-    8px;
+  margin: 17px auto -4px;
 
-  letter-spacing:
-    0.25em;
-
-  text-transform:
-    uppercase;
-
-  color:
-    rgba(78, 66, 55, 0.54);
+  pointer-events: none;
 }
 
-.music-header h1 {
-  margin:
-    0;
-
-  font-size:
-    clamp(19px, 2vw, 27px);
-
-  font-weight:
-    500;
-
-  line-height:
-    1.15;
-
-  text-transform:
-    uppercase;
-
-  letter-spacing:
-    0.22em;
-
-  color:
-    #4a3d31;
-}
-
-.music-header p {
-  margin:
-    6px 0 0;
-
-  font-size:
-    12px;
-
-  font-style:
-    italic;
-
-  color:
-    #77675a;
-}
-
-.title-rule {
-  width:
-    min(560px, 60%);
-
-  margin:
-    16px auto 0;
-
-  display:
-    grid;
-
-  grid-template-columns:
-    1fr 25px 1fr;
-
-  align-items:
-    center;
-
-  gap:
-    9px;
-}
-
-.title-rule > span {
-  display:
-    block;
-
-  height:
-    1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(183, 138, 71, 0.65)
-    );
-}
-
-.title-rule > span:last-child {
-  transform:
-    scaleX(-1);
-}
-
-.title-rule svg {
-  display:
-    block;
-
-  width:
-    25px;
-
-  height:
-    25px;
-
-  fill:
-    var(--gold);
-}
-
-
-/* ============================= */
-/* SPOTIFY FRAME                  */
-/* ============================= */
-
-.player-frame {
-  position:
-    relative;
-
-  z-index:
-    5;
-
-  padding:
-    7px;
-
-  background:
-    rgba(255, 253, 248, 0.65);
-
-  border:
-    1px
-    solid
-    rgba(183, 138, 71, 0.78);
-
-  border-radius:
-    17px;
-
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.8),
-    inset 0 0 0 3px rgba(183, 138, 71, 0.06);
-}
-
-.player-inner {
-  padding:
-    4px;
-
-  border:
-    1px
-    solid
-    rgba(183, 138, 71, 0.28);
-
-  border-radius:
-    12px;
-}
-
-.player-frame iframe {
-  display:
-    block;
-
-  width:
-    100%;
-
-  border-radius:
-    8px;
-}
-
-
-/* actual little flourishes attached to player */
-
-.player-ornament {
-  position:
-    absolute;
-
-  top:
-    210px;
-
-  z-index:
-    7;
-
-  font-size:
-    23px;
-
-  color:
-    rgba(183, 138, 71, 0.68);
-}
-
-.player-ornament-left {
-  left:
-    25px;
-
-  transform:
-    rotate(-12deg);
-}
-
-.player-ornament-right {
-  right:
-    25px;
-
-  transform:
-    scaleX(-1)
-    rotate(-12deg);
-}
-
-
-/* ============================= */
-/* LOWER ORNAMENT                 */
-/* ============================= */
-
-.lower-decoration {
-  position:
-    relative;
-
-  z-index:
-    4;
-
-  width:
-    min(500px, 55%);
-
-  margin:
-    11px auto -2px;
-}
-
-.lower-decoration svg {
-  display:
-    block;
-
-  width:
-    100%;
-}
-
-.leaf-detail {
-  fill:
-    rgba(127, 141, 114, 0.56);
-
-  stroke:
-    var(--gold-dark);
-
-  stroke-width:
-    0.7;
-}
-
-.small-dot {
-  fill:
-    var(--gold);
-}
-
-
-/* ============================= */
-/* FOOTER                         */
-/* ============================= */
-
-.archive-footer {
-  position:
-    relative;
-
-  z-index:
-    5;
-
-  display:
-    flex;
-
-  justify-content:
-    center;
-
-  align-items:
-    center;
-
-  gap:
-    8px;
-
-  margin-top:
-    -2px;
-
-  font-size:
-    8px;
-
-  letter-spacing:
-    0.23em;
-
-  text-transform:
-    uppercase;
-
-  color:
-    rgba(78, 66, 55, 0.53);
-}
-
-.archive-footer span:first-child,
-.archive-footer span:last-child {
-  color:
-    rgba(183, 138, 71, 0.65);
-
-  font-size:
-    7px;
-}
-
-
-/* ============================= */
-/* RESPONSIVE                     */
-/* ============================= */
-
-@media (max-width: 800px) {
-
-  .ornate-frame {
+/* responsive */
+@media (max-width: 900px) {
+  .banner-shell {
+    min-height: 450px;
     padding:
-      72px
+      105px
       28px
-      28px;
+      42px;
   }
 
-  .crest {
-    width:
-      340px;
-
-    max-width:
-      55%;
+  .corner-art {
+    width: 190px;
   }
 
-  .flourish {
-    width:
-      110px;
+  .celestial-crest {
+    width: 330px;
+    max-width: 46%;
   }
 
-  .title-rule {
-    width:
-      72%;
+  .player-stage {
+    min-height: 190px;
   }
 
-  .lower-decoration {
-    width:
-      64%;
+  .bottom-flourish {
+    max-width: 72%;
   }
 }
 
-
-@media (max-width: 520px) {
-
-  .archive-music-widget {
+@media (max-width: 600px) {
+  .banner-shell {
+    min-height: 390px;
     padding:
-      6px;
-  }
-
-  .ornate-frame {
-    padding:
-      63px
+      85px
       16px
-      25px;
+      30px;
   }
 
-  .crest {
-    width:
-      245px;
-
-    max-width:
-      70%;
+  .corner-art {
+    width: 115px;
+    opacity: 0.92;
   }
 
-  .flourish {
-    width:
-      75px;
-
-    opacity:
-      0.8;
+  .celestial-crest {
+    width: 235px;
+    max-width: 55%;
   }
 
-  .music-header h1 {
-    letter-spacing:
-      0.15em;
+  h1 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    letter-spacing: 0.16em;
   }
 
-  .title-rule {
-    width:
-      82%;
+  .player-stage {
+    min-height: 175px;
   }
 
-  .player-ornament {
-    display:
-      none;
+  .spotify-player {
+    left: 6%;
+    right: 6%;
+    top: 19%;
   }
 
-  .lower-decoration {
-    width:
-      78%;
+  .bottom-flourish {
+    width: 380px;
+    max-width: 80%;
+    margin-top: 8px;
   }
 }

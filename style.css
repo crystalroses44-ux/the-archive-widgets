@@ -1,0 +1,187 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: transparent;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.loose-leaves-widget {
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+}
+
+.inner-frame {
+  position: relative;
+  padding: 30px 28px 22px;
+  background:
+    radial-gradient(circle at 15% 15%,
+      rgba(182, 139, 69, 0.06),
+      transparent 24%),
+    radial-gradient(circle at 85% 80%,
+      rgba(130, 144, 116, 0.05),
+      transparent 26%),
+    #faf7f0;
+  border: 1px solid #b68b45;
+  border-radius: 16px;
+  color: #51483d;
+  box-shadow:
+    inset 0 0 0 7px rgba(182, 139, 69, 0.08);
+}
+
+.inner-frame::before {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  border: 1px solid rgba(182, 139, 69, 0.28);
+  border-radius: 11px;
+  pointer-events: none;
+}
+
+.title {
+  position: relative;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 23px;
+  font-weight: 500;
+}
+
+.subtitle {
+  position: relative;
+  text-align: center;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-style: italic;
+  color: #766a5d;
+}
+
+.divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 70%;
+  margin: 18px auto 17px;
+  color: #b68b45;
+}
+
+.divider span {
+  height: 1px;
+  flex: 1;
+  background: rgba(182, 139, 69, 0.5);
+}
+
+.divider b {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+/* NOTE AREA */
+textarea {
+  position: relative;
+  display: block;
+  width: 88%;
+  min-height: 175px;
+  margin: 0 auto;
+  padding: 7px 4px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  color: #51483d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 29px;
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0,
+      transparent 28px,
+      rgba(81, 72, 61, 0.17) 28px,
+      rgba(81, 72, 61, 0.17) 29px);
+}
+
+textarea::placeholder {
+  color: rgba(81, 72, 61, 0.38);
+  font-style: italic;
+}
+
+textarea:focus {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* FOOTER */
+.footer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin-top: 16px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(81, 72, 61, 0.5);
+}
+
+#clearNotes {
+  border: 0;
+  padding: 2px 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+#clearNotes:hover {
+  color: #70433f;
+}
+
+/* DECORATION */
+.corner {
+  position: absolute;
+  color: rgba(182, 139, 69, 0.72);
+  font-size: 14px;
+}
+
+.corner-tl {
+  top: 17px;
+  left: 20px;
+}
+
+.corner-tr {
+  top: 17px;
+  right: 20px;
+}
+
+.corner-bl {
+  bottom: 15px;
+  left: 20px;
+}
+
+.corner-br {
+  bottom: 15px;
+  right: 20px;
+}
+
+@media (max-width: 500px) {
+  .inner-frame {
+    padding: 27px 18px 21px;
+  }
+
+  .title {
+    font-size: 19px;
+  }
+
+  textarea {
+    width: 92%;
+    min-height: 160px;
+    font-size: 14px;
+  }
+}

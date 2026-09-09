@@ -17,14 +17,18 @@
       color: #51483D;
     }
 
+    /* ─────────────────────────────
+       ATHENAEUM FRAME
+    ───────────────────────────── */
+
     .athenaeum-widget {
       width: 100%;
       padding: 18px 20px 16px;
 
       background: linear-gradient(
         180deg,
-        #ffffff 0%,
-        #fdfcf8 100%
+        #FFFFFF 0%,
+        #FDFCF8 100%
       );
 
       border: 1px solid #B68B45;
@@ -32,7 +36,9 @@
       outline-offset: -5px;
     }
 
-    /* HEADER */
+    /* ─────────────────────────────
+       HEADER
+    ───────────────────────────── */
 
     .widget-heading {
       text-align: center;
@@ -47,41 +53,59 @@
 
     .widget-heading h1 {
       margin: 0;
+
+      font-family: Georgia, "Times New Roman", serif;
       font-size: 16px;
       font-weight: normal;
+
       letter-spacing: 0.14em;
       text-transform: uppercase;
+
       color: #51483D;
     }
 
     .widget-heading p {
       margin: 4px 0 0;
+
       font-size: 11px;
       font-style: italic;
+
       color: #829074;
     }
 
-    /* GOODREADS LAYOUT */
+    /* ─────────────────────────────
+       GOODREADS BOOKSHELF
+    ───────────────────────────── */
 
     .gr_custom_container_ {
       width: 100% !important;
+
       padding: 0 !important;
       margin: 0 !important;
+
       border: none !important;
       background: transparent !important;
 
       display: flex !important;
       flex-wrap: wrap;
+
       align-items: flex-start;
       justify-content: space-between;
+
       gap: 16px;
     }
+
+    /* Hide Goodreads' own header/logo */
 
     .gr_custom_header_,
     .gr_custom_container_ > center,
     .gr_custom_container_ > br {
       display: none !important;
     }
+
+    /* ─────────────────────────────
+       INDIVIDUAL BOOK
+    ───────────────────────────── */
 
     .gr_custom_each_container_ {
       width: calc(20% - 13px) !important;
@@ -99,13 +123,15 @@
       text-align: center;
     }
 
-    /* COVER */
+    /* ─────────────────────────────
+       BOOK COVER
+    ───────────────────────────── */
 
     .gr_custom_book_container_ {
       float: none !important;
 
       width: 100% !important;
-      height: 170px !important;
+      height: 180px !important;
 
       margin: 0 0 8px !important;
 
@@ -118,22 +144,33 @@
 
     .gr_custom_book_container_ img {
       display: block;
-      height: 165px !important;
+
+      height: 175px !important;
       width: auto !important;
-      max-width: 112px !important;
+      max-width: 120px !important;
 
       object-fit: cover;
+
       margin: 0 auto;
     }
 
-    /* TITLE */
+    /* ─────────────────────────────
+       BOOK TITLE
+    ───────────────────────────── */
 
     .gr_custom_title_ {
-      min-height: 50px;
+      height: 49px;
+
       margin: 0 0 4px !important;
 
       font-size: 13px !important;
       line-height: 1.25;
+
+      overflow: hidden;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
 
     .gr_custom_title_ a {
@@ -145,11 +182,14 @@
       text-decoration: underline !important;
     }
 
-    /* AUTHOR */
+    /* ─────────────────────────────
+       AUTHOR
+    ───────────────────────────── */
 
     .gr_custom_author_ {
       font-size: 10.5px !important;
       line-height: 1.3;
+
       color: #829074 !important;
     }
 
@@ -158,7 +198,9 @@
       text-decoration: none !important;
     }
 
-    /* HIDE CLUTTER */
+    /* ─────────────────────────────
+       HIDE GOODREADS CLUTTER
+    ───────────────────────────── */
 
     .gr_custom_rating_,
     .gr_custom_tags_,
@@ -166,7 +208,9 @@
       display: none !important;
     }
 
-    /* EXTRA BOOKS */
+    /* ─────────────────────────────
+       EXTRA BOOKS
+    ───────────────────────────── */
 
     .extra-book {
       display: none !important;
@@ -176,33 +220,45 @@
       display: block !important;
     }
 
-    /* FOOTER */
+    /* ─────────────────────────────
+       FOOTER
+    ───────────────────────────── */
 
     .widget-footer {
       text-align: center;
-      margin-top: 18px;
+      margin-top: 10px;
     }
 
     .footer-ornament {
       display: flex;
+
       justify-content: center;
       align-items: center;
+
       gap: 7px;
+
       margin-bottom: 7px;
     }
 
     .footer-ornament span {
       display: block;
+
       width: 34px;
       height: 1px;
+
       background: #C8B788;
     }
 
     .footer-ornament b {
       color: #B68B45;
+
       font-size: 8px;
       font-weight: normal;
     }
+
+    /* ─────────────────────────────
+       SHOW MORE BUTTON
+    ───────────────────────────── */
 
     #toggleBooks {
       display: none;
@@ -226,7 +282,9 @@
       text-decoration: underline;
     }
 
-    /* RESPONSIVE */
+    /* ─────────────────────────────
+       RESPONSIVE
+    ───────────────────────────── */
 
     @media (max-width: 700px) {
       .gr_custom_each_container_ {
@@ -247,21 +305,40 @@
   <section class="athenaeum-widget">
 
     <header class="widget-heading">
-      <div class="ornament">✦</div>
-      <h1>To Be Read</h1>
-      <p>recently added to my shelf</p>
+
+      <div class="ornament">
+        ✦
+      </div>
+
+      <h1>
+        Recently Shelved
+      </h1>
+
+      <p>
+        from my Goodreads shelf
+      </p>
+
     </header>
 
+
     <div id="gr_custom_widget_">
-      <div class="gr_custom_container_"></div>
+
+      <div class="gr_custom_container_">
+      </div>
+
     </div>
+
 
     <div class="widget-footer">
 
       <div class="footer-ornament">
+
         <span></span>
+
         <b>✦</b>
+
         <span></span>
+
       </div>
 
       <button id="toggleBooks">
@@ -272,61 +349,103 @@
 
   </section>
 
+
+  <!-- GOODREADS FEED -->
+
   <script
     src="https://www.goodreads.com/review/custom_widget/201101484.Faae's%20bookshelf:%20to-read?cover_position=left&cover_size=medium&num_books=100&order=d&shelf=to-read&sort=date_added&widget_bg_transparent=1"
     type="text/javascript"
     charset="utf-8">
   </script>
 
+
+  <!-- SHOW MORE / SHOW LESS -->
+
   <script>
     let initialized = false;
 
     function setupBookToggle() {
+
       if (initialized) return;
 
       const books = document.querySelectorAll(
         ".gr_custom_each_container_"
       );
 
-      const button = document.getElementById("toggleBooks");
+      const button = document.getElementById(
+        "toggleBooks"
+      );
 
       if (!books.length) return;
 
+
+      /* Hide everything after the
+         five newest books */
+
       books.forEach((book, index) => {
+
         if (index >= 5) {
           book.classList.add("extra-book");
         }
+
       });
+
+
+      /* Only show button when
+         more than five books exist */
 
       if (books.length > 5) {
         button.style.display = "block";
       }
 
+
+      /* Expand / collapse shelf */
+
       button.addEventListener("click", () => {
+
         const expanded =
-          document.body.classList.toggle("expanded");
+          document.body.classList.toggle(
+            "expanded"
+          );
 
         button.textContent =
-          expanded ? "Show less" : "Show more";
+          expanded
+            ? "Show less"
+            : "Show more";
+
       });
+
 
       initialized = true;
     }
 
-    const observer = new MutationObserver(() => {
-      const books = document.querySelectorAll(
-        ".gr_custom_each_container_"
-      );
 
-      if (books.length > 0) {
-        setupBookToggle();
+    /* Goodreads injects the books
+       after the page loads, so wait
+       until they appear */
+
+    const observer =
+      new MutationObserver(() => {
+
+        const books =
+          document.querySelectorAll(
+            ".gr_custom_each_container_"
+          );
+
+        if (books.length > 0) {
+          setupBookToggle();
+        }
+
+      });
+
+
+    observer.observe(
+      document.body,
+      {
+        childList: true,
+        subtree: true
       }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
+    );
   </script>
 
 </body>

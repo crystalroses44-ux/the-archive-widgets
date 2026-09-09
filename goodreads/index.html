@@ -10,6 +10,7 @@
       padding: 0;
       background: transparent;
       font-family: Georgia, serif;
+      color: #51483D;
     }
 
     .gr_custom_container_ {
@@ -65,20 +66,86 @@
       color: #51483D;
       text-decoration: none;
     }
+
+    .extra-book {
+      display: none;
+    }
+
+    #toggleBooks {
+      display: block;
+      margin: 14px auto 2px;
+      padding: 6px 14px;
+      border: 1px solid #b68b45;
+      background: #faf7f0;
+      color: #51483D;
+      font-family: Georgia, serif;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    #toggleBooks:hover {
+      background: #f3eee4;
+    }
   </style>
 </head>
 
 <body>
 
   <div id="gr_custom_widget_">
-    <div class="gr_custom_container_">
-    </div>
+    <div class="gr_custom_container_"></div>
   </div>
 
+  <button id="toggleBooks" style="display:none;">
+    Show more
+  </button>
+
   <script
-    src="https://www.goodreads.com/review/custom_widget/201101484.Faae's%20bookshelf:%20to-read?cover_position=left&cover_size=medium&num_books=8&order=d&shelf=to-read&sort=date_added&widget_bg_transparent=1"
+    src="https://www.goodreads.com/review/custom_widget/201101484.Faae's%20bookshelf:%20to-read?cover_position=left&cover_size=medium&num_books=100&order=d&shelf=to-read&sort=date_added&widget_bg_transparent=1"
     type="text/javascript"
     charset="utf-8">
+  </script>
+
+  <script>
+    function setupBookToggle() {
+      const books = document.querySelectorAll('.gr_custom_each_container_');
+      const button = document.getElementById('toggleBooks');
+
+      if (books.length <= 5) return;
+
+      books.forEach((book, index) => {
+        if (index >= 5) {
+          book.classList.add('extra-book');
+        }
+      });
+
+      button.style.display = 'block';
+
+      let expanded = false;
+
+      button.addEventListener('click', () => {
+        expanded = !expanded;
+
+        document.querySelectorAll('.extra-book').forEach(book => {
+          book.style.display = expanded ? 'block' : 'none';
+        });
+
+        button.textContent = expanded ? 'Show less' : 'Show more';
+      });
+    }
+
+    const observer = new MutationObserver(() => {
+      const books = document.querySelectorAll('.gr_custom_each_container_');
+
+      if (books.length > 0) {
+        setupBookToggle();
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   </script>
 
 </body>

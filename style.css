@@ -2,327 +2,187 @@
   box-sizing: border-box;
 }
 
-html,
 body {
   margin: 0;
-  padding: 0;
   background: transparent;
-}
-
-body {
   font-family: Georgia, "Times New Roman", serif;
 }
 
-.now-playing-widget {
+.loose-leaves-widget {
   width: 100%;
   padding: 8px;
+  background: transparent;
 }
 
-.banner-shell {
+.inner-frame {
   position: relative;
-
-  width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
-
-  min-height: 690px;
-
-  padding:
-    78px
-    34px
-    38px;
-
-  overflow: hidden;
-
+  padding: 30px 28px 22px;
   background:
-    radial-gradient(
-      circle at 50% 7%,
-      rgba(183, 138, 71, 0.08),
-      transparent 26%
-    ),
-    #fbf6eb;
-
-  border: 1px solid #b78a47;
-  border-radius: 18px;
-
+    radial-gradient(circle at 15% 15%,
+      rgba(182, 139, 69, 0.06),
+      transparent 24%),
+    radial-gradient(circle at 85% 80%,
+      rgba(130, 144, 116, 0.05),
+      transparent 26%),
+    #faf7f0;
+  border: 1px solid #b68b45;
+  border-radius: 16px;
+  color: #51483d;
   box-shadow:
-    inset 0 0 0 5px rgba(183, 138, 71, 0.05),
-    inset 0 0 0 10px rgba(183, 138, 71, 0.025);
+    inset 0 0 0 7px rgba(182, 139, 69, 0.08);
 }
 
-/* inner decorative borders */
-.banner-shell::before {
+.inner-frame::before {
   content: "";
-
   position: absolute;
-  inset: 8px;
-
-  border: 1px solid rgba(183, 138, 71, 0.55);
-  border-radius: 13px;
-
+  inset: 11px;
+  border: 1px solid rgba(182, 139, 69, 0.28);
+  border-radius: 11px;
   pointer-events: none;
 }
 
-.banner-shell::after {
-  content: "";
-
-  position: absolute;
-  inset: 14px;
-
-  border: 1px solid rgba(183, 138, 71, 0.18);
-  border-radius: 10px;
-
-  pointer-events: none;
-}
-
-/* botanical corners */
-.corner-art {
-  position: absolute;
-
-  top: 10px;
-
-  width: 190px;
-  max-width: 30%;
-
-  z-index: 1;
-
-  pointer-events: none;
-}
-
-.corner-left {
-  left: 10px;
-}
-
-.corner-right {
-  right: 10px;
-}
-
-/* title section */
-.top-section {
+.title {
   position: relative;
-
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  z-index: 3;
-}
-
-.celestial-crest {
-  display: block;
-
-  width: 330px;
-  max-width: 60%;
-
-  margin: -60px auto -8px;
-
-  pointer-events: none;
-}
-
-h1 {
-  margin: 0 0 24px;
-
   text-align: center;
-
-  font-size: 31px;
-  font-weight: 500;
-
-  letter-spacing: 0.22em;
   text-transform: uppercase;
-
-  color: #4b3b2d;
+  letter-spacing: 0.14em;
+  font-size: 23px;
+  font-weight: 500;
 }
 
-/* player section */
-.player-stage {
+.subtitle {
   position: relative;
+  text-align: center;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-style: italic;
+  color: #766a5d;
+}
 
-  width: 430px;
-  height: 430px;
+.divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 70%;
+  margin: 18px auto 17px;
+  color: #b68b45;
+}
 
-  max-width: 100%;
+.divider span {
+  height: 1px;
+  flex: 1;
+  background: rgba(182, 139, 69, 0.5);
+}
 
+.divider b {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+/* NOTE AREA */
+textarea {
+  position: relative;
+  display: block;
+  width: 88%;
+  min-height: 175px;
   margin: 0 auto;
-
-  z-index: 4;
+  padding: 7px 4px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  color: #51483d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 29px;
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0,
+      transparent 28px,
+      rgba(81, 72, 61, 0.17) 28px,
+      rgba(81, 72, 61, 0.17) 29px);
 }
 
-/* ornate frame */
-.player-frame-art {
-  position: absolute;
-
-  top: 50%;
-  left: 50%;
-
-  width: 430px;
-  height: 430px;
-
-  max-width: 100%;
-
-  transform: translate(-50%, -50%);
-
-  object-fit: fill;
-
-  z-index: 5;
-
-  pointer-events: none;
+textarea::placeholder {
+  color: rgba(81, 72, 61, 0.38);
+  font-style: italic;
 }
 
-/* actual spotify embed */
-.spotify-player {
-  position: absolute;
-
-  top: 50%;
-  left: 50%;
-
-  width: 352px;
-  height: 352px;
-
-  transform: translate(-50%, -50%);
-
-  z-index: 4;
-
-  overflow: hidden;
-
-  border-radius: 12px;
+textarea:focus {
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
-.spotify-player iframe {
-  display: block;
-
-  width: 352px;
-  height: 352px;
-
-  border: 0;
-  border-radius: 12px;
-}
-
-/* bottom decorative flourish */
-.bottom-flourish {
-  display: block;
-
-  width: 440px;
-  max-width: 72%;
-
-  margin: 6px auto 0;
-
+/* FOOTER */
+.footer {
   position: relative;
-
-  z-index: 3;
-
-  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin-top: 16px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(81, 72, 61, 0.5);
 }
 
-/* tablet */
-@media (max-width: 700px) {
-
-  .banner-shell {
-    max-width: 590px;
-
-    min-height: 650px;
-
-    padding:
-      72px
-      24px
-      34px;
-  }
-
-  .corner-art {
-    width: 150px;
-  }
-
-  .celestial-crest {
-    width: 280px;
-    max-width: 62%;
-  }
-
-  h1 {
-    font-size: 27px;
-  }
-
-  .player-stage {
-    width: 400px;
-    height: 400px;
-  }
-
-  .player-frame-art {
-    width: 400px;
-    height: 400px;
-  }
-
-  .spotify-player {
-    width: 330px;
-    height: 330px;
-  }
-
-  .spotify-player iframe {
-    width: 330px;
-    height: 330px;
-  }
-
-  .bottom-flourish {
-    width: 390px;
-  }
+#clearNotes {
+  border: 0;
+  padding: 2px 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
 }
 
-/* mobile */
-@media (max-width: 480px) {
+#clearNotes:hover {
+  color: #70433f;
+}
 
-  .banner-shell {
-    min-height: 590px;
+/* DECORATION */
+.corner {
+  position: absolute;
+  color: rgba(182, 139, 69, 0.72);
+  font-size: 14px;
+}
 
-    padding:
-      62px
-      15px
-      28px;
+.corner-tl {
+  top: 17px;
+  left: 20px;
+}
+
+.corner-tr {
+  top: 17px;
+  right: 20px;
+}
+
+.corner-bl {
+  bottom: 15px;
+  left: 20px;
+}
+
+.corner-br {
+  bottom: 15px;
+  right: 20px;
+}
+
+@media (max-width: 500px) {
+  .inner-frame {
+    padding: 27px 18px 21px;
   }
 
-  .corner-art {
-    width: 105px;
-    max-width: 27%;
+  .title {
+    font-size: 19px;
   }
 
-  .celestial-crest {
-    width: 220px;
-    max-width: 68%;
-
-    margin-top: -46px;
+  textarea {
+    width: 92%;
+    min-height: 160px;
+    font-size: 14px;
   }
-
-  h1 {
-    margin-bottom: 18px;
-
-    font-size: 21px;
-
-    letter-spacing: 0.15em;
-  }
-
-  .player-stage {
-    width: 350px;
-    height: 350px;
-  }
-
-  .player-frame-art {
-    width: 350px;
-    height: 350px;
-  }
-
-  .spotify-player {
-    width: 292px;
-    height: 292px;
-  }
-
-  .spotify-player iframe {
-    width: 292px;
-    height: 292px;
-  }
-
-  .bottom-flourish {
-    width: 310px;
-    max-width: 78%;
-
-    margin-top: 4px;
-  }
+}
 }

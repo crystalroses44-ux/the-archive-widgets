@@ -37,11 +37,7 @@ body {
 /* CORNER ORNAMENTS */
 
 .corner {
-  position: absolute;
-  color: #b68b45;
-  font-size: 11px;
-  line-height: 1;
-  opacity: 0.85;
+  display: none;
 }
 
 .corner.top-left {

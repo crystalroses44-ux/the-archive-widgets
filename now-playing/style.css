@@ -15,9 +15,10 @@ body {
 
 .now-playing-widget {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
 }
 
+/* OUTER DASHBOARD CARD */
 .outer-frame {
   position: relative;
 
@@ -25,7 +26,7 @@ body {
   max-width: 620px;
   margin: 0 auto;
 
-  padding: 48px 34px 42px;
+  padding: 26px 28px 28px;
 
   background: #fbf7ef;
 
@@ -35,51 +36,45 @@ body {
   box-shadow:
     inset 0 0 0 5px #fbf7ef,
     inset 0 0 0 6px rgba(181, 138, 70, 0.55),
-    inset 0 0 0 12px #fbf7ef,
-    inset 0 0 0 13px rgba(181, 138, 70, 0.28);
+    inset 0 0 0 11px #fbf7ef,
+    inset 0 0 0 12px rgba(181, 138, 70, 0.25);
 }
 
-/* top star */
-.top-ornament {
+/* HEADER */
+.header {
+  width: 100%;
   text-align: center;
-  color: #b58a46;
-  font-size: 28px;
-  line-height: 1;
-  margin-bottom: 12px;
 }
 
-/* title */
 h1 {
-  margin: 0;
+  margin: 7px 0 9px;
 
-  text-align: center;
-
-  font-size: 34px;
+  font-size: 29px;
   font-weight: 400;
 
-  letter-spacing: 0.24em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 
   color: #4b3b2d;
 }
 
-/* small divider under title */
+/* DECORATIVE RULES */
+.top-rule,
 .title-rule {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  gap: 12px;
+  gap: 10px;
 
   width: 72%;
-  margin: 20px auto 30px;
+  margin: 0 auto;
 }
 
+.top-rule span,
 .title-rule span {
-  display: block;
-  flex: 1;
-
   height: 1px;
+  flex: 1;
 
   background: linear-gradient(
     to right,
@@ -88,6 +83,7 @@ h1 {
   );
 }
 
+.top-rule span:last-child,
 .title-rule span:last-child {
   background: linear-gradient(
     to left,
@@ -96,42 +92,65 @@ h1 {
   );
 }
 
+.top-rule b,
 .title-rule b {
   color: #b58a46;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
 }
 
-/* ornate-ish Spotify frame */
+/* PLAYER FRAME */
 .spotify-frame {
   position: relative;
 
-  width: 412px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 540px;
 
-  margin: 0 auto;
+  margin: 20px auto 0;
 
-  padding: 28px;
+  padding: 17px;
 
   background: #f9f3e7;
 
   border: 2px solid #b58a46;
-  border-radius: 18px;
+  border-radius: 16px;
 
   box-shadow:
     inset 0 0 0 4px #f9f3e7,
-    inset 0 0 0 5px rgba(181, 138, 70, 0.75),
-    inset 0 0 0 10px #f9f3e7,
-    inset 0 0 0 11px rgba(181, 138, 70, 0.35),
-    0 4px 12px rgba(93, 69, 37, 0.08);
+    inset 0 0 0 5px rgba(181, 138, 70, 0.72),
+    inset 0 0 0 9px #f9f3e7,
+    inset 0 0 0 10px rgba(181, 138, 70, 0.28),
+    0 3px 8px rgba(80, 58, 31, 0.07);
 }
 
-/* decorative corners */
+/* PLAYER ITSELF */
+.spotify-player {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  height: 152px;
+
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.spotify-player iframe {
+  display: block;
+
+  width: 100%;
+  height: 152px;
+
+  border: 0;
+  border-radius: 12px;
+}
+
+/* CORNERS */
 .corner {
   position: absolute;
 
-  width: 34px;
-  height: 34px;
+  width: 26px;
+  height: 26px;
 
   pointer-events: none;
 }
@@ -145,18 +164,18 @@ h1 {
 }
 
 .corner::before {
-  width: 30px;
+  width: 23px;
   height: 1px;
 }
 
 .corner::after {
   width: 1px;
-  height: 30px;
+  height: 23px;
 }
 
 .corner-tl {
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
 }
 
 .corner-tl::before,
@@ -166,188 +185,107 @@ h1 {
 }
 
 .corner-tr {
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
 }
 
-.corner-tr::before {
-  top: 0;
-  right: 0;
-}
-
+.corner-tr::before,
 .corner-tr::after {
   top: 0;
   right: 0;
 }
 
 .corner-bl {
-  bottom: 10px;
-  left: 10px;
+  bottom: 8px;
+  left: 8px;
 }
 
-.corner-bl::before {
-  bottom: 0;
-  left: 0;
-}
-
+.corner-bl::before,
 .corner-bl::after {
   bottom: 0;
   left: 0;
 }
 
 .corner-br {
-  bottom: 10px;
-  right: 10px;
+  right: 8px;
+  bottom: 8px;
 }
 
-.corner-br::before {
-  bottom: 0;
-  right: 0;
-}
-
+.corner-br::before,
 .corner-br::after {
-  bottom: 0;
   right: 0;
+  bottom: 0;
 }
 
-/* little flourish dots */
-.spotify-frame::before,
-.spotify-frame::after {
-  content: "✦";
-
+/* SIDE STARS */
+.side-star {
   position: absolute;
 
   top: 50%;
-
   transform: translateY(-50%);
 
-  color: #b58a46;
-  font-size: 16px;
+  z-index: 3;
+
+  padding: 2px 0;
 
   background: #f9f3e7;
 
-  padding: 4px 0;
-
-  z-index: 3;
-}
-
-.spotify-frame::before {
-  left: -8px;
-}
-
-.spotify-frame::after {
-  right: -8px;
-}
-
-/* actual spotify */
-.spotify-player {
-  width: 352px;
-  height: 352px;
-
-  max-width: 100%;
-
-  margin: 0 auto;
-
-  overflow: hidden;
-
-  border-radius: 12px;
-
-  position: relative;
-  z-index: 2;
-}
-
-.spotify-player iframe {
-  display: block;
-
-  width: 352px;
-  height: 352px;
-
-  max-width: 100%;
-
-  border: 0;
-  border-radius: 12px;
-}
-
-/* bottom star */
-.bottom-ornament {
-  margin-top: 26px;
-
-  text-align: center;
-
   color: #b58a46;
-  font-size: 22px;
+
+  font-size: 13px;
+  line-height: 1;
 }
 
-/* tablet */
+.side-star-left {
+  left: -6px;
+}
+
+.side-star-right {
+  right: -6px;
+}
+
+/* SMALLER DASHBOARD WIDTHS */
 @media (max-width: 620px) {
   .outer-frame {
-    padding:
-      40px
-      22px
-      34px;
+    padding: 22px 20px 24px;
   }
 
   h1 {
-    font-size: 28px;
+    font-size: 25px;
     letter-spacing: 0.18em;
   }
 
   .spotify-frame {
-    width: 390px;
-    padding: 20px;
-  }
-
-  .spotify-player,
-  .spotify-player iframe {
-    width: 348px;
-    height: 348px;
+    margin-top: 17px;
+    padding: 15px;
   }
 }
 
-/* mobile */
 @media (max-width: 430px) {
-  .outer-frame {
-    padding:
-      34px
-      14px
-      28px;
+  .now-playing-widget {
+    padding: 5px;
   }
 
-  .top-ornament {
-    font-size: 22px;
+  .outer-frame {
+    padding: 19px 13px 20px;
   }
 
   h1 {
-    font-size: 21px;
+    font-size: 20px;
     letter-spacing: 0.14em;
   }
 
+  .top-rule,
   .title-rule {
-    width: 82%;
-    margin-bottom: 22px;
+    width: 80%;
   }
 
   .spotify-frame {
-    width: 100%;
-    padding: 16px;
+    padding: 12px;
   }
 
   .spotify-player,
   .spotify-player iframe {
-    width: 100%;
-    height: 320px;
-  }
-
-  .corner {
-    width: 26px;
-    height: 26px;
-  }
-
-  .corner::before {
-    width: 22px;
-  }
-
-  .corner::after {
-    height: 22px;
+    height: 152px;
   }
 }

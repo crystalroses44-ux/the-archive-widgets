@@ -50,10 +50,10 @@
     }
 
     button,
-    input {
+    input,
+    textarea {
       font: inherit;
     }
-
 
 
     /* ---------------------------------
@@ -97,7 +97,6 @@
     }
 
 
-
     /* ---------------------------------
        HEADER
     --------------------------------- */
@@ -139,7 +138,6 @@
 
       font-style: italic;
     }
-
 
 
     /* ---------------------------------
@@ -200,7 +198,6 @@
     }
 
 
-
     /* ---------------------------------
        BOARD FRAME
     --------------------------------- */
@@ -251,7 +248,6 @@
 
       border: 1px solid var(--cork-dark);
     }
-
 
 
     /* ---------------------------------
@@ -310,26 +306,29 @@
     }
 
 
+    /* ---------------------------------
+       SHARED BOARD ITEM
+    --------------------------------- */
+
+    .board-item {
+      position: absolute;
+
+      user-select: none;
+
+      transform-origin: center center;
+    }
+
 
     /* ---------------------------------
        PHOTO
     --------------------------------- */
 
     .photo {
-      position: absolute;
-
-      left: 30px;
-      top: 30px;
-
       width: 150px;
 
       min-width: 80px;
 
-      user-select: none;
-
       touch-action: none;
-
-      transform-origin: center center;
     }
 
     .photo-shell {
@@ -366,14 +365,22 @@
     }
 
 
-
     /* ---------------------------------
-       PIN
+       PHOTO DECORATIONS
     --------------------------------- */
 
-    .pin {
+    .decoration {
       position: absolute;
 
+      pointer-events: none;
+
+      z-index: 5;
+    }
+
+
+    /* BRASS PIN */
+
+    .photo[data-decoration="pin"] .decoration {
       width: 10px;
       height: 10px;
 
@@ -394,16 +401,73 @@
 
       box-shadow:
         0 1px 2px rgba(81,72,61,0.35);
-
-      pointer-events: none;
-
-      z-index: 5;
     }
 
 
+    /* MASKING TAPE */
+
+    .photo[data-decoration="tape"] .decoration {
+      width: 52px;
+      height: 17px;
+
+      left: 50%;
+      top: -9px;
+
+      transform:
+        translateX(-50%)
+        rotate(-2deg);
+
+      background:
+        rgba(229, 211, 170, 0.84);
+
+      border-left: 1px solid rgba(167, 140, 91, 0.23);
+      border-right: 1px solid rgba(167, 140, 91, 0.23);
+
+      box-shadow:
+        0 1px 2px rgba(81,72,61,0.10);
+    }
+
+
+    /* PAPERCLIP */
+
+    .photo[data-decoration="clip"] .decoration {
+      width: 11px;
+      height: 29px;
+
+      left: 14px;
+      top: -11px;
+
+      transform: rotate(-13deg);
+
+      border: 2px solid #A88A4E;
+
+      border-radius: 7px;
+
+      background: transparent;
+
+      box-shadow:
+        inset 0 0 0 2px rgba(255,253,248,0.6);
+    }
+
+    .photo[data-decoration="clip"] .decoration::after {
+      content: "";
+
+      position: absolute;
+
+      width: 5px;
+      height: 20px;
+
+      left: 1px;
+      top: 3px;
+
+      border: 1px solid #C0A261;
+
+      border-radius: 5px;
+    }
+
 
     /* ---------------------------------
-       CONTROLS
+       PHOTO CONTROLS
     --------------------------------- */
 
     .photo-controls {
@@ -429,7 +493,8 @@
       pointer-events: auto;
     }
 
-    .photo-control {
+    .photo-control,
+    .note-control {
       width: 21px;
       height: 21px;
 
@@ -453,14 +518,19 @@
         0 2px 5px rgba(81,72,61,0.11);
     }
 
-    .photo-control:hover {
+    .photo-control:hover,
+    .note-control:hover {
       background: #F4EEDF;
     }
 
-    .photo-control.delete {
+    .photo-control.delete,
+    .note-control.delete {
       color: var(--rose);
     }
 
+    .style-control {
+      color: var(--gold);
+    }
 
 
     /* ---------------------------------
@@ -498,12 +568,152 @@
       border-bottom: 1px solid var(--gold);
     }
 
-    .photo.active .resize-handle {
+    .photo.active .resize-handle,
+    .note.active .resize-handle {
       opacity: 1;
 
       pointer-events: auto;
     }
 
+
+    /* ---------------------------------
+       NOTES
+    --------------------------------- */
+
+    .note {
+      width: 170px;
+
+      min-width: 110px;
+
+      touch-action: none;
+    }
+
+    .note-shell {
+      width: 100%;
+
+      min-height: 125px;
+
+      position: relative;
+
+      padding: 19px 12px 14px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #FFF8D8,
+          #F8EFC7
+        );
+
+      border: 1px solid #D8C789;
+
+      box-shadow:
+        0 5px 12px rgba(81,72,61,0.20);
+    }
+
+    .note-shell::after {
+      content: "";
+
+      position: absolute;
+
+      inset: 0;
+
+      pointer-events: none;
+
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 23px,
+          rgba(130,144,116,0.10) 24px
+        );
+    }
+
+    .note-grip {
+      position: absolute;
+
+      left: 10px;
+      right: 10px;
+      top: 5px;
+
+      height: 11px;
+
+      z-index: 3;
+
+      cursor: grab;
+
+      text-align: center;
+
+      color: rgba(182,139,69,0.60);
+
+      font-size: 7px;
+
+      letter-spacing: 0.15em;
+    }
+
+    .note-grip:active {
+      cursor: grabbing;
+    }
+
+    .note textarea {
+      position: relative;
+
+      z-index: 2;
+
+      display: block;
+
+      width: 100%;
+      height: 92px;
+
+      resize: none;
+
+      border: 0;
+
+      outline: 0;
+
+      padding: 3px;
+
+      background: transparent;
+
+      color: #51483D;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: 11px;
+
+      line-height: 1.55;
+    }
+
+    .note textarea::placeholder {
+      color: rgba(81,72,61,0.45);
+
+      font-style: italic;
+    }
+
+    .note-controls {
+      position: absolute;
+
+      top: -25px;
+      right: 0;
+
+      display: flex;
+
+      gap: 3px;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transition: opacity 120ms ease;
+    }
+
+    .note.active .note-controls {
+      opacity: 1;
+
+      pointer-events: auto;
+    }
 
 
     /* ---------------------------------
@@ -529,7 +739,6 @@
     .saved-status {
       font-style: italic;
     }
-
 
 
     /* ---------------------------------
@@ -562,6 +771,10 @@
 
       .photo {
         width: 125px;
+      }
+
+      .note {
+        width: 145px;
       }
 
     }
@@ -609,6 +822,14 @@
           multiple
         >
 
+        <button
+          class="tool-button"
+          id="addNoteButton"
+          type="button"
+        >
+          + Note
+        </button>
+
       </div>
 
 
@@ -645,8 +866,8 @@
               The board is waiting
             </strong>
 
-            Add images, then drag them around
-            to build your collection.
+            Add images or notes, then arrange
+            them however you like.
 
           </div>
 
@@ -660,7 +881,7 @@
     <footer class="footer">
 
       <span>
-        CLICK A PHOTO TO EDIT ✦
+        CLICK AN ITEM TO EDIT ✦
       </span>
 
       <span
@@ -675,11 +896,14 @@
   </section>
 
 
-
   <script>
 
     /* ---------------------------------
        DATABASE
+
+       We intentionally keep the SAME
+       database + store as the first
+       version so existing photos remain.
     --------------------------------- */
 
     const DB_NAME =
@@ -691,7 +915,6 @@
     const DB_VERSION = 1;
 
     let database;
-
 
 
     function openDatabase() {
@@ -757,8 +980,7 @@
     }
 
 
-
-    function savePhotoData(photo) {
+    function saveItemData(item) {
 
       return new Promise(
         (resolve, reject) => {
@@ -776,7 +998,7 @@
             );
 
 
-          store.put(photo);
+          store.put(item);
 
 
           transaction.oncomplete =
@@ -794,8 +1016,7 @@
     }
 
 
-
-    function getAllPhotos() {
+    function getAllItems() {
 
       return new Promise(
         (resolve, reject) => {
@@ -842,8 +1063,7 @@
     }
 
 
-
-    function deletePhotoData(id) {
+    function deleteItemData(id) {
 
       return new Promise(
         (resolve, reject) => {
@@ -877,8 +1097,7 @@
     }
 
 
-
-    function clearPhotoData() {
+    function clearItemData() {
 
       return new Promise(
         (resolve, reject) => {
@@ -912,7 +1131,6 @@
     }
 
 
-
     /* ---------------------------------
        STATE
     --------------------------------- */
@@ -925,6 +1143,11 @@
     const fileInput =
       document.getElementById(
         "fileInput"
+      );
+
+    const addNoteButton =
+      document.getElementById(
+        "addNoteButton"
       );
 
     const emptyState =
@@ -943,10 +1166,9 @@
       );
 
 
-    let activePhoto = null;
+    let activeItem = null;
 
     let highestZ = 1;
-
 
 
     /* ---------------------------------
@@ -955,19 +1177,18 @@
 
     function updateEmptyState() {
 
-      const photos =
+      const items =
         board.querySelectorAll(
-          ".photo"
+          ".board-item"
         );
 
 
       emptyState.style.display =
-        photos.length
+        items.length
           ? "none"
           : "flex";
 
     }
-
 
 
     /* ---------------------------------
@@ -989,6 +1210,84 @@
 
     }
 
+
+    /* ---------------------------------
+       ACTIVATE ITEM
+    --------------------------------- */
+
+    function activateItem(
+      element,
+      itemData
+    ) {
+
+      if (
+        activeItem
+        && activeItem !== element
+      ) {
+
+        activeItem
+          .classList
+          .remove(
+            "active"
+          );
+
+      }
+
+
+      activeItem =
+        element;
+
+
+      element
+        .classList
+        .add(
+          "active"
+        );
+
+
+      element.style.zIndex =
+        ++highestZ;
+
+
+      itemData.z =
+        highestZ;
+
+
+      saveItemData(
+        itemData
+      );
+
+    }
+
+
+    board.addEventListener(
+      "pointerdown",
+      event => {
+
+        if (
+          !event.target.closest(
+            ".board-item"
+          )
+        ) {
+
+          if (
+            activeItem
+          ) {
+
+            activeItem
+              .classList
+              .remove(
+                "active"
+              );
+
+            activeItem = null;
+
+          }
+
+        }
+
+      }
+    );
 
 
     /* ---------------------------------
@@ -1028,6 +1327,8 @@
 
             id,
 
+            type: "photo",
+
             file,
 
             x:
@@ -1050,13 +1351,16 @@
               * 8
               - 4,
 
+            decoration:
+              "pin",
+
             z:
               ++highestZ
 
           };
 
 
-          await savePhotoData(
+          await saveItemData(
             photoData
           );
 
@@ -1073,9 +1377,10 @@
 
         updateEmptyState();
 
+        showSaved();
+
       }
     );
-
 
 
     /* ---------------------------------
@@ -1086,6 +1391,20 @@
       photoData
     ) {
 
+      /* Compatibility with photos saved
+         by the original pinboard version */
+
+      if (!photoData.type) {
+        photoData.type =
+          "photo";
+      }
+
+      if (!photoData.decoration) {
+        photoData.decoration =
+          "pin";
+      }
+
+
       const photo =
         document.createElement(
           "div"
@@ -1093,31 +1412,35 @@
 
 
       photo.className =
-        "photo";
+        "board-item photo";
 
 
       photo.dataset.id =
         photoData.id;
 
 
+      photo.dataset.decoration =
+        photoData.decoration;
+
+
       photo.style.left =
-        `${photoData.x}px`;
+        `${photoData.x ?? 30}px`;
 
 
       photo.style.top =
-        `${photoData.y}px`;
+        `${photoData.y ?? 30}px`;
 
 
       photo.style.width =
-        `${photoData.width}px`;
+        `${photoData.width || 150}px`;
 
 
       photo.style.zIndex =
-        photoData.z;
+        photoData.z || 1;
 
 
       photo.style.transform =
-        `rotate(${photoData.rotation}deg)`;
+        `rotate(${photoData.rotation || 0}deg)`;
 
 
       highestZ =
@@ -1167,14 +1490,14 @@
         };
 
 
-      const pin =
+      const decoration =
         document.createElement(
           "div"
         );
 
 
-      pin.className =
-        "pin";
+      decoration.className =
+        "decoration";
 
 
       const controls =
@@ -1206,6 +1529,14 @@
         </button>
 
         <button
+          class="photo-control style-control"
+          type="button"
+          title="Change pin style"
+        >
+          ✦
+        </button>
+
+        <button
           class="photo-control delete"
           type="button"
           title="Delete"
@@ -1227,7 +1558,7 @@
 
 
       shell.appendChild(img);
-      shell.appendChild(pin);
+      shell.appendChild(decoration);
       shell.appendChild(controls);
       shell.appendChild(
         resizeHandle
@@ -1255,88 +1586,6 @@
     }
 
 
-
-    /* ---------------------------------
-       ACTIVATE PHOTO
-    --------------------------------- */
-
-    function activatePhoto(
-      photo,
-      photoData
-    ) {
-
-      if (
-        activePhoto
-        && activePhoto !== photo
-      ) {
-
-        activePhoto
-          .classList
-          .remove(
-            "active"
-          );
-
-      }
-
-
-      activePhoto =
-        photo;
-
-
-      photo
-        .classList
-        .add(
-          "active"
-        );
-
-
-      photo.style.zIndex =
-        ++highestZ;
-
-
-      photoData.z =
-        highestZ;
-
-
-      savePhotoData(
-        photoData
-      );
-
-    }
-
-
-
-    board.addEventListener(
-      "pointerdown",
-      event => {
-
-        if (
-          !event.target.closest(
-            ".photo"
-          )
-        ) {
-
-          if (
-            activePhoto
-          ) {
-
-            activePhoto
-              .classList
-              .remove(
-                "active"
-              );
-
-            activePhoto = null;
-
-          }
-
-        }
-
-      }
-    );
-
-
-
     /* ---------------------------------
        PHOTO INTERACTIONS
     --------------------------------- */
@@ -1361,6 +1610,12 @@
       const rotateRight =
         photo.querySelector(
           ".rotate-right"
+        );
+
+
+      const styleButton =
+        photo.querySelector(
+          ".style-control"
         );
 
 
@@ -1397,7 +1652,7 @@
           }
 
 
-          activatePhoto(
+          activateItem(
             photo,
             photoData
           );
@@ -1406,136 +1661,15 @@
           event.preventDefault();
 
 
-          const startX =
-            event.clientX;
-
-
-          const startY =
-            event.clientY;
-
-
-          const startLeft =
-            parseFloat(
-              photo.style.left
-            );
-
-
-          const startTop =
-            parseFloat(
-              photo.style.top
-            );
-
-
-          shell.setPointerCapture(
-            event.pointerId
-          );
-
-
-          const move =
-            moveEvent => {
-
-              const dx =
-                moveEvent.clientX
-                - startX;
-
-
-              const dy =
-                moveEvent.clientY
-                - startY;
-
-
-              let nextX =
-                startLeft
-                + dx;
-
-
-              let nextY =
-                startTop
-                + dy;
-
-
-              nextX =
-                Math.max(
-                  -photo.offsetWidth * 0.4,
-                  Math.min(
-                    board.clientWidth
-                    - photo.offsetWidth * 0.6,
-                    nextX
-                  )
-                );
-
-
-              nextY =
-                Math.max(
-                  -photo.offsetHeight * 0.3,
-                  Math.min(
-                    board.clientHeight
-                    - photo.offsetHeight * 0.5,
-                    nextY
-                  )
-                );
-
-
-              photo.style.left =
-                `${nextX}px`;
-
-
-              photo.style.top =
-                `${nextY}px`;
-
-
-              photoData.x =
-                nextX;
-
-
-              photoData.y =
-                nextY;
-
-            };
-
-
-          const up =
-            async upEvent => {
-
-              shell.removeEventListener(
-                "pointermove",
-                move
-              );
-
-
-              shell.removeEventListener(
-                "pointerup",
-                up
-              );
-
-
-              showSaving();
-
-
-              await savePhotoData(
-                photoData
-              );
-
-
-              showSaved();
-
-            };
-
-
-          shell.addEventListener(
-            "pointermove",
-            move
-          );
-
-
-          shell.addEventListener(
-            "pointerup",
-            up
+          startDragging(
+            event,
+            photo,
+            photoData,
+            shell
           );
 
         }
       );
-
 
 
       /* RESIZE */
@@ -1549,101 +1683,23 @@
           event.preventDefault();
 
 
-          activatePhoto(
+          activateItem(
             photo,
             photoData
           );
 
 
-          const startX =
-            event.clientX;
-
-
-          const startWidth =
-            photo.offsetWidth;
-
-
-          resizeHandle
-            .setPointerCapture(
-              event.pointerId
-            );
-
-
-          const move =
-            moveEvent => {
-
-              const difference =
-                moveEvent.clientX
-                - startX;
-
-
-              const width =
-                Math.max(
-                  80,
-                  Math.min(
-                    330,
-                    startWidth
-                    + difference
-                  )
-                );
-
-
-              photo.style.width =
-                `${width}px`;
-
-
-              photoData.width =
-                width;
-
-            };
-
-
-          const up =
-            async () => {
-
-              resizeHandle
-                .removeEventListener(
-                  "pointermove",
-                  move
-                );
-
-
-              resizeHandle
-                .removeEventListener(
-                  "pointerup",
-                  up
-                );
-
-
-              showSaving();
-
-
-              await savePhotoData(
-                photoData
-              );
-
-
-              showSaved();
-
-            };
-
-
-          resizeHandle
-            .addEventListener(
-              "pointermove",
-              move
-            );
-
-
-          resizeHandle
-            .addEventListener(
-              "pointerup",
-              up
-            );
+          startResizing(
+            event,
+            photo,
+            photoData,
+            resizeHandle,
+            80,
+            330
+          );
 
         }
       );
-
 
 
       /* ROTATE LEFT */
@@ -1655,7 +1711,9 @@
           event.stopPropagation();
 
 
-          photoData.rotation -= 3;
+          photoData.rotation =
+            (photoData.rotation || 0)
+            - 3;
 
 
           photo.style.transform =
@@ -1665,7 +1723,7 @@
           showSaving();
 
 
-          await savePhotoData(
+          await saveItemData(
             photoData
           );
 
@@ -1674,7 +1732,6 @@
 
         }
       );
-
 
 
       /* ROTATE RIGHT */
@@ -1686,7 +1743,9 @@
           event.stopPropagation();
 
 
-          photoData.rotation += 3;
+          photoData.rotation =
+            (photoData.rotation || 0)
+            + 3;
 
 
           photo.style.transform =
@@ -1696,7 +1755,7 @@
           showSaving();
 
 
-          await savePhotoData(
+          await saveItemData(
             photoData
           );
 
@@ -1706,6 +1765,71 @@
         }
       );
 
+
+      /* DECORATION STYLE */
+
+      styleButton.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+
+          const styles =
+            [
+              "pin",
+              "tape",
+              "clip"
+            ];
+
+
+          const currentIndex =
+            styles.indexOf(
+              photoData.decoration
+            );
+
+
+          const nextIndex =
+            (
+              currentIndex + 1
+            )
+            % styles.length;
+
+
+          photoData.decoration =
+            styles[nextIndex];
+
+
+          photo.dataset.decoration =
+            photoData.decoration;
+
+
+          const labels = {
+            pin:
+              "Brass pin",
+            tape:
+              "Masking tape",
+            clip:
+              "Paperclip"
+          };
+
+
+          styleButton.title =
+            `Decoration: ${labels[photoData.decoration]}`;
+
+
+          showSaving();
+
+
+          await saveItemData(
+            photoData
+          );
+
+
+          showSaved();
+
+        }
+      );
 
 
       /* DELETE */
@@ -1721,15 +1845,15 @@
 
 
           if (
-            activePhoto === photo
+            activeItem === photo
           ) {
 
-            activePhoto = null;
+            activeItem = null;
 
           }
 
 
-          await deletePhotoData(
+          await deleteItemData(
             photoData.id
           );
 
@@ -1744,6 +1868,779 @@
     }
 
 
+    /* ---------------------------------
+       ADD NOTE
+    --------------------------------- */
+
+    addNoteButton.addEventListener(
+      "click",
+      async () => {
+
+        const noteData = {
+
+          id:
+            crypto.randomUUID(),
+
+          type:
+            "note",
+
+          text:
+            "",
+
+          x:
+            50
+            + Math.random()
+            * 100,
+
+          y:
+            45
+            + Math.random()
+            * 75,
+
+          width:
+            170,
+
+          rotation:
+            Math.random()
+            * 4
+            - 2,
+
+          z:
+            ++highestZ
+
+        };
+
+
+        await saveItemData(
+          noteData
+        );
+
+
+        const note =
+          createNoteElement(
+            noteData
+          );
+
+
+        activateItem(
+          note,
+          noteData
+        );
+
+
+        const textarea =
+          note.querySelector(
+            "textarea"
+          );
+
+
+        textarea.focus();
+
+
+        updateEmptyState();
+
+      }
+    );
+
+
+    /* ---------------------------------
+       CREATE NOTE
+    --------------------------------- */
+
+    function createNoteElement(
+      noteData
+    ) {
+
+      const note =
+        document.createElement(
+          "div"
+        );
+
+
+      note.className =
+        "board-item note";
+
+
+      note.dataset.id =
+        noteData.id;
+
+
+      note.style.left =
+        `${noteData.x ?? 50}px`;
+
+
+      note.style.top =
+        `${noteData.y ?? 50}px`;
+
+
+      note.style.width =
+        `${noteData.width || 170}px`;
+
+
+      note.style.zIndex =
+        noteData.z || 1;
+
+
+      note.style.transform =
+        `rotate(${noteData.rotation || 0}deg)`;
+
+
+      highestZ =
+        Math.max(
+          highestZ,
+          noteData.z || 1
+        );
+
+
+      const shell =
+        document.createElement(
+          "div"
+        );
+
+
+      shell.className =
+        "note-shell";
+
+
+      const grip =
+        document.createElement(
+          "div"
+        );
+
+
+      grip.className =
+        "note-grip";
+
+
+      grip.textContent =
+        "✦  ✦  ✦";
+
+
+      const textarea =
+        document.createElement(
+          "textarea"
+        );
+
+
+      textarea.placeholder =
+        "Write something worth keeping…";
+
+
+      textarea.value =
+        noteData.text || "";
+
+
+      const controls =
+        document.createElement(
+          "div"
+        );
+
+
+      controls.className =
+        "note-controls";
+
+
+      controls.innerHTML = `
+
+        <button
+          class="note-control rotate-left"
+          type="button"
+          title="Rotate left"
+        >
+          ↶
+        </button>
+
+        <button
+          class="note-control rotate-right"
+          type="button"
+          title="Rotate right"
+        >
+          ↷
+        </button>
+
+        <button
+          class="note-control delete"
+          type="button"
+          title="Delete note"
+        >
+          ×
+        </button>
+
+      `;
+
+
+      const resizeHandle =
+        document.createElement(
+          "div"
+        );
+
+
+      resizeHandle.className =
+        "resize-handle";
+
+
+      shell.appendChild(grip);
+      shell.appendChild(textarea);
+      shell.appendChild(controls);
+      shell.appendChild(
+        resizeHandle
+      );
+
+
+      note.appendChild(shell);
+
+
+      board.appendChild(note);
+
+
+      setupNoteInteractions(
+        note,
+        noteData
+      );
+
+
+      updateEmptyState();
+
+
+      return note;
+
+    }
+
+
+    /* ---------------------------------
+       NOTE INTERACTIONS
+    --------------------------------- */
+
+    function setupNoteInteractions(
+      note,
+      noteData
+    ) {
+
+      const textarea =
+        note.querySelector(
+          "textarea"
+        );
+
+
+      const grip =
+        note.querySelector(
+          ".note-grip"
+        );
+
+
+      const rotateLeft =
+        note.querySelector(
+          ".rotate-left"
+        );
+
+
+      const rotateRight =
+        note.querySelector(
+          ".rotate-right"
+        );
+
+
+      const deleteButton =
+        note.querySelector(
+          ".delete"
+        );
+
+
+      const resizeHandle =
+        note.querySelector(
+          ".resize-handle"
+        );
+
+
+      /* ACTIVATE WHILE EDITING */
+
+      textarea.addEventListener(
+        "pointerdown",
+        event => {
+
+          event.stopPropagation();
+
+
+          activateItem(
+            note,
+            noteData
+          );
+
+        }
+      );
+
+
+      /* AUTO-SAVE TEXT */
+
+      let saveTimer;
+
+
+      textarea.addEventListener(
+        "input",
+        () => {
+
+          noteData.text =
+            textarea.value;
+
+
+          showSaving();
+
+
+          clearTimeout(
+            saveTimer
+          );
+
+
+          saveTimer =
+            setTimeout(
+              async () => {
+
+                await saveItemData(
+                  noteData
+                );
+
+
+                showSaved();
+
+              },
+              350
+            );
+
+        }
+      );
+
+
+      /* DRAG USING TOP GRIP */
+
+      grip.addEventListener(
+        "pointerdown",
+        event => {
+
+          event.stopPropagation();
+
+          event.preventDefault();
+
+
+          activateItem(
+            note,
+            noteData
+          );
+
+
+          startDragging(
+            event,
+            note,
+            noteData,
+            grip
+          );
+
+        }
+      );
+
+
+      /* RESIZE */
+
+      resizeHandle.addEventListener(
+        "pointerdown",
+        event => {
+
+          event.stopPropagation();
+
+          event.preventDefault();
+
+
+          activateItem(
+            note,
+            noteData
+          );
+
+
+          startResizing(
+            event,
+            note,
+            noteData,
+            resizeHandle,
+            110,
+            300
+          );
+
+        }
+      );
+
+
+      /* ROTATE LEFT */
+
+      rotateLeft.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+
+          noteData.rotation =
+            (noteData.rotation || 0)
+            - 3;
+
+
+          note.style.transform =
+            `rotate(${noteData.rotation}deg)`;
+
+
+          showSaving();
+
+
+          await saveItemData(
+            noteData
+          );
+
+
+          showSaved();
+
+        }
+      );
+
+
+      /* ROTATE RIGHT */
+
+      rotateRight.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+
+          noteData.rotation =
+            (noteData.rotation || 0)
+            + 3;
+
+
+          note.style.transform =
+            `rotate(${noteData.rotation}deg)`;
+
+
+          showSaving();
+
+
+          await saveItemData(
+            noteData
+          );
+
+
+          showSaved();
+
+        }
+      );
+
+
+      /* DELETE */
+
+      deleteButton.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+
+          note.remove();
+
+
+          if (
+            activeItem === note
+          ) {
+
+            activeItem = null;
+
+          }
+
+
+          await deleteItemData(
+            noteData.id
+          );
+
+
+          updateEmptyState();
+
+          showSaved();
+
+        }
+      );
+
+    }
+
+
+    /* ---------------------------------
+       SHARED DRAG
+    --------------------------------- */
+
+    function startDragging(
+      event,
+      element,
+      itemData,
+      captureElement
+    ) {
+
+      const startX =
+        event.clientX;
+
+
+      const startY =
+        event.clientY;
+
+
+      const startLeft =
+        parseFloat(
+          element.style.left
+        ) || 0;
+
+
+      const startTop =
+        parseFloat(
+          element.style.top
+        ) || 0;
+
+
+      captureElement.setPointerCapture(
+        event.pointerId
+      );
+
+
+      const move =
+        moveEvent => {
+
+          const dx =
+            moveEvent.clientX
+            - startX;
+
+
+          const dy =
+            moveEvent.clientY
+            - startY;
+
+
+          let nextX =
+            startLeft
+            + dx;
+
+
+          let nextY =
+            startTop
+            + dy;
+
+
+          nextX =
+            Math.max(
+              -element.offsetWidth
+              * 0.4,
+
+              Math.min(
+                board.clientWidth
+                - element.offsetWidth
+                * 0.6,
+
+                nextX
+              )
+            );
+
+
+          nextY =
+            Math.max(
+              -element.offsetHeight
+              * 0.3,
+
+              Math.min(
+                board.clientHeight
+                - element.offsetHeight
+                * 0.5,
+
+                nextY
+              )
+            );
+
+
+          element.style.left =
+            `${nextX}px`;
+
+
+          element.style.top =
+            `${nextY}px`;
+
+
+          itemData.x =
+            nextX;
+
+
+          itemData.y =
+            nextY;
+
+        };
+
+
+      const up =
+        async () => {
+
+          captureElement
+            .removeEventListener(
+              "pointermove",
+              move
+            );
+
+
+          captureElement
+            .removeEventListener(
+              "pointerup",
+              up
+            );
+
+
+          captureElement
+            .removeEventListener(
+              "pointercancel",
+              up
+            );
+
+
+          showSaving();
+
+
+          await saveItemData(
+            itemData
+          );
+
+
+          showSaved();
+
+        };
+
+
+      captureElement.addEventListener(
+        "pointermove",
+        move
+      );
+
+
+      captureElement.addEventListener(
+        "pointerup",
+        up
+      );
+
+
+      captureElement.addEventListener(
+        "pointercancel",
+        up
+      );
+
+    }
+
+
+    /* ---------------------------------
+       SHARED RESIZE
+    --------------------------------- */
+
+    function startResizing(
+      event,
+      element,
+      itemData,
+      handle,
+      minimum,
+      maximum
+    ) {
+
+      const startX =
+        event.clientX;
+
+
+      const startWidth =
+        element.offsetWidth;
+
+
+      handle.setPointerCapture(
+        event.pointerId
+      );
+
+
+      const move =
+        moveEvent => {
+
+          const difference =
+            moveEvent.clientX
+            - startX;
+
+
+          const width =
+            Math.max(
+              minimum,
+
+              Math.min(
+                maximum,
+                startWidth
+                + difference
+              )
+            );
+
+
+          element.style.width =
+            `${width}px`;
+
+
+          itemData.width =
+            width;
+
+        };
+
+
+      const up =
+        async () => {
+
+          handle.removeEventListener(
+            "pointermove",
+            move
+          );
+
+
+          handle.removeEventListener(
+            "pointerup",
+            up
+          );
+
+
+          handle.removeEventListener(
+            "pointercancel",
+            up
+          );
+
+
+          showSaving();
+
+
+          await saveItemData(
+            itemData
+          );
+
+
+          showSaved();
+
+        };
+
+
+      handle.addEventListener(
+        "pointermove",
+        move
+      );
+
+
+      handle.addEventListener(
+        "pointerup",
+        up
+      );
+
+
+      handle.addEventListener(
+        "pointercancel",
+        up
+      );
+
+    }
+
 
     /* ---------------------------------
        CLEAR BOARD
@@ -1753,14 +2650,14 @@
       "click",
       async () => {
 
-        const photos =
+        const items =
           board.querySelectorAll(
-            ".photo"
+            ".board-item"
           );
 
 
         if (
-          !photos.length
+          !items.length
         ) {
 
           return;
@@ -1770,7 +2667,7 @@
 
         const confirmed =
           confirm(
-            "Clear every image from this pinboard?"
+            "Clear every image and note from this pinboard?"
           );
 
 
@@ -1786,15 +2683,15 @@
         showSaving();
 
 
-        await clearPhotoData();
+        await clearItemData();
 
 
-        photos.forEach(
-          photo => photo.remove()
+        items.forEach(
+          item => item.remove()
         );
 
 
-        activePhoto = null;
+        activeItem = null;
 
 
         updateEmptyState();
@@ -1803,7 +2700,6 @@
 
       }
     );
-
 
 
     /* ---------------------------------
@@ -1817,22 +2713,35 @@
         await openDatabase();
 
 
-        const photos =
-          await getAllPhotos();
+        const items =
+          await getAllItems();
 
 
-        photos
+        items
           .sort(
             (a, b) =>
               (a.z || 0)
               - (b.z || 0)
           )
           .forEach(
-            photoData => {
+            itemData => {
 
-              createPhotoElement(
-                photoData
-              );
+              if (
+                itemData.type ===
+                "note"
+              ) {
+
+                createNoteElement(
+                  itemData
+                );
+
+              } else {
+
+                createPhotoElement(
+                  itemData
+                );
+
+              }
 
             }
           );

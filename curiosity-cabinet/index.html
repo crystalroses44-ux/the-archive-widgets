@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Curiosity Cabinet</title>
+<style>
+  :root{
+    --ivory:#fbf8f0;
+    --paper:#fffdf8;
+    --ink:#51483d;
+    --forest:#263d35;
+    --sage:#829074;
+    --gold:#b68b45;
+    --gold-soft:#d8c69f;
+    --line:rgba(182,139,69,.42);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:transparent}
+  body{
+    font-family: Georgia, "Times New Roman", serif;
+    color:var(--ink);
+  }
+
+  .cabinet{
+    width:100%;
+    min-height:390px;
+    background:var(--ivory);
+    border:1px solid var(--gold);
+    padding:6px;
+    position:relative;
+  }
+
+  .cabinet::before{
+    content:"";
+    position:absolute;
+    inset:5px;
+    border:1px solid var(--gold-soft);
+    pointer-events:none;
+  }
+
+  .inner{
+    position:relative;
+    z-index:1;
+    min-height:376px;
+    padding:18px 22px 16px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .corner{
+    position:absolute;
+    color:var(--gold);
+    font-size:10px;
+    line-height:1;
+    opacity:.9;
+  }
+  .corner.tl{top:10px;left:12px}
+  .corner.tr{top:10px;right:12px}
+  .corner.bl{bottom:10px;left:12px}
+  .corner.br{bottom:10px;right:12px}
+
+  .eyebrow{
+    text-align:center;
+    color:var(--gold);
+    font-size:9px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+
+  h1{
+    margin:0;
+    text-align:center;
+    font-weight:400;
+    font-size:18px;
+    letter-spacing:.16em;
+    color:var(--forest);
+  }
+
+  .subtitle{
+    text-align:center;
+    font-size:11px;
+    font-style:italic;
+    color:var(--sage);
+    margin:5px 0 13px;
+  }
+
+  .rule{
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--line),var(--gold),var(--line),transparent);
+    width:76%;
+    margin:0 auto 12px;
+    position:relative;
+  }
+  .rule::after{
+    content:"✦";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-52%);
+    background:var(--ivory);
+    color:var(--gold);
+    font-size:8px;
+    padding:0 8px;
+  }
+
+  .filters{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:12px;
+  }
+
+  .filter{
+    border:1px solid var(--gold-soft);
+    background:rgba(255,255,255,.35);
+    color:var(--ink);
+    padding:4px 8px;
+    font:inherit;
+    font-size:9px;
+    cursor:pointer;
+    transition:.18s ease;
+  }
+  .filter:hover{border-color:var(--gold);color:var(--forest)}
+  .filter.active{
+    background:var(--forest);
+    color:var(--paper);
+    border-color:var(--forest);
+  }
+
+  .card{
+    flex:1;
+    background:rgba(255,253,248,.78);
+    border:1px solid rgba(182,139,69,.28);
+    padding:15px 18px 14px;
+    min-height:210px;
+  }
+
+  .category-label{
+    color:var(--gold);
+    text-transform:uppercase;
+    letter-spacing:.17em;
+    font-size:8px;
+    text-align:center;
+    margin-bottom:4px;
+  }
+
+  .topic{
+    color:var(--forest);
+    font-size:18px;
+    line-height:1.25;
+    text-align:center;
+    margin-bottom:13px;
+  }
+
+  .path{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+  }
+
+  .step{
+    border-top:1px solid rgba(182,139,69,.32);
+    padding-top:8px;
+  }
+
+  .step-title{
+    color:var(--gold);
+    font-size:8px;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    margin-bottom:5px;
+  }
+
+  .step-text{
+    font-size:11.5px;
+    line-height:1.43;
+    color:var(--ink);
+  }
+
+  .source-note{
+    margin-top:10px;
+    font-size:8.5px;
+    color:var(--sage);
+    font-style:italic;
+    text-align:center;
+  }
+
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    margin-top:12px;
+    flex-wrap:wrap;
+  }
+
+  button.action{
+    border:1px solid var(--gold);
+    background:transparent;
+    color:var(--ink);
+    font:inherit;
+    font-size:10px;
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  button.action:hover{background:rgba(182,139,69,.08)}
+  button.action.primary{
+    background:var(--gold);
+    color:white;
+  }
+  button.action.kept{
+    background:var(--sage);
+    border-color:var(--sage);
+    color:white;
+  }
+
+  .meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+    color:var(--sage);
+    font-size:9px;
+  }
+
+  .linkish{
+    background:none;
+    border:0;
+    color:var(--sage);
+    font:inherit;
+    font-size:9px;
+    cursor:pointer;
+    padding:0;
+  }
+  .linkish:hover{color:var(--gold)}
+  .empty{color:var(--sage);font-style:italic;font-size:12px;text-align:center}
+
+  dialog{
+    border:1px solid var(--gold);
+    padding:5px;
+    background:var(--ivory);
+    color:var(--ink);
+    width:min(92vw,560px);
+    box-shadow:0 14px 50px rgba(45,40,34,.18);
+  }
+  dialog::backdrop{background:rgba(38,61,53,.18)}
+  .modal-inner{border:1px solid var(--gold-soft);padding:18px}
+  .modal-title{
+    color:var(--forest);
+    font-size:15px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    text-align:center;
+    margin-bottom:5px;
+  }
+  .modal-sub{
+    font-size:10px;
+    color:var(--sage);
+    text-align:center;
+    font-style:italic;
+    margin-bottom:14px;
+  }
+
+  input, textarea, select{
+    width:100%;
+    border:1px solid var(--gold-soft);
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Georgia,"Times New Roman",serif;
+    padding:8px;
+    font-size:11px;
+  }
+  textarea{min-height:64px;resize:vertical;line-height:1.4}
+  .field-label{
+    font-size:8px;
+    color:var(--gold);
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    margin:9px 0 4px;
+  }
+  .modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:7px;
+    margin-top:12px;
+  }
+
+  .kept-list{
+    max-height:340px;
+    overflow:auto;
+    margin-top:12px;
+    padding-right:4px;
+  }
+  .kept-item{
+    border-top:1px solid rgba(182,139,69,.2);
+    padding:10px 0;
+    font-size:11px;
+    line-height:1.4;
+  }
+  .kept-item:first-child{border-top:0}
+  .kept-cat{
+    color:var(--gold);
+    font-size:8px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:3px;
+  }
+  .kept-topic{
+    color:var(--forest);
+    font-size:12px;
+    margin-bottom:4px;
+  }
+
+  @media(max-width:620px){
+    .inner{padding:16px 14px 14px}
+    .filters{gap:4px}
+    .filter{font-size:8px;padding:4px 6px}
+    h1{font-size:16px}
+    .card{padding:14px 12px}
+    .topic{font-size:16px}
+    .path{grid-template-columns:1fr;gap:7px}
+    .step{padding-top:6px}
+    .step-text{font-size:11px}
+  }
+</style>
+</head>
+<body>
+<section class="cabinet" aria-label="The Curiosity Cabinet">
+  <span class="corner tl">✦</span>
+  <span class="corner tr">✦</span>
+  <span class="corner bl">✦</span>
+  <span class="corner br">✦</span>
+
+  <div class="inner">
+    <div class="eyebrow">✦ choose a thread ✦</div>
+    <h1>THE CURIOSITY CABINET</h1>
+    <div class="subtitle">a gentle place to begin researching</div>
+    <div class="rule"></div>
+
+    <div class="filters" id="filters"></div>
+
+    <div class="card">
+      <div class="category-label" id="categoryLabel">SURPRISE ME</div>
+      <div class="topic" id="topic"></div>
+
+      <div class="path" id="researchPath">
+        <div class="step">
+          <div class="step-title">01 · Start Here</div>
+          <div class="step-text" id="startHere"></div>
+        </div>
+        <div class="step">
+          <div class="step-title">02 · Go Deeper</div>
+          <div class="step-text" id="goDeeper"></div>
+        </div>
+        <div class="step">
+          <div class="step-title">03 · Follow the Thread</div>
+          <div class="step-text" id="followThread"></div>
+        </div>
+      </div>
+
+      <div class="source-note" id="sourceNote"></div>
+    </div>
+
+    <div class="controls">
+      <button class="action primary" id="anotherBtn">Another Topic</button>
+      <button class="action" id="keepBtn">♡ Keep This</button>
+      <button class="action" id="addBtn">＋ Add</button>
+    </div>
+
+    <div class="meta">
+      <span id="countText"></span>
+      <button class="linkish" id="viewKeptBtn">Kept: <span id="keptCount">0</span> ✦</button>
+    </div>
+  </div>
+</section>
+
+<dialog id="addDialog">
+  <div class="modal-inner">
+    <div class="modal-title">Add to the Cabinet</div>
+    <div class="modal-sub">you can keep this simple — only the topic is required</div>
+
+    <div class="field-label">Topic</div>
+    <input id="customTopic" placeholder="e.g. Medieval bestiaries" />
+
+    <div class="field-label">Category</div>
+    <select id="customCategory">
+      <option value="Mine">Mine</option>
+      <option value="Philosophy">Philosophy</option>
+      <option value="Psychology">Psychology</option>
+      <option value="Literature & Film">Literature & Film</option>
+      <option value="History & Culture">History & Culture</option>
+      <option value="Science & Nature">Science & Nature</option>
+      <option value="Folklore & Myth">Folklore & Myth</option>
+      <option value="Mysteries">Mysteries</option>
+    </select>
+
+    <div class="field-label">Start Here <span style="text-transform:none;letter-spacing:0;color:var(--sage)">(optional)</span></div>
+    <textarea id="customStart" placeholder="What is it? Where and when does it come from?"></textarea>
+
+    <div class="field-label">Go Deeper <span style="text-transform:none;letter-spacing:0;color:var(--sage)">(optional)</span></div>
+    <textarea id="customDeep" placeholder="What caused it, shaped it, or made it significant?"></textarea>
+
+    <div class="field-label">Follow the Thread <span style="text-transform:none;letter-spacing:0;color:var(--sage)">(optional)</span></div>
+    <textarea id="customThread" placeholder="What related subject could you explore next?"></textarea>
+
+    <div class="modal-actions">
+      <button class="action" id="cancelAdd">Cancel</button>
+      <button class="action primary" id="saveAdd">Keep in Cabinet</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="keptDialog">
+  <div class="modal-inner">
+    <div class="modal-title">Kept Curiosities</div>
+    <div class="modal-sub">topics worth returning to</div>
+    <div class="kept-list" id="keptList"></div>
+    <div class="modal-actions">
+      <button class="action" id="closeKept">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const BUILTIN = [
+  // PHILOSOPHY
+  {
+    c:"Philosophy", t:"Plato’s Allegory of the Cave",
+    a:"What is Plato’s Allegory of the Cave, where does it appear, and what happens in the story?",
+    b:"What philosophical problems is Plato using the allegory to explore, especially knowledge, education, and reality?",
+    d:"Compare the allegory with a modern example involving media, ideology, education, or perception."
+  },
+  {
+    c:"Philosophy", t:"Stoicism",
+    a:"What is Stoicism, where did it begin, and who were its major thinkers?",
+    b:"What did Stoics mean by virtue, control, emotion, and living according to nature?",
+    d:"Compare Stoicism with modern ideas about resilience, emotional regulation, or self-help."
+  },
+  {
+    c:"Philosophy", t:"Existentialism",
+    a:"What is existentialism, and which writers and philosophers are most associated with it?",
+    b:"How do existentialists approach freedom, responsibility, meaning, anxiety, and authenticity?",
+    d:"Trace one existential idea through a novel, film, or character you already know."
+  },
+  {
+    c:"Philosophy", t:"The Problem of Free Will",
+    a:"What do philosophers mean by free will, determinism, and compatibilism?",
+    b:"What are the strongest arguments for and against the idea that human choices are genuinely free?",
+    d:"Look at how psychology or neuroscience complicates philosophical ideas about choice."
+  },
+  {
+    c:"Philosophy", t:"Personal Identity",
+    a:"What makes a person the same person over time according to major philosophical theories?",
+    b:"How do memory, the body, consciousness, and continuity each function in theories of personal identity?",
+    d:"Apply the debate to a thought experiment involving amnesia, cloning, teleportation, or digital minds."
+  },
+  {
+    c:"Philosophy", t:"The Ethics of Intention and Consequence",
+    a:"What is the basic difference between deontological ethics and consequentialist ethics?",
+    b:"How do these theories judge cases where a good intention produces harm or a bad intention produces a good result?",
+    d:"Choose one everyday ethical dilemma and compare how each framework would approach it."
+  },
+  {
+    c:"Philosophy", t:"Virtue Ethics",
+    a:"What is virtue ethics, and how does it differ from rule-based and consequence-based ethics?",
+    b:"What did Aristotle mean by virtue, habit, character, and the ‘golden mean’?",
+    d:"Ask what a modern virtue ethic might say about social media, ambition, friendship, or self-discipline."
+  },
+  {
+    c:"Philosophy", t:"The Meaning of a Good Life",
+    a:"How have philosophers defined a good or flourishing life?",
+    b:"Compare pleasure, virtue, purpose, freedom, relationships, and service as possible foundations of a good life.",
+    d:"Create your own provisional definition of flourishing and note which thinkers support or challenge it."
+  },
+  {
+    c:"Philosophy", t:"Skepticism and Knowledge",
+    a:"What is philosophical skepticism, and what does it challenge us to prove that we know?",
+    b:"How did thinkers such as Descartes respond to radical doubt?",
+    d:"Connect skepticism to misinformation, testimony, expertise, and how we decide whom to trust."
+  },
+  {
+    c:"Philosophy", t:"Aesthetics and Beauty",
+    a:"What questions does the philosophy of aesthetics ask about beauty, taste, and art?",
+    b:"What are some major theories about whether beauty is objective, subjective, or socially shaped?",
+    d:"Choose an artwork or architectural style you love and test those theories against your own response."
+  },
+
+  // PSYCHOLOGY
+  {
+    c:"Psychology", t:"Memory as Reconstruction",
+    a:"How does human memory work, and why is remembering not the same as replaying a recording?",
+    b:"What are false memories, source-monitoring errors, and the misinformation effect?",
+    d:"Explore what reconstructive memory might mean for autobiography, eyewitness testimony, or personal identity."
+  },
+  {
+    c:"Psychology", t:"Cognitive Dissonance",
+    a:"What is cognitive dissonance, and how was the theory first developed?",
+    b:"What strategies do people use to reduce discomfort when beliefs and behavior conflict?",
+    d:"Look for examples in consumer behavior, relationships, politics, fandom, or health decisions."
+  },
+  {
+    c:"Psychology", t:"Confirmation Bias",
+    a:"What is confirmation bias, and how does it affect the way people seek and interpret information?",
+    b:"How does confirmation bias interact with motivated reasoning and belief perseverance?",
+    d:"Design a simple research habit that would force you to look for evidence against your first interpretation."
+  },
+  {
+    c:"Psychology", t:"The Psychology of the Uncanny",
+    a:"What does ‘the uncanny’ mean in psychology and psychoanalytic theory?",
+    b:"Why can almost-familiar faces, houses, dolls, doubles, and humanlike machines feel disturbing?",
+    d:"Trace the uncanny through Gothic fiction, horror film, or character design."
+  },
+  {
+    c:"Psychology", t:"Perfectionism",
+    a:"How do psychologists define perfectionism, and what is the difference between adaptive striving and maladaptive perfectionism?",
+    b:"How are perfectionism, avoidance, procrastination, shame, and fear of failure related?",
+    d:"Compare psychological research on perfectionism with cultural ideals of discipline and self-improvement."
+  },
+  {
+    c:"Psychology", t:"Attention and Distraction",
+    a:"What are the main systems involved in human attention?",
+    b:"How do novelty, stress, sleep, multitasking, and digital environments affect sustained attention?",
+    d:"Compare what the research says with common claims about ‘short attention spans’ and social media."
+  },
+  {
+    c:"Psychology", t:"Habit Formation",
+    a:"What is a habit psychologically, and how does a repeated behavior become more automatic?",
+    b:"What roles do cues, rewards, context, repetition, and identity play in habit formation?",
+    d:"Choose one habit and map its cue-routine-reward structure using what you learned."
+  },
+  {
+    c:"Psychology", t:"Loneliness and Social Perception",
+    a:"How do psychologists distinguish loneliness from simply being alone?",
+    b:"How can loneliness alter attention, threat perception, memory, and interpretation of social cues?",
+    d:"Explore how literature or film represents loneliness differently from psychological research."
+  },
+  {
+    c:"Psychology", t:"Parasocial Relationships",
+    a:"What is a parasocial relationship, and when did psychologists first begin studying the concept?",
+    b:"What makes one-sided attachment to creators, celebrities, or fictional characters feel emotionally meaningful?",
+    d:"Compare parasocial attachment across television, social media, streaming, and fandom."
+  },
+  {
+    c:"Psychology", t:"Emotion and Language",
+    a:"How does naming an emotion affect the way people experience and regulate it?",
+    b:"What is affect labeling, and what evidence exists for its effects on emotional processing?",
+    d:"Explore whether richer emotional vocabulary changes self-understanding or interpersonal communication."
+  },
+
+  // LITERATURE & FILM
+  {
+    c:"Literature & Film", t:"Gothic Literature",
+    a:"What defines Gothic literature, and when and where did the genre emerge?",
+    b:"What recurring settings, character types, fears, and themes appear across Gothic works?",
+    d:"Compare an early Gothic work with a modern Gothic novel or film and note what changed."
+  },
+  {
+    c:"Literature & Film", t:"The Gothic House",
+    a:"Why are castles, mansions, monasteries, and decaying houses so central to Gothic fiction?",
+    b:"How do writers use architecture to represent memory, repression, family history, isolation, or psychological states?",
+    d:"Choose one fictional house and analyze how its physical layout shapes the story."
+  },
+  {
+    c:"Literature & Film", t:"Female Madness in Literature",
+    a:"How has ‘madness’ historically been represented in female literary characters?",
+    b:"How are those representations connected to medical history, gender roles, confinement, and social control?",
+    d:"Compare one nineteenth-century example with a modern novel or film."
+  },
+  {
+    c:"Literature & Film", t:"The Unreliable Narrator",
+    a:"What is an unreliable narrator, and how can readers recognize one?",
+    b:"What different kinds of unreliability exist, and why might an author choose each one?",
+    d:"Compare unreliability caused by deception with unreliability caused by memory, trauma, immaturity, or limited knowledge."
+  },
+  {
+    c:"Literature & Film", t:"Fairy Tales Before Disney",
+    a:"Where did familiar European fairy tales come from before their modern adaptations?",
+    b:"How did oral tradition, the Brothers Grimm, Charles Perrault, and later editors reshape them?",
+    d:"Compare one early version with a modern adaptation and identify what cultural values changed."
+  },
+  {
+    c:"Literature & Film", t:"Victorian Censorship",
+    a:"What formal and informal restrictions shaped what Victorian writers could publish?",
+    b:"How did authors write indirectly about sex, class, religion, violence, and gender when direct treatment was risky?",
+    d:"Look for euphemism, implication, symbolism, or coded language in one Victorian text."
+  },
+  {
+    c:"Literature & Film", t:"Medieval Manuscript Marginalia",
+    a:"What is marginalia, and what kinds of images and notes appear in medieval manuscripts?",
+    b:"Who created these additions, and what do scholars think strange animals, jokes, monsters, and doodles were doing there?",
+    d:"Compare historical marginalia with modern annotation, memes, or reader commentary."
+  },
+  {
+    c:"Literature & Film", t:"Early Vampire Cinema",
+    a:"How did vampire stories move from folklore and literature into silent film?",
+    b:"What made Nosferatu (1922) visually and culturally influential?",
+    d:"Compare the vampire’s meaning in folklore, Dracula, Nosferatu, and a modern adaptation."
+  },
+  {
+    c:"Literature & Film", t:"Banned Books",
+    a:"What are the major historical reasons governments, schools, and institutions have banned or challenged books?",
+    b:"How do censorship campaigns differ across political, religious, and educational contexts?",
+    d:"Choose one frequently challenged book and trace who objected to it, when, and why."
+  },
+  {
+    c:"Literature & Film", t:"The Development of Modern Fantasy",
+    a:"What literary traditions came before modern fantasy as a distinct publishing genre?",
+    b:"How did myth, romance, folklore, fairy tales, and writers such as Tolkien shape modern fantasy conventions?",
+    d:"Trace one convention—quests, invented languages, secondary worlds, magical races—across several works."
+  },
+
+  // HISTORY & CULTURE
+  {
+    c:"History & Culture", t:"Victorian Mourning Culture",
+    a:"What were the main customs, etiquette rules, clothing practices, and rituals surrounding mourning in Victorian Britain?",
+    b:"How did mourning differ according to gender, class, relationship to the deceased, and stage of grief?",
+    d:"Explore how mourning culture influenced photography, jewelry, fashion, literature, or ideas about respectable emotion.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"The History of ‘Female Hysteria’",
+    a:"What did physicians historically mean by ‘hysteria,’ and how did the diagnosis change over time?",
+    b:"How were gender assumptions, medical authority, sexuality, and social expectations built into the diagnosis?",
+    d:"Trace what happened to hysteria as psychiatry and neurology developed.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"Medieval Animal Trials",
+    a:"Were animals really put on trial in medieval and early modern Europe, and what kinds of cases are documented?",
+    b:"How did legal, religious, and social ideas make these trials intelligible to people at the time?",
+    d:"Compare historical ideas of animal responsibility with modern animal law and ethics.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"The Antikythera Mechanism",
+    a:"What is the Antikythera mechanism, where was it found, and how old is it?",
+    b:"What did it calculate, and what does its construction reveal about ancient Greek astronomy and engineering?",
+    d:"Research how modern imaging technology helped scholars reconstruct its function.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"The Library of Alexandria",
+    a:"What was the Library of Alexandria, and what do historians actually know about its purpose and collections?",
+    b:"What are the major theories about how it declined or disappeared?",
+    d:"Compare the popular story of one catastrophic destruction with the more complicated historical evidence.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"The Rosetta Stone",
+    a:"What is the Rosetta Stone, when was it created, and why does it contain three scripts?",
+    b:"How did scholars use it to decipher Egyptian hieroglyphs?",
+    d:"Study the political history of its discovery, ownership, and current museum debates.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"Egyptomania",
+    a:"What does ‘Egyptomania’ mean, and when did major waves of Egyptian-inspired fashion and design occur?",
+    b:"What events—archaeological discoveries, empire, tourism, exhibitions—helped produce those waves?",
+    d:"Trace Egyptian motifs through Art Deco, fashion, film, architecture, or funerary culture.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"European Witch Trials",
+    a:"When and where did the major European witch trials occur, and who was most often accused?",
+    b:"What roles did religion, law, gender, local conflict, print culture, and political instability play?",
+    d:"Compare historical witch trials with the way modern popular culture remembers them.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"The Golden Age of Piracy",
+    a:"What period is called the Golden Age of Piracy, and where did piracy flourish?",
+    b:"What economic, naval, imperial, and labor conditions made piracy possible?",
+    d:"Compare the historical lives of pirates with the romantic pirate image created by novels and film.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"History & Culture", t:"The Window Tax",
+    a:"What was the window tax, where was it used, and how did it work?",
+    b:"How did people alter buildings and daily life to avoid paying it?",
+    d:"Use it as a case study in how taxation can unexpectedly reshape architecture and public health.",
+    s:"Inspired by the Substack study list"
+  },
+
+  // SCIENCE & NATURE
+  {
+    c:"Science & Nature", t:"Mycorrhizal Networks",
+    a:"What are mycorrhizae, and what kind of relationship exists between fungi and plant roots?",
+    b:"How do underground fungal networks move nutrients or chemical signals, and where is the popular ‘wood wide web’ metaphor accurate or overstated?",
+    d:"Compare scientific findings with popular media descriptions of forests as cooperative communities.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"Electroreception and Electrogenesis",
+    a:"What are electroreception and electrogenesis, and which animals use them?",
+    b:"How do electric fish, sharks, rays, and other animals detect or generate electrical signals?",
+    d:"Explore what these senses suggest about forms of perception humans do not naturally possess.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"The Mariana Trench",
+    a:"Where is the Mariana Trench, how deep is it, and what physical conditions exist at its deepest points?",
+    b:"What organisms have been observed there, and how do they survive extreme pressure, darkness, and cold?",
+    d:"Research what human exploration and pollution findings reveal about supposedly inaccessible environments.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"The Hadean Earth",
+    a:"What was the Hadean eon, and what was Earth like during its earliest geological history?",
+    b:"How did the Moon, crust, oceans, and early atmosphere form during or after this period?",
+    d:"Explore what evidence scientists can use to study a period with almost no surviving rocks.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"Exoplanets",
+    a:"What is an exoplanet, and how do astronomers detect planets that orbit other stars?",
+    b:"What makes an exoplanet potentially habitable, and why is the habitable zone only part of the answer?",
+    d:"Compare several famous exoplanets and the evidence scientists have about their atmospheres or conditions.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"Chernobyl’s Red Forest",
+    a:"What is the Red Forest near Chernobyl, and why did the area receive that name?",
+    b:"How has chronic radiation affected plants, animals, microbes, and ecological succession there?",
+    d:"Compare sensational claims about ‘mutant wildlife’ with what field studies actually show.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"The ‘Immortal’ Jellyfish",
+    a:"What species is commonly called the immortal jellyfish, and what unusual life-cycle process does it perform?",
+    b:"How does cellular transdifferentiation allow it to return to an earlier developmental stage?",
+    d:"Ask what its biology can and cannot tell us about aging in more complex organisms.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"Pando, the Quaking Aspen Clone",
+    a:"What is Pando, where is it, and why is it considered a single organism?",
+    b:"How do clonal plants reproduce and persist across large areas and long periods?",
+    d:"Use Pando to explore biological definitions of individuality, age, and organism.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"Rogue Planets",
+    a:"What is a rogue planet, and how can a planet exist without orbiting a star?",
+    b:"How might rogue planets form or be ejected from planetary systems?",
+    d:"Research whether any conditions could allow heat, atmosphere, or even life on a starless world.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Science & Nature", t:"The Wow! Signal",
+    a:"What was the Wow! signal detected in 1977, and why did astronomer Jerry Ehman mark it as unusual?",
+    b:"Why has the signal remained interesting despite never being detected again?",
+    d:"Compare proposed explanations and learn how SETI researchers decide whether a signal deserves further attention.",
+    s:"Inspired by the Substack study list"
+  },
+
+  // FOLKLORE & MYTH
+  {
+    c:"Folklore & Myth", t:"Faeries in European Folklore",
+    a:"What were faeries in older European folklore before modern fantasy made them small, winged, and benevolent?",
+    b:"How did beliefs about changelings, fairy rings, bargains, time distortion, and dangerous beauty vary by region?",
+    d:"Trace how fairies changed from folklore into Victorian art, children’s literature, and modern fantasy.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Folklore & Myth", t:"Selkie Folklore",
+    a:"What is a selkie, and in which Scottish and Irish traditions do selkie stories appear?",
+    b:"What recurring story patterns involve seal skins, marriage, captivity, longing, and return to the sea?",
+    d:"Compare selkie tales with other myths about shape-shifting spouses or stolen magical garments.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Folklore & Myth", t:"Mermaids Across Cultures",
+    a:"What kinds of mermaid or human-fish beings appear in different cultures?",
+    b:"How do their meanings change between traditions associated with sailors, rivers, fertility, danger, beauty, or death?",
+    d:"Choose two cultures and compare what their water beings reveal about human relationships with the sea.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Folklore & Myth", t:"Alchemy",
+    a:"What was alchemy, where was it practiced, and what were alchemists actually trying to accomplish?",
+    b:"How did laboratory experimentation, medicine, metallurgy, religion, and symbolism overlap in alchemical practice?",
+    d:"Trace which parts of alchemical practice contributed to later chemistry and which remained spiritual or symbolic.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Folklore & Myth", t:"Unicorn Horns and Narwhal Tusks",
+    a:"Why did Europeans once believe that narwhal tusks were unicorn horns?",
+    b:"How were supposed unicorn horns traded, displayed, and used medicinally?",
+    d:"Use the story to explore how trade networks, limited zoological knowledge, and prestige shaped belief.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Folklore & Myth", t:"Vampire Folklore",
+    a:"What did vampires look like in European folklore before Dracula established the modern literary image?",
+    b:"How were vampire beliefs connected to burial practices, decomposition, disease, sexuality, and fear of the dead?",
+    d:"Trace one element of vampire folklore into Gothic literature or modern film.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Folklore & Myth", t:"Baba Yaga",
+    a:"Who is Baba Yaga in Slavic folklore, and what are the most common features of her stories?",
+    b:"Why can she function as villain, helper, guardian, or tester depending on the tale?",
+    d:"Compare Baba Yaga with another ambiguous witch or old-woman figure from a different tradition.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Folklore & Myth", t:"Thresholds and Liminal Spaces in Folklore",
+    a:"What does ‘liminal’ mean, and why are crossroads, doorways, shorelines, forests, and twilight often treated as special spaces?",
+    b:"What supernatural beings, rituals, or dangers are associated with thresholds in different traditions?",
+    d:"Trace liminality into Gothic literature, horror, fantasy, or modern internet aesthetics."
+  },
+
+  // MYSTERIES
+  {
+    c:"Mysteries", t:"The Bermuda Triangle",
+    a:"Where did the idea of the Bermuda Triangle come from, and which disappearances helped popularize it?",
+    b:"What explanations involving weather, navigation, human error, reporting, and myth-making have been proposed?",
+    d:"Compare the documented cases with the later popular narrative and identify where the legend grew.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Mysteries", t:"The Dyatlov Pass Incident",
+    a:"What happened to the Dyatlov group in 1959, and what physical evidence was found?",
+    b:"What are the main natural and human explanations proposed for the deaths?",
+    d:"Compare recent avalanche research with the more sensational theories and note what evidence each explanation requires.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Mysteries", t:"Remote Viewing",
+    a:"What is remote viewing, and how did it become associated with Cold War intelligence programs?",
+    b:"What experiments were conducted, and what criticisms have been made about their methods and results?",
+    d:"Use the topic to practice distinguishing documented government interest from evidence that a claimed ability works.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Mysteries", t:"MKUltra",
+    a:"What was MKUltra, when did it operate, and what goals did the CIA publicly document for the program?",
+    b:"What experiments and ethical abuses are supported by historical records?",
+    d:"Separate well-documented facts from later claims that go beyond surviving evidence.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Mysteries", t:"Ghost Ships",
+    a:"What are some historically documented abandoned or missing ships that later became known as ‘ghost ships’?",
+    b:"How do incomplete records, maritime danger, and storytelling transform real incidents into legends?",
+    d:"Choose one famous case and build a timeline separating contemporary evidence from later embellishment.",
+    s:"Inspired by the Substack study list"
+  },
+  {
+    c:"Mysteries", t:"The Taos Hum",
+    a:"What is the Taos Hum, who reports hearing it, and when did it become widely known?",
+    b:"What environmental, mechanical, auditory, and psychological explanations have researchers considered?",
+    d:"Compare the Taos Hum with similar reported low-frequency hums elsewhere.",
+    s:"Inspired by the Substack study list"
+  }
+];
+
+const FILTERS = [
+  "Surprise Me","Philosophy","Psychology","Literature & Film",
+  "History & Culture","Science & Nature","Folklore & Myth","Mysteries","Mine"
+];
+
+const LS_CUSTOM = "archive-curiosity-cabinet-custom-v2";
+const LS_KEPT = "archive-curiosity-cabinet-kept-v2";
+
+let custom = JSON.parse(localStorage.getItem(LS_CUSTOM) || "[]");
+let kept = new Set(JSON.parse(localStorage.getItem(LS_KEPT) || "[]"));
+let activeFilter = "Surprise Me";
+let current = null;
+let lastKey = null;
+
+const topicEl = document.getElementById("topic");
+const catEl = document.getElementById("categoryLabel");
+const startEl = document.getElementById("startHere");
+const deepEl = document.getElementById("goDeeper");
+const threadEl = document.getElementById("followThread");
+const sourceEl = document.getElementById("sourceNote");
+const filtersEl = document.getElementById("filters");
+const keepBtn = document.getElementById("keepBtn");
+const countText = document.getElementById("countText");
+const keptCount = document.getElementById("keptCount");
+
+function simpleHash(str){
+  let h=0;
+  for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i)|0;
+  return Math.abs(h);
+}
+
+function normalizeItem(item, i, prefix){
+  return {...item, id:item.id || `${prefix}-${i}-${simpleHash(item.t || "")}`};
+}
+
+function autoStart(topic){
+  return `What is ${topic}, where and when does it come from, and what basic background should you know before studying it further?`;
+}
+function autoDeep(topic){
+  return `What are the most important people, events, ideas, causes, or discoveries connected to ${topic}, and why is the subject significant?`;
+}
+function autoThread(topic){
+  return `What is one related subject, debate, text, event, or field that would make a useful next step after learning the basics of ${topic}?`;
+}
+
+function allItems(){
+  return [
+    ...BUILTIN.map((x,i)=>normalizeItem(x,i,"b")),
+    ...custom.map((x,i)=>normalizeItem(x,i,"c"))
+  ];
+}
+
+function itemsForFilter(){
+  const all=allItems();
+  if(activeFilter==="Surprise Me") return all;
+  if(activeFilter==="Mine") return all.filter(x=>x.mine===true);
+  return all.filter(x=>x.c===activeFilter);
+}
+
+function draw(){
+  const pool=itemsForFilter();
+  if(!pool.length){
+    current=null;
+    topicEl.innerHTML='<span class="empty">Nothing is tucked into this drawer yet. Add a topic of your own ✦</span>';
+    catEl.textContent=activeFilter.toUpperCase();
+    startEl.textContent=deepEl.textContent=threadEl.textContent="";
+    sourceEl.textContent="";
+    updateMeta();
+    return;
+  }
+
+  let options=pool.filter(x=>x.id!==lastKey);
+  if(!options.length) options=pool;
+  current=options[Math.floor(Math.random()*options.length)];
+  lastKey=current.id;
+  renderCurrent();
+}
+
+function renderCurrent(){
+  if(!current) return;
+  catEl.textContent=current.c.toUpperCase();
+  topicEl.textContent=current.t;
+  startEl.textContent=current.a || autoStart(current.t);
+  deepEl.textContent=current.b || autoDeep(current.t);
+  threadEl.textContent=current.d || autoThread(current.t);
+  sourceEl.textContent=current.s || (current.mine ? "from your cabinet" : "");
+  keepBtn.classList.toggle("kept",kept.has(current.id));
+  keepBtn.textContent=kept.has(current.id) ? "♥ Kept" : "♡ Keep This";
+  updateMeta();
+}
+
+function updateMeta(){
+  const n=itemsForFilter().length;
+  countText.textContent=`${n} topic${n===1?"":"s"} in this drawer`;
+  keptCount.textContent=kept.size;
+}
+
+function saveKept(){
+  localStorage.setItem(LS_KEPT,JSON.stringify([...kept]));
+  updateMeta();
+}
+
+function renderFilters(){
+  filtersEl.innerHTML="";
+  FILTERS.forEach(name=>{
+    const b=document.createElement("button");
+    b.className="filter"+(name===activeFilter?" active":"");
+    b.textContent=name;
+    b.onclick=()=>{
+      activeFilter=name;
+      renderFilters();
+      draw();
+    };
+    filtersEl.appendChild(b);
+  });
+}
+
+document.getElementById("anotherBtn").onclick=draw;
+
+keepBtn.onclick=()=>{
+  if(!current) return;
+  if(kept.has(current.id)) kept.delete(current.id);
+  else kept.add(current.id);
+  saveKept();
+  renderCurrent();
+};
+
+const addDialog=document.getElementById("addDialog");
+document.getElementById("addBtn").onclick=()=>addDialog.showModal();
+document.getElementById("cancelAdd").onclick=()=>addDialog.close();
+
+document.getElementById("saveAdd").onclick=()=>{
+  const t=document.getElementById("customTopic").value.trim();
+  const c=document.getElementById("customCategory").value;
+  const a=document.getElementById("customStart").value.trim();
+  const b=document.getElementById("customDeep").value.trim();
+  const d=document.getElementById("customThread").value.trim();
+
+  if(!t) return;
+
+  custom.push({
+    id:`mine-${Date.now()}`,
+    t, c, a, b, d,
+    mine:true
+  });
+
+  localStorage.setItem(LS_CUSTOM,JSON.stringify(custom));
+
+  ["customTopic","customStart","customDeep","customThread"].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+
+  addDialog.close();
+  activeFilter="Mine";
+  renderFilters();
+
+  const items=itemsForFilter();
+  current=items[items.length-1];
+  lastKey=current.id;
+  renderCurrent();
+};
+
+const keptDialog=document.getElementById("keptDialog");
+
+document.getElementById("viewKeptBtn").onclick=()=>{
+  const list=document.getElementById("keptList");
+  const map=new Map(allItems().map(x=>[x.id,x]));
+  const saved=[...kept].map(id=>map.get(id)).filter(Boolean);
+
+  if(!saved.length){
+    list.innerHTML='<div class="empty">You haven’t kept anything yet.</div>';
+  }else{
+    list.innerHTML=saved.map(x=>`
+      <div class="kept-item">
+        <span class="kept-cat">${escapeHtml(x.c)}</span>
+        <div class="kept-topic">${escapeHtml(x.t)}</div>
+        ${escapeHtml(x.a || autoStart(x.t))}
+      </div>
+    `).join("");
+  }
+
+  keptDialog.showModal();
+};
+
+document.getElementById("closeKept").onclick=()=>keptDialog.close();
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+renderFilters();
+draw();
+</script>
+</body>
+</html>

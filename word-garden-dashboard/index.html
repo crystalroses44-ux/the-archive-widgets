@@ -9,6 +9,8 @@
     content="width=device-width, initial-scale=1.0"
   >
 
+  <title>Word Garden</title>
+
   <style>
 
     /* ---------------------------------
@@ -24,7 +26,6 @@
       margin: 0;
       width: 100%;
       min-height: 100%;
-
       background: transparent;
     }
 
@@ -42,15 +43,11 @@
 
     /* ---------------------------------
        MAIN WIDGET
-       Tall proportions to visually match
-       the illustration beside it
     --------------------------------- */
 
     .widget {
       width: 100%;
 
-      /* approximately the same proportions
-         as the tall illustration */
       aspect-ratio: 1 / 1.88;
 
       min-height: 430px;
@@ -66,6 +63,8 @@
       outline-offset: -5px;
 
       padding: 18px 14px 14px;
+
+      overflow: hidden;
     }
 
 
@@ -75,15 +74,13 @@
 
     .header {
       text-align: center;
-
       margin-bottom: 15px;
+      flex-shrink: 0;
     }
 
     .star {
       color: #B68B45;
-
       font-size: 9px;
-
       margin-bottom: 5px;
     }
 
@@ -113,6 +110,8 @@
       gap: 7px;
 
       margin-bottom: 14px;
+
+      flex-shrink: 0;
     }
 
     .mode-button {
@@ -129,11 +128,14 @@
       color: #70433F;
 
       cursor: pointer;
+
+      transition:
+        background 150ms ease,
+        border-color 150ms ease;
     }
 
     .mode-button.active {
       background: #F2EEDC;
-
       border-color: #B68B45;
     }
 
@@ -149,6 +151,8 @@
     #content {
       flex: 1;
 
+      min-height: 0;
+
       display: flex;
 
       flex-direction: column;
@@ -162,11 +166,13 @@
     .word-card {
       flex: 1;
 
+      min-height: 0;
+
       border: 1px solid #D8CFB7;
 
       background: #FAF8F1;
 
-      padding: 22px 14px;
+      padding: 18px 13px 12px;
 
       text-align: center;
 
@@ -176,7 +182,23 @@
 
       align-items: center;
 
+      overflow: hidden;
+    }
+
+    .card-main {
+      width: 100%;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
       justify-content: center;
+
+      flex: 1;
+
+      min-height: 0;
     }
 
 
@@ -211,6 +233,8 @@
       line-height: 1.1;
 
       color: #51483D;
+
+      overflow-wrap: anywhere;
     }
 
     .part-of-speech {
@@ -237,7 +261,7 @@
 
       gap: 8px;
 
-      margin: 17px 0;
+      margin: 15px 0;
     }
 
     .rule span {
@@ -264,14 +288,14 @@
     .prompt {
       font-size: 10.5px;
 
-      line-height: 1.55;
+      line-height: 1.5;
 
       color: #6A6258;
     }
 
 
     /* ---------------------------------
-       BUTTON
+       REVEAL BUTTON
     --------------------------------- */
 
     .button-row {
@@ -279,7 +303,7 @@
 
       justify-content: center;
 
-      margin-top: 15px;
+      margin-top: 13px;
     }
 
     .action-button {
@@ -296,6 +320,8 @@
       color: #70433F;
 
       cursor: pointer;
+
+      transition: background 150ms ease;
     }
 
     .action-button:hover {
@@ -312,7 +338,11 @@
 
       width: 100%;
 
-      margin-top: 14px;
+      max-height: 122px;
+
+      overflow-y: auto;
+
+      margin-top: 12px;
 
       padding: 10px 11px;
 
@@ -324,21 +354,104 @@
 
       font-size: 10px;
 
-      line-height: 1.5;
+      line-height: 1.45;
 
       color: #51483D;
+
+      flex-shrink: 0;
+
+      scrollbar-width: thin;
+      scrollbar-color: #C8B788 transparent;
+    }
+
+    .definition-box.visible {
+      display: block;
     }
 
     .definition-box strong {
       display: block;
 
-      margin-bottom: 5px;
+      margin-bottom: 6px;
 
       font-size: 7.5px;
 
       letter-spacing: 0.1em;
 
       text-transform: uppercase;
+
+      color: #829074;
+    }
+
+    .definition-box::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .definition-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .definition-box::-webkit-scrollbar-thumb {
+      background: #C8B788;
+      border-radius: 8px;
+    }
+
+
+    /* ---------------------------------
+       FLASHCARD NAVIGATION
+    --------------------------------- */
+
+    .flashcard-nav {
+      width: 100%;
+
+      display: none;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 7px;
+
+      margin-top: 10px;
+
+      flex-shrink: 0;
+    }
+
+    .flashcard-nav.visible {
+      display: flex;
+    }
+
+    .nav-button {
+      border: 1px solid #D5CAB0;
+
+      background: #FFFDF8;
+
+      padding: 5px 7px;
+
+      font-family: inherit;
+
+      font-size: 8.5px;
+
+      color: #70433F;
+
+      cursor: pointer;
+
+      white-space: nowrap;
+
+      transition: background 150ms ease;
+    }
+
+    .nav-button:hover {
+      background: #F7F3E8;
+    }
+
+    .card-count {
+      flex: 1;
+
+      text-align: center;
+
+      font-size: 7.5px;
+
+      letter-spacing: 0.08em;
 
       color: #829074;
     }
@@ -360,6 +473,8 @@
       padding-top: 8px;
 
       padding-right: 2px;
+
+      flex-shrink: 0;
     }
 
     .use-link {
@@ -431,16 +546,28 @@
 
       .mode-button {
         padding: 5px 7px;
-
         font-size: 9px;
       }
 
       .word-card {
-        padding: 18px 10px;
+        padding: 15px 10px 10px;
       }
 
       .word {
         font-size: 23px;
+      }
+
+      .rule {
+        margin: 12px 0;
+      }
+
+      .definition-box {
+        max-height: 110px;
+      }
+
+      .nav-button {
+        padding: 5px 6px;
+        font-size: 8px;
       }
 
     }
@@ -453,7 +580,6 @@
 <body>
 
   <section class="widget">
-
 
     <!-- HEADER -->
 
@@ -477,6 +603,7 @@
       <button
         class="mode-button active"
         id="dailyModeButton"
+        type="button"
       >
         Word of the Day
       </button>
@@ -484,6 +611,7 @@
       <button
         class="mode-button"
         id="flashcardModeButton"
+        type="button"
       >
         Flashcards
       </button>
@@ -500,7 +628,6 @@
       </div>
 
     </div>
-
 
   </section>
 
@@ -520,6 +647,10 @@
     let currentWord = null;
 
     let currentMode = "daily";
+
+    let flashcardDeck = [];
+
+    let flashcardIndex = 0;
 
 
     const todayKey =
@@ -570,10 +701,14 @@
         }
 
 
+        createFlashcardDeck();
+
         showDailyWord();
 
 
       } catch (error) {
+
+        console.error(error);
 
         showError(
           "Unable to load the Word Garden right now."
@@ -630,38 +765,106 @@
 
 
     /* ---------------------------------
-       RANDOM FLASHCARD
+       FLASHCARD DECK
     --------------------------------- */
 
-    function getRandomWord() {
+    function createFlashcardDeck() {
 
-      if (words.length === 1) {
-
-        return words[0];
-
-      }
+      flashcardDeck =
+        [...words];
 
 
-      let next =
-        currentWord;
-
-
-      while (
-        next === currentWord
+      for (
+        let i =
+          flashcardDeck.length - 1;
+        i > 0;
+        i--
       ) {
 
-        next =
-          words[
-            Math.floor(
-              Math.random()
-              * words.length
-            )
-          ];
+        const j =
+          Math.floor(
+            Math.random()
+            * (i + 1)
+          );
+
+
+        [
+          flashcardDeck[i],
+          flashcardDeck[j]
+        ] =
+        [
+          flashcardDeck[j],
+          flashcardDeck[i]
+        ];
 
       }
 
 
-      return next;
+      flashcardIndex = 0;
+
+    }
+
+
+    function getCurrentFlashcard() {
+
+      if (!flashcardDeck.length) {
+
+        createFlashcardDeck();
+
+      }
+
+
+      return flashcardDeck[
+        flashcardIndex
+      ];
+
+    }
+
+
+    function nextFlashcard() {
+
+      if (!flashcardDeck.length) {
+        return;
+      }
+
+
+      flashcardIndex =
+        (
+          flashcardIndex + 1
+        )
+        % flashcardDeck.length;
+
+
+      currentWord =
+        getCurrentFlashcard();
+
+
+      renderWord();
+
+    }
+
+
+    function previousFlashcard() {
+
+      if (!flashcardDeck.length) {
+        return;
+      }
+
+
+      flashcardIndex =
+        (
+          flashcardIndex
+          - 1
+          + flashcardDeck.length
+        )
+        % flashcardDeck.length;
+
+
+      currentWord =
+        getCurrentFlashcard();
+
+
+      renderWord();
 
     }
 
@@ -674,10 +877,13 @@
 
       currentMode = "daily";
 
+
       updateModeButtons();
+
 
       currentWord =
         getDailyWord();
+
 
       renderWord();
 
@@ -688,10 +894,20 @@
 
       currentMode = "flashcard";
 
+
       updateModeButtons();
 
+
+      if (!flashcardDeck.length) {
+
+        createFlashcardDeck();
+
+      }
+
+
       currentWord =
-        getRandomWord();
+        getCurrentFlashcard();
+
 
       renderWord();
 
@@ -742,83 +958,125 @@
         )}`;
 
 
+      const flashcardNavigation =
+        currentMode === "flashcard"
+          ? `
+            <div class="flashcard-nav visible">
+
+              <button
+                class="nav-button"
+                id="previousCardButton"
+                type="button"
+              >
+                ← Previous
+              </button>
+
+              <div class="card-count">
+                ${flashcardIndex + 1}
+                of
+                ${flashcardDeck.length}
+              </div>
+
+              <button
+                class="nav-button"
+                id="nextCardButton"
+                type="button"
+              >
+                Next →
+              </button>
+
+            </div>
+          `
+          : "";
+
+
       content.innerHTML = `
 
         <div class="word-card">
 
-          <div class="label">
+          <div class="card-main">
 
-            ${
-              currentMode === "daily"
-                ? "Today's Word"
-                : "Review Card"
-            }
+            <div class="label">
 
-          </div>
+              ${
+                currentMode === "daily"
+                  ? "Today's Word"
+                  : "Review Card"
+              }
 
-
-          <h2 class="word">
-
-            ${escapeHtml(
-              currentWord.word
-            )}
-
-          </h2>
+            </div>
 
 
-          <div class="part-of-speech">
+            <h2 class="word">
 
-            ${escapeHtml(
-              currentWord.partOfSpeech
-            )}
+              ${escapeHtml(
+                currentWord.word
+              )}
 
-          </div>
-
-
-          <div class="rule">
-
-            <span></span>
-
-            <b>✦</b>
-
-            <span></span>
-
-          </div>
+            </h2>
 
 
-          <div class="prompt">
+            <div class="part-of-speech">
 
-            Do you remember what this word means?
+              ${escapeHtml(
+                currentWord.partOfSpeech
+              )}
 
-          </div>
+            </div>
 
 
-          <div class="button-row">
+            <div class="rule">
 
-            <button
-              class="action-button"
-              id="revealButton"
+              <span></span>
+
+              <b>✦</b>
+
+              <span></span>
+
+            </div>
+
+
+            <div class="prompt">
+
+              Do you remember what this word means?
+
+            </div>
+
+
+            <div class="button-row">
+
+              <button
+                class="action-button"
+                id="revealButton"
+                type="button"
+              >
+                Reveal Meaning
+              </button>
+
+            </div>
+
+
+            <div
+              class="definition-box"
+              id="definitionBox"
             >
-              Reveal Meaning
-            </button>
+
+              <strong>
+                Meaning
+              </strong>
+
+              ${
+                formatText(
+                  currentWord.definition
+                )
+              }
+
+            </div>
 
           </div>
 
 
-          <div
-            class="definition-box"
-            id="definitionBox"
-          >
-
-            <strong>
-              Meaning
-            </strong>
-
-            ${formatText(
-              currentWord.definition
-            )}
-
-          </div>
+          ${flashcardNavigation}
 
         </div>
 
@@ -848,6 +1106,32 @@
           toggleDefinition
         );
 
+
+      if (
+        currentMode === "flashcard"
+      ) {
+
+        document
+          .getElementById(
+            "previousCardButton"
+          )
+          .addEventListener(
+            "click",
+            previousFlashcard
+          );
+
+
+        document
+          .getElementById(
+            "nextCardButton"
+          )
+          .addEventListener(
+            "click",
+            nextFlashcard
+          );
+
+      }
+
     }
 
 
@@ -869,20 +1153,22 @@
         );
 
 
-      const hidden =
-        box.style.display !== "block";
+      const isVisible =
+        box.classList.contains(
+          "visible"
+        );
 
 
-      box.style.display =
-        hidden
-          ? "block"
-          : "none";
+      box.classList.toggle(
+        "visible",
+        !isVisible
+      );
 
 
       button.textContent =
-        hidden
-          ? "Hide Meaning"
-          : "Reveal Meaning";
+        isVisible
+          ? "Reveal Meaning"
+          : "Hide Meaning";
 
     }
 
@@ -893,7 +1179,15 @@
 
     function formatText(text) {
 
-      return escapeHtml(text)
+      const cleanedText =
+        text
+          ? String(text).trim()
+          : "No definition added yet.";
+
+
+      return escapeHtml(
+        cleanedText
+      )
         .replace(
           /\n/g,
           "<br>"

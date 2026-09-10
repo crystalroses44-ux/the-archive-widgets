@@ -1,1 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 10px;
+      background: transparent;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      color: #51483D;
+    }
+
+    .widget {
+      width: 100%;
+
+      background: #FFFDF8;
+
+      border: 1px solid #B68B45;
+      outline: 1px solid #DED5BD;
+      outline-offset: -5px;
+
+      padding: 16px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .star {
+      color: #B68B45;
+      font-size: 9px;
+      margin-bottom: 3px;
+    }
+
+    .header h1 {
+      margin: 0;
+
+      font-size: 14px;
+      font-weight: normal;
+
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .header p {
+      margin: 3px 0 0;
+
+      font-size: 10px;
+      font-style: italic;
+
+      color: #829074;
+    }
+
+    .mode-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+
+      margin-bottom: 12px;
+    }
+
+    .mode-button {
+      border: 1px solid #D5CAB0;
+      background: #FBF8EF;
+
+      padding: 5px 9px;
+
+      font-family: inherit;
+      font-size: 9.5px;
+
+      color: #70433F;
+      cursor: pointer;
+    }
+
+    .mode-button.active {
+      background: #F2EEDC;
+      border-color: #B68B45;
+    }
+
+    .word-card {
+      border: 1px solid #D8CFB7;
+      background: #FAF8F1;
+
+      padding: 17px 14px;
+      text-align: center;
+
+      min-height: 205px;
+    }
+
+    .label {
+      font-size: 7.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+
+      color: #829074;
+
+      margin-bottom: 6px;
+    }
+
+    .word {
+      margin: 0;
+
+      font-size: 24px;
+      font-weight: normal;
+
+      color: #51483D;
+    }
+
+    .part-of-speech {
+      margin-top: 4px;
+
+      font-size: 10px;
+      font-style: italic;
+
+      color: #829074;
+    }
+
+    .rule {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 7px;
+
+      margin: 11px 0;
+    }
+
+    .rule span {
+      width: 30px;
+      height: 1px;
+
+      background: #C8B788;
+    }
+
+    .rule b {
+      color: #B68B45;
+
+      font-size: 6px;
+      font-weight: normal;
+    }
+
+    .prompt {
+      font-size: 10.5px;
+      line-height: 1.45;
+
+      color: #6A6258;
+    }
+
+    .definition-box {
+      display: none;
+
+      margin-top: 11px;
+      padding: 9px 10px;
+
+      background: #F7F3E8;
+      border: 1px solid #DDD2B8;
+
+      text-align: left;
+
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .definition-box strong {
+      display: block;
+
+      margin-bottom: 4px;
+
+      font-size: 7.5px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+
+      color: #829074;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+
+      margin-top: 11px;
+    }
+
+    .action-button {
+      border: 1px solid #CDBE99;
+      background: #FFFDF8;
+
+      padding: 6px 10px;
+
+      font-family: inherit;
+      font-size: 9.5px;
+
+      color: #70433F;
+      cursor: pointer;
+    }
+
+    .action-button:hover {
+      background: #F7F3E8;
+    }
+
+    .footer-link-wrap {
+      display: flex;
+      justify-content: flex-end;
+
+      margin-top: 9px;
+    }
+
+    .use-link {
+      color: #70433F;
+
+      font-size: 9.5px;
+      font-style: italic;
+
+      text-decoration: none;
+    }
+
+    .use-link:hover {
+      text-decoration: underline;
+    }
+
+    .loading,
+    .error {
+      text-align: center;
+
+      padding: 28px 10px;
+
+      font-size: 10.5px;
+      font-style: italic;
+
+      color: #829074;
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="widget">
+
+    <header class="header">
+
+      <div class="star">
+        ✦
+      </div>
+
+      <h1>
+        Word Garden
+      </h1>
+
+      <p>
+        a daily return to words worth keeping
+      </p>
+
+    </header>
+
+
+    <div class="mode-tabs">
+
+      <button
+        class="mode-button active"
+        id="dailyModeButton"
+      >
+        Word of the Day
+      </button>
+
+      <button
+        class="mode-button"
+        id="flashcardModeButton"
+      >
+        Flashcards
+      </button>
+
+    </div>
+
+
+    <div id="content">
+
+      <div class="loading">
+        Gathering words from the garden...
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <script>
+
+    const feedUrl =
+      "https://archive-word-garden.crystalroses44.workers.dev/?widget=dashboard";
+
+    const fullWidgetUrl =
+      "https://crystalroses44-ux.github.io/the-archive-widgets/word-garden/";
+
+    let words = [];
+
+    let currentWord = null;
+
+    let currentMode = "daily";
+
+
+    const todayKey =
+      new Date()
+        .toISOString()
+        .slice(0, 10);
+
+
+    async function loadWords() {
+      try {
+        const response =
+          await fetch(feedUrl);
+
+        if (!response.ok) {
+          throw new Error(
+            `Worker returned ${response.status}`
+          );
+        }
+
+        const data =
+          await response.json();
+
+        words =
+          Array.isArray(data.words)
+            ? data.words
+            : [];
+
+        if (!words.length) {
+          showError(
+            "No completed Word Garden entries are available yet."
+          );
+
+          return;
+        }
+
+        showDailyWord();
+
+      } catch (error) {
+        showError(
+          "Unable to load the Word Garden right now."
+        );
+      }
+    }
+
+
+    function hashString(text) {
+      let hash = 0;
+
+      for (
+        let i = 0;
+        i < text.length;
+        i++
+      ) {
+        hash =
+          (
+            (hash << 5)
+            - hash
+          )
+          + text.charCodeAt(i);
+
+        hash |= 0;
+      }
+
+      return Math.abs(hash);
+    }
+
+
+    function getDailyWord() {
+      const index =
+        hashString(todayKey)
+        % words.length;
+
+      return words[index];
+    }
+
+
+    function getRandomWord() {
+      if (words.length === 1) {
+        return words[0];
+      }
+
+      let next = currentWord;
+
+      while (
+        next === currentWord
+      ) {
+        next =
+          words[
+            Math.floor(
+              Math.random()
+              * words.length
+            )
+          ];
+      }
+
+      return next;
+    }
+
+
+    function showDailyWord() {
+      currentMode =
+        "daily";
+
+      updateModeButtons();
+
+      currentWord =
+        getDailyWord();
+
+      renderWord();
+    }
+
+
+    function showFlashcardWord() {
+      currentMode =
+        "flashcard";
+
+      updateModeButtons();
+
+      currentWord =
+        getRandomWord();
+
+      renderWord();
+    }
+
+
+    function updateModeButtons() {
+      document
+        .getElementById(
+          "dailyModeButton"
+        )
+        .classList
+        .toggle(
+          "active",
+          currentMode === "daily"
+        );
+
+      document
+        .getElementById(
+          "flashcardModeButton"
+        )
+        .classList
+        .toggle(
+          "active",
+          currentMode === "flashcard"
+        );
+    }
+
+
+    function renderWord() {
+      const content =
+        document.getElementById(
+          "content"
+        );
+
+
+      const useUrl =
+        `${fullWidgetUrl}?word=${encodeURIComponent(
+          currentWord.word
+        )}`;
+
+
+      content.innerHTML = `
+
+        <div class="word-card">
+
+          <div class="label">
+            ${
+              currentMode === "daily"
+                ? "Today's Word"
+                : "Review Card"
+            }
+          </div>
+
+
+          <h2 class="word">
+            ${escapeHtml(
+              currentWord.word
+            )}
+          </h2>
+
+
+          <div class="part-of-speech">
+            ${escapeHtml(
+              currentWord.partOfSpeech
+            )}
+          </div>
+
+
+          <div class="rule">
+
+            <span></span>
+
+            <b>✦</b>
+
+            <span></span>
+
+          </div>
+
+
+          <div class="prompt">
+            Do you remember what this word means?
+          </div>
+
+
+          <div class="button-row">
+
+            <button
+              class="action-button"
+              id="revealButton"
+            >
+              Reveal Meaning
+            </button>
+
+          </div>
+
+
+          <div
+            class="definition-box"
+            id="definitionBox"
+          >
+
+            <strong>
+              Meaning
+            </strong>
+
+            ${formatText(
+              currentWord.definition
+            )}
+
+          </div>
+
+        </div>
+
+
+        <div class="footer-link-wrap">
+
+          <a
+            class="use-link"
+            href="${useUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Use this word →
+          </a>
+
+        </div>
+      `;
+
+
+      document
+        .getElementById(
+          "revealButton"
+        )
+        .addEventListener(
+          "click",
+          toggleDefinition
+        );
+    }
+
+
+    function toggleDefinition() {
+      const box =
+        document.getElementById(
+          "definitionBox"
+        );
+
+      const button =
+        document.getElementById(
+          "revealButton"
+        );
+
+      const hidden =
+        box.style.display !== "block";
+
+      box.style.display =
+        hidden
+          ? "block"
+          : "none";
+
+      button.textContent =
+        hidden
+          ? "Hide Meaning"
+          : "Reveal Meaning";
+    }
+
+
+    function formatText(text) {
+      return escapeHtml(text)
+        .replace(
+          /\n/g,
+          "<br>"
+        );
+    }
+
+
+    function escapeHtml(
+      text = ""
+    ) {
+      return text
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+    }
+
+
+    function showError(message) {
+      document
+        .getElementById(
+          "content"
+        )
+        .innerHTML = `
+          <div class="error">
+            ${escapeHtml(message)}
+          </div>
+        `;
+    }
+
+
+    document
+      .getElementById(
+        "dailyModeButton"
+      )
+      .addEventListener(
+        "click",
+        showDailyWord
+      );
+
+
+    document
+      .getElementById(
+        "flashcardModeButton"
+      )
+      .addEventListener(
+        "click",
+        showFlashcardWord
+      );
+
+
+    loadWords();
+
+  </script>
+
+</body>
+</html>

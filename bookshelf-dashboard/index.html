@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Archive Bookshelf</title>
+
+  <style>
+    :root {
+      --ivory: #faf7f0;
+      --paper: #fffdf8;
+      --forest: #263d35;
+      --sage: #829074;
+      --sage-soft: #dfe4da;
+      --gold: #b68b45;
+      --gold-soft: #d8c39a;
+      --brown: #51483d;
+      --rose: #b77b78;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background: transparent;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--brown);
+    }
+
+    body {
+      padding: 8px;
+    }
+
+    .widget {
+      width: 100%;
+      background: var(--ivory);
+      border: 1px solid var(--gold);
+      outline: 1px solid rgba(182, 139, 69, 0.28);
+      outline-offset: -5px;
+      padding: 18px 20px 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .widget::before,
+    .widget::after {
+      content: "✦";
+      position: absolute;
+      top: 8px;
+      color: var(--gold-soft);
+      font-size: 9px;
+    }
+
+    .widget::before {
+      left: 10px;
+    }
+
+    .widget::after {
+      right: 10px;
+    }
+
+    .section-heading {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      font-weight: normal;
+      color: var(--forest);
+      margin: 1px 0 13px;
+    }
+
+    .current-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    .current-book {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .book-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .cover-frame {
+      width: 100%;
+      max-width: 125px;
+      aspect-ratio: 2 / 3;
+      margin: 0 auto;
+      padding: 3px;
+      background: var(--paper);
+      border: 1px solid var(--gold-soft);
+      box-shadow:
+        0 4px 10px rgba(81, 72, 61, 0.10),
+        0 1px 2px rgba(81, 72, 61, 0.08);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .book-link:hover .cover-frame {
+      transform: translateY(-3px);
+      box-shadow:
+        0 7px 14px rgba(81, 72, 61, 0.14),
+        0 2px 3px rgba(81, 72, 61, 0.08);
+    }
+
+    .cover-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cover-placeholder {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      text-align: center;
+      background:
+        linear-gradient(
+          145deg,
+          #f7f1e3,
+          #ece4d3
+        );
+      color: var(--forest);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .book-title {
+      margin-top: 8px;
+      color: var(--forest);
+      font-size: 12px;
+      line-height: 1.25;
+      min-height: 30px;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .book-author {
+      margin-top: 2px;
+      color: var(--sage);
+      font-size: 10px;
+      line-height: 1.25;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      max-width: 610px;
+      margin: 17px auto 14px;
+      color: var(--gold);
+    }
+
+    .ornament::before,
+    .ornament::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(
+        to right,
+        transparent,
+        var(--gold-soft),
+        transparent
+      );
+    }
+
+    .ornament span {
+      font-size: 9px;
+    }
+
+    .shelf {
+      max-width: 660px;
+      margin: 0 auto;
+    }
+
+    .shelf-books {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      align-items: end;
+      padding: 0 5px;
+    }
+
+    .shelf-book {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .shelf-book .cover-frame {
+      max-width: 82px;
+    }
+
+    .shelf-book .book-title {
+      margin-top: 6px;
+      font-size: 10px;
+      line-height: 1.2;
+      min-height: 24px;
+    }
+
+    .shelf-book .book-author {
+      display: none;
+    }
+
+    .shelf-line {
+      height: 7px;
+      margin-top: 8px;
+      border-top: 2px solid var(--gold);
+      border-bottom: 1px solid var(--gold-soft);
+      position: relative;
+    }
+
+    .shelf-line::before,
+    .shelf-line::after {
+      content: "❦";
+      position: absolute;
+      top: -9px;
+      color: var(--gold);
+      font-size: 10px;
+      background: var(--ivory);
+      padding: 0 4px;
+    }
+
+    .shelf-line::before {
+      left: 7px;
+    }
+
+    .shelf-line::after {
+      right: 7px;
+      transform: scaleX(-1);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 11px;
+    }
+
+    .library-link {
+      color: var(--sage);
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+
+    .library-link:hover {
+      color: var(--gold);
+    }
+
+    .loading,
+    .error {
+      text-align: center;
+      padding: 45px 10px;
+      color: var(--sage);
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    .error {
+      color: var(--rose);
+    }
+
+    @media (max-width: 560px) {
+      .widget {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .current-grid {
+        gap: 11px;
+      }
+
+      .shelf-books {
+        gap: 7px;
+      }
+
+      .book-title {
+        font-size: 10px;
+      }
+
+      .book-author {
+        font-size: 9px;
+      }
+
+      .shelf-book .book-title {
+        font-size: 9px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="widget">
+
+    <div id="loading" class="loading">
+      Opening the shelves…
+    </div>
+
+    <div id="content" hidden>
+
+      <div class="section-heading">
+        CURRENTLY READING
+      </div>
+
+      <div
+        id="currently-reading"
+        class="current-grid">
+      </div>
+
+      <div class="ornament">
+        <span>✦</span>
+      </div>
+
+      <div class="section-heading">
+        ON THE SHELVES
+      </div>
+
+      <div class="shelf">
+
+        <div
+          id="shelf-books"
+          class="shelf-books">
+        </div>
+
+        <div class="shelf-line"></div>
+
+      </div>
+
+      <div class="footer">
+        <a
+          class="library-link"
+          href="https://app.notion.com/p/3d4d0591b199806ab75cfddd0163bb1c"
+          target="_blank"
+          rel="noopener noreferrer">
+          View Library →
+        </a>
+      </div>
+
+    </div>
+
+    <div
+      id="error"
+      class="error"
+      hidden>
+      The shelves couldn't be opened right now.
+    </div>
+
+  </div>
+
+
+  <script>
+    const API_URL =
+      "https://archive-bookshelf.crystalroses44.workers.dev/";
+
+    const loading =
+      document.getElementById("loading");
+
+    const content =
+      document.getElementById("content");
+
+    const errorBox =
+      document.getElementById("error");
+
+    const currentContainer =
+      document.getElementById("currently-reading");
+
+    const shelfContainer =
+      document.getElementById("shelf-books");
+
+
+    function escapeHTML(value = "") {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+
+    function makeBook(book, small = false) {
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        small ? "shelf-book" : "current-book";
+
+
+      const link =
+        document.createElement("a");
+
+      link.className = "book-link";
+      link.href = book.notionUrl || "#";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+
+      const frame =
+        document.createElement("div");
+
+      frame.className = "cover-frame";
+
+
+      if (book.cover) {
+
+        const img =
+          document.createElement("img");
+
+        img.src = book.cover;
+        img.alt =
+          `${book.book || "Book"} cover`;
+
+        img.loading = "lazy";
+
+        img.onerror = () => {
+          frame.innerHTML = "";
+
+          const placeholder =
+            document.createElement("div");
+
+          placeholder.className =
+            "cover-placeholder";
+
+          placeholder.textContent =
+            book.book || "Book";
+
+          frame.appendChild(
+            placeholder
+          );
+        };
+
+        frame.appendChild(img);
+
+      } else {
+
+        const placeholder =
+          document.createElement("div");
+
+        placeholder.className =
+          "cover-placeholder";
+
+        placeholder.textContent =
+          book.book || "Book";
+
+        frame.appendChild(
+          placeholder
+        );
+      }
+
+
+      const title =
+        document.createElement("div");
+
+      title.className = "book-title";
+      title.innerHTML =
+        escapeHTML(book.book || "");
+
+
+      const author =
+        document.createElement("div");
+
+      author.className = "book-author";
+      author.innerHTML =
+        escapeHTML(book.author || "");
+
+
+      link.appendChild(frame);
+      link.appendChild(title);
+
+      if (book.author) {
+        link.appendChild(author);
+      }
+
+      wrapper.appendChild(link);
+
+      return wrapper;
+    }
+
+
+    async function loadBooks() {
+
+      try {
+
+        const response =
+          await fetch(
+            `${API_URL}?t=${Date.now()}`,
+            {
+              cache: "no-store"
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+        }
+
+        const data =
+          await response.json();
+
+        const books =
+          Array.isArray(data.books)
+            ? data.books
+            : [];
+
+
+        const currentlyReading =
+          books.filter(book => {
+            const status =
+              (book.status || "")
+                .toLowerCase();
+
+            return (
+              status === "reading" ||
+              status === "in progress"
+            );
+          });
+
+
+        const others =
+          books.filter(book => {
+            const status =
+              (book.status || "")
+                .toLowerCase();
+
+            return !(
+              status === "reading" ||
+              status === "in progress"
+            );
+          });
+
+
+        currentContainer.innerHTML = "";
+        shelfContainer.innerHTML = "";
+
+
+        currentlyReading
+          .slice(0, 3)
+          .forEach(book => {
+            currentContainer.appendChild(
+              makeBook(book)
+            );
+          });
+
+
+        others
+          .slice(0, 5)
+          .forEach(book => {
+            shelfContainer.appendChild(
+              makeBook(book, true)
+            );
+          });
+
+
+        loading.hidden = true;
+        content.hidden = false;
+
+      } catch (error) {
+
+        console.error(error);
+
+        loading.hidden = true;
+        errorBox.hidden = false;
+      }
+    }
+
+
+    loadBooks();
+  </script>
+
+</body>
+</html>

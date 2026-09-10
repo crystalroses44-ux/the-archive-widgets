@@ -230,7 +230,7 @@
     .shelf-line {
       height: 8px;
       width: 100%;
-      margin: 8px auto 0;
+      margin: 2px auto 0;
       border-top: 2px solid var(--gold);
       border-bottom: 1px solid var(--gold-soft);
       position: relative;
@@ -261,7 +261,7 @@
       margin: 9px auto 0;
       display: flex;
       justify-content: flex-end;
-      padding: 0 4px;
+      padding: 0 12px;
     }
 
     .library-link {
@@ -351,7 +351,10 @@
         CURRENTLY READING
       </div>
 
-      <div id="currently-reading" class="current-grid"></div>
+      <div
+        id="currently-reading"
+        class="current-grid">
+      </div>
 
       <div class="ornament">
         <span>✦</span>
@@ -363,7 +366,10 @@
 
       <div class="shelf">
 
-        <div id="shelf-books" class="shelf-books"></div>
+        <div
+          id="shelf-books"
+          class="shelf-books">
+        </div>
 
         <div class="shelf-line"></div>
 
@@ -381,7 +387,10 @@
 
     </div>
 
-    <div id="error" class="error" hidden>
+    <div
+      id="error"
+      class="error"
+      hidden>
       The shelves couldn't be opened right now.
     </div>
 
@@ -406,6 +415,7 @@
     const shelfContainer =
       document.getElementById("shelf-books");
 
+
     function makeBook(book, small = false) {
 
       const wrapper =
@@ -413,6 +423,7 @@
 
       wrapper.className =
         small ? "shelf-book" : "current-book";
+
 
       const link =
         document.createElement("a");
@@ -422,10 +433,12 @@
       link.target = "_blank";
       link.rel = "noopener noreferrer";
 
+
       const frame =
         document.createElement("div");
 
       frame.className = "cover-frame";
+
 
       if (book.cover) {
 
@@ -450,7 +463,9 @@
           placeholder.textContent =
             book.book || "Book";
 
-          frame.appendChild(placeholder);
+          frame.appendChild(
+            placeholder
+          );
         };
 
         frame.appendChild(img);
@@ -466,8 +481,11 @@
         placeholder.textContent =
           book.book || "Book";
 
-        frame.appendChild(placeholder);
+        frame.appendChild(
+          placeholder
+        );
       }
+
 
       const title =
         document.createElement("div");
@@ -476,12 +494,14 @@
       title.textContent =
         book.book || "";
 
+
       const author =
         document.createElement("div");
 
       author.className = "book-author";
       author.textContent =
         book.author || "";
+
 
       link.appendChild(frame);
       link.appendChild(title);
@@ -494,6 +514,7 @@
 
       return wrapper;
     }
+
 
     async function loadBooks() {
 
@@ -521,6 +542,7 @@
             ? data.books
             : [];
 
+
         const currentlyReading =
           books.filter(book => {
             const status =
@@ -532,6 +554,7 @@
               status === "in progress"
             );
           });
+
 
         const others =
           books.filter(book => {
@@ -545,8 +568,10 @@
             );
           });
 
+
         currentContainer.innerHTML = "";
         shelfContainer.innerHTML = "";
+
 
         currentlyReading
           .slice(0, 3)
@@ -556,6 +581,7 @@
             );
           });
 
+
         others
           .slice(0, 5)
           .forEach(book => {
@@ -563,6 +589,7 @@
               makeBook(book, true)
             );
           });
+
 
         loading.hidden = true;
         content.hidden = false;
@@ -575,6 +602,7 @@
         errorBox.hidden = false;
       }
     }
+
 
     loadBooks();
   </script>

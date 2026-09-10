@@ -11,7 +11,6 @@
       --paper: #fffdf8;
       --forest: #263d35;
       --sage: #829074;
-      --sage-soft: #dfe4da;
       --gold: #b68b45;
       --gold-soft: #d8c39a;
       --brown: #51483d;
@@ -42,7 +41,7 @@
       border: 1px solid var(--gold);
       outline: 1px solid rgba(182, 139, 69, 0.28);
       outline-offset: -5px;
-      padding: 18px 20px 15px;
+      padding: 15px 24px 13px;
       position: relative;
       overflow: hidden;
     }
@@ -67,18 +66,21 @@
     .section-heading {
       text-align: center;
       font-size: 11px;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.19em;
       font-weight: normal;
       color: var(--forest);
-      margin: 1px 0 13px;
+      margin: 0 0 11px;
     }
+
+    /* CURRENTLY READING */
 
     .current-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      max-width: 540px;
+      gap: 42px;
+      max-width: 760px;
       margin: 0 auto;
+      align-items: start;
     }
 
     .current-book {
@@ -94,7 +96,7 @@
 
     .cover-frame {
       width: 100%;
-      max-width: 125px;
+      max-width: 145px;
       aspect-ratio: 2 / 3;
       margin: 0 auto;
       padding: 3px;
@@ -129,23 +131,22 @@
       place-items: center;
       padding: 10px;
       text-align: center;
-      background:
-        linear-gradient(
-          145deg,
-          #f7f1e3,
-          #ece4d3
-        );
+      background: linear-gradient(
+        145deg,
+        #f7f1e3,
+        #ece4d3
+      );
       color: var(--forest);
       font-size: 11px;
       line-height: 1.35;
     }
 
     .book-title {
-      margin-top: 8px;
+      margin-top: 7px;
       color: var(--forest);
-      font-size: 12px;
-      line-height: 1.25;
-      min-height: 30px;
+      font-size: 13px;
+      line-height: 1.23;
+      min-height: 31px;
 
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -158,18 +159,19 @@
       color: var(--sage);
       font-size: 10px;
       line-height: 1.25;
-
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    /* DIVIDER */
+
     .ornament {
       display: flex;
       align-items: center;
-      gap: 9px;
-      max-width: 610px;
-      margin: 17px auto 14px;
+      gap: 10px;
+      max-width: 720px;
+      margin: 14px auto 12px;
       color: var(--gold);
     }
 
@@ -190,17 +192,19 @@
       font-size: 9px;
     }
 
+    /* LOWER SHELF */
+
     .shelf {
-      max-width: 660px;
+      max-width: 860px;
       margin: 0 auto;
     }
 
     .shelf-books {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
+      gap: 28px;
       align-items: end;
-      padding: 0 5px;
+      padding: 0 22px;
     }
 
     .shelf-book {
@@ -209,13 +213,13 @@
     }
 
     .shelf-book .cover-frame {
-      max-width: 82px;
+      max-width: 96px;
     }
 
     .shelf-book .book-title {
       margin-top: 6px;
       font-size: 10px;
-      line-height: 1.2;
+      line-height: 1.17;
       min-height: 24px;
     }
 
@@ -224,8 +228,9 @@
     }
 
     .shelf-line {
-      height: 7px;
-      margin-top: 8px;
+      height: 8px;
+      width: 100%;
+      margin: 8px auto 0;
       border-top: 2px solid var(--gold);
       border-bottom: 1px solid var(--gold-soft);
       position: relative;
@@ -243,18 +248,20 @@
     }
 
     .shelf-line::before {
-      left: 7px;
+      left: 5px;
     }
 
     .shelf-line::after {
-      right: 7px;
+      right: 5px;
       transform: scaleX(-1);
     }
 
     .footer {
+      max-width: 860px;
+      margin: 9px auto 0;
       display: flex;
       justify-content: flex-end;
-      margin-top: 11px;
+      padding: 0 4px;
     }
 
     .library-link {
@@ -272,7 +279,7 @@
     .loading,
     .error {
       text-align: center;
-      padding: 45px 10px;
+      padding: 40px 10px;
       color: var(--sage);
       font-size: 12px;
       font-style: italic;
@@ -282,18 +289,33 @@
       color: var(--rose);
     }
 
-    @media (max-width: 560px) {
+    @media (max-width: 700px) {
       .widget {
-        padding-left: 14px;
-        padding-right: 14px;
+        padding-left: 15px;
+        padding-right: 15px;
       }
 
       .current-grid {
-        gap: 11px;
+        gap: 16px;
+      }
+
+      .cover-frame {
+        max-width: 125px;
       }
 
       .shelf-books {
-        gap: 7px;
+        gap: 10px;
+        padding: 0 4px;
+      }
+
+      .shelf-book .cover-frame {
+        max-width: 82px;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .current-grid {
+        gap: 9px;
       }
 
       .book-title {
@@ -304,8 +326,12 @@
         font-size: 9px;
       }
 
+      .shelf-books {
+        gap: 6px;
+      }
+
       .shelf-book .book-title {
-        font-size: 9px;
+        font-size: 8.5px;
       }
     }
   </style>
@@ -325,10 +351,7 @@
         CURRENTLY READING
       </div>
 
-      <div
-        id="currently-reading"
-        class="current-grid">
-      </div>
+      <div id="currently-reading" class="current-grid"></div>
 
       <div class="ornament">
         <span>✦</span>
@@ -340,10 +363,7 @@
 
       <div class="shelf">
 
-        <div
-          id="shelf-books"
-          class="shelf-books">
-        </div>
+        <div id="shelf-books" class="shelf-books"></div>
 
         <div class="shelf-line"></div>
 
@@ -361,15 +381,11 @@
 
     </div>
 
-    <div
-      id="error"
-      class="error"
-      hidden>
+    <div id="error" class="error" hidden>
       The shelves couldn't be opened right now.
     </div>
 
   </div>
-
 
   <script>
     const API_URL =
@@ -390,17 +406,6 @@
     const shelfContainer =
       document.getElementById("shelf-books");
 
-
-    function escapeHTML(value = "") {
-      return value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-
     function makeBook(book, small = false) {
 
       const wrapper =
@@ -408,7 +413,6 @@
 
       wrapper.className =
         small ? "shelf-book" : "current-book";
-
 
       const link =
         document.createElement("a");
@@ -418,12 +422,10 @@
       link.target = "_blank";
       link.rel = "noopener noreferrer";
 
-
       const frame =
         document.createElement("div");
 
       frame.className = "cover-frame";
-
 
       if (book.cover) {
 
@@ -448,9 +450,7 @@
           placeholder.textContent =
             book.book || "Book";
 
-          frame.appendChild(
-            placeholder
-          );
+          frame.appendChild(placeholder);
         };
 
         frame.appendChild(img);
@@ -466,27 +466,22 @@
         placeholder.textContent =
           book.book || "Book";
 
-        frame.appendChild(
-          placeholder
-        );
+        frame.appendChild(placeholder);
       }
-
 
       const title =
         document.createElement("div");
 
       title.className = "book-title";
-      title.innerHTML =
-        escapeHTML(book.book || "");
-
+      title.textContent =
+        book.book || "";
 
       const author =
         document.createElement("div");
 
       author.className = "book-author";
-      author.innerHTML =
-        escapeHTML(book.author || "");
-
+      author.textContent =
+        book.author || "";
 
       link.appendChild(frame);
       link.appendChild(title);
@@ -499,7 +494,6 @@
 
       return wrapper;
     }
-
 
     async function loadBooks() {
 
@@ -527,7 +521,6 @@
             ? data.books
             : [];
 
-
         const currentlyReading =
           books.filter(book => {
             const status =
@@ -539,7 +532,6 @@
               status === "in progress"
             );
           });
-
 
         const others =
           books.filter(book => {
@@ -553,10 +545,8 @@
             );
           });
 
-
         currentContainer.innerHTML = "";
         shelfContainer.innerHTML = "";
-
 
         currentlyReading
           .slice(0, 3)
@@ -566,7 +556,6 @@
             );
           });
 
-
         others
           .slice(0, 5)
           .forEach(book => {
@@ -574,7 +563,6 @@
               makeBook(book, true)
             );
           });
-
 
         loading.hidden = true;
         content.hidden = false;
@@ -587,7 +575,6 @@
         errorBox.hidden = false;
       }
     }
-
 
     loadBooks();
   </script>

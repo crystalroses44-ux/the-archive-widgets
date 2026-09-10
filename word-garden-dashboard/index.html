@@ -1,22 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
 
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
-  />
+  >
 
   <style>
+
+    /* ---------------------------------
+       BASE
+    --------------------------------- */
+
     * {
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
-      padding: 10px;
+      width: 100%;
+      min-height: 100%;
+
       background: transparent;
+    }
+
+    body {
+      padding: 0;
 
       font-family:
         Georgia,
@@ -26,66 +39,91 @@
       color: #51483D;
     }
 
+
+    /* ---------------------------------
+       MAIN WIDGET
+       Tall proportions to visually match
+       the illustration beside it
+    --------------------------------- */
+
     .widget {
       width: 100%;
+
+      /* approximately the same proportions
+         as the tall illustration */
+      aspect-ratio: 1 / 1.88;
+
+      min-height: 430px;
+
+      display: flex;
+      flex-direction: column;
 
       background: #FFFDF8;
 
       border: 1px solid #B68B45;
+
       outline: 1px solid #DED5BD;
       outline-offset: -5px;
 
-      padding: 14px;
+      padding: 18px 14px 14px;
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
        HEADER
-    ------------------------- */
+    --------------------------------- */
 
     .header {
       text-align: center;
-      margin-bottom: 12px;
+
+      margin-bottom: 15px;
     }
 
     .star {
       color: #B68B45;
+
       font-size: 9px;
-      margin-bottom: 3px;
+
+      margin-bottom: 5px;
     }
 
     .header h1 {
       margin: 0;
 
-      font-size: 14px;
+      font-size: 15px;
       font-weight: normal;
 
       letter-spacing: 0.14em;
+
       text-transform: uppercase;
 
       color: #51483D;
     }
 
 
-    /* -------------------------
-       TABS
-    ------------------------- */
+    /* ---------------------------------
+       MODE BUTTONS
+    --------------------------------- */
 
     .mode-tabs {
       display: flex;
+
       justify-content: center;
+
       gap: 7px;
 
-      margin-bottom: 11px;
+      margin-bottom: 14px;
     }
 
     .mode-button {
       border: 1px solid #D5CAB0;
+
       background: #FBF8EF;
 
       padding: 5px 9px;
 
       font-family: inherit;
+
       font-size: 9.5px;
 
       color: #70433F;
@@ -95,6 +133,7 @@
 
     .mode-button.active {
       background: #F2EEDC;
+
       border-color: #B68B45;
     }
 
@@ -103,25 +142,53 @@
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
+       CONTENT AREA
+    --------------------------------- */
+
+    #content {
+      flex: 1;
+
+      display: flex;
+
+      flex-direction: column;
+    }
+
+
+    /* ---------------------------------
        WORD CARD
-    ------------------------- */
+    --------------------------------- */
 
     .word-card {
+      flex: 1;
+
       border: 1px solid #D8CFB7;
+
       background: #FAF8F1;
 
-      padding: 15px 14px;
+      padding: 22px 14px;
 
       text-align: center;
 
-      min-height: 190px;
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: center;
     }
 
+
+    /* ---------------------------------
+       LABEL
+    --------------------------------- */
+
     .label {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
 
       font-size: 7.5px;
+
       letter-spacing: 0.12em;
 
       text-transform: uppercase;
@@ -129,42 +196,53 @@
       color: #829074;
     }
 
+
+    /* ---------------------------------
+       WORD
+    --------------------------------- */
+
     .word {
       margin: 0;
 
-      font-size: 24px;
+      font-size: 25px;
+
       font-weight: normal;
+
+      line-height: 1.1;
 
       color: #51483D;
     }
 
     .part-of-speech {
-      margin-top: 4px;
+      margin-top: 5px;
 
       font-size: 10px;
+
       font-style: italic;
 
       color: #829074;
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
        ORNAMENT
-    ------------------------- */
+    --------------------------------- */
 
     .rule {
       display: flex;
 
       align-items: center;
+
       justify-content: center;
 
-      gap: 7px;
+      gap: 8px;
 
-      margin: 11px 0;
+      margin: 17px 0;
     }
 
     .rule span {
-      width: 30px;
+      width: 31px;
+
       height: 1px;
 
       background: #C8B788;
@@ -173,41 +251,46 @@
     .rule b {
       color: #B68B45;
 
-      font-size: 6px;
+      font-size: 7px;
+
       font-weight: normal;
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
        PROMPT
-    ------------------------- */
+    --------------------------------- */
 
     .prompt {
       font-size: 10.5px;
-      line-height: 1.45;
+
+      line-height: 1.55;
 
       color: #6A6258;
     }
 
 
-    /* -------------------------
-       REVEAL BUTTON
-    ------------------------- */
+    /* ---------------------------------
+       BUTTON
+    --------------------------------- */
 
     .button-row {
       display: flex;
+
       justify-content: center;
 
-      margin-top: 11px;
+      margin-top: 15px;
     }
 
     .action-button {
       border: 1px solid #CDBE99;
+
       background: #FFFDF8;
 
-      padding: 6px 10px;
+      padding: 6px 11px;
 
       font-family: inherit;
+
       font-size: 9.5px;
 
       color: #70433F;
@@ -220,15 +303,18 @@
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
        DEFINITION
-    ------------------------- */
+    --------------------------------- */
 
     .definition-box {
       display: none;
 
-      margin-top: 11px;
-      padding: 9px 10px;
+      width: 100%;
+
+      margin-top: 14px;
+
+      padding: 10px 11px;
 
       background: #F7F3E8;
 
@@ -237,7 +323,8 @@
       text-align: left;
 
       font-size: 10px;
-      line-height: 1.45;
+
+      line-height: 1.5;
 
       color: #51483D;
     }
@@ -245,9 +332,10 @@
     .definition-box strong {
       display: block;
 
-      margin-bottom: 4px;
+      margin-bottom: 5px;
 
       font-size: 7.5px;
+
       letter-spacing: 0.1em;
 
       text-transform: uppercase;
@@ -256,15 +344,21 @@
     }
 
 
-    /* -------------------------
-       USE THIS WORD LINK
-    ------------------------- */
+    /* ---------------------------------
+       FOOTER
+    --------------------------------- */
 
     .footer-link-wrap {
       display: flex;
+
       justify-content: flex-end;
 
-      margin-top: 8px;
+      align-items: center;
+
+      min-height: 35px;
+
+      padding-top: 8px;
+
       padding-right: 2px;
     }
 
@@ -272,6 +366,7 @@
       color: #70433F;
 
       font-size: 9.5px;
+
       font-style: italic;
 
       text-decoration: none;
@@ -282,52 +377,76 @@
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
        LOADING / ERROR
-    ------------------------- */
+    --------------------------------- */
 
     .loading,
     .error {
-      padding: 28px 10px;
+      flex: 1;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 30px 12px;
 
       text-align: center;
 
       font-size: 10.5px;
+
       font-style: italic;
 
       color: #829074;
     }
 
 
-    /* -------------------------
-       SMALL SCREENS
-    ------------------------- */
+    /* ---------------------------------
+       SMALL WIDTHS
+    --------------------------------- */
 
-    @media (max-width: 520px) {
-
-      body {
-        padding: 6px;
-      }
+    @media (max-width: 320px) {
 
       .widget {
-        padding: 11px;
+        min-height: 410px;
+
+        padding:
+          16px 11px
+          12px;
       }
 
       .header {
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+      }
+
+      .header h1 {
+        font-size: 14px;
+      }
+
+      .mode-tabs {
+        margin-bottom: 12px;
+      }
+
+      .mode-button {
+        padding: 5px 7px;
+
+        font-size: 9px;
       }
 
       .word-card {
-        min-height: 175px;
-        padding: 13px 10px;
+        padding: 18px 10px;
       }
 
       .word {
-        font-size: 22px;
+        font-size: 23px;
       }
+
     }
 
   </style>
+
 </head>
 
 
@@ -336,7 +455,7 @@
   <section class="widget">
 
 
-    <!-- WORD GARDEN HEADING -->
+    <!-- HEADER -->
 
     <header class="header">
 
@@ -351,7 +470,7 @@
     </header>
 
 
-    <!-- MODE BUTTONS -->
+    <!-- MODES -->
 
     <div class="mode-tabs">
 
@@ -372,7 +491,7 @@
     </div>
 
 
-    <!-- WORD CONTENT -->
+    <!-- CONTENT -->
 
     <div id="content">
 
@@ -400,8 +519,7 @@
 
     let currentWord = null;
 
-    let currentMode =
-      "daily";
+    let currentMode = "daily";
 
 
     const todayKey =
@@ -410,9 +528,9 @@
         .slice(0, 10);
 
 
-    /* -------------------------
+    /* ---------------------------------
        LOAD WORDS
-    ------------------------- */
+    --------------------------------- */
 
     async function loadWords() {
 
@@ -466,9 +584,9 @@
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
        DAILY WORD
-    ------------------------- */
+    --------------------------------- */
 
     function hashString(text) {
 
@@ -511,9 +629,9 @@
     }
 
 
-    /* -------------------------
+    /* ---------------------------------
        RANDOM FLASHCARD
-    ------------------------- */
+    --------------------------------- */
 
     function getRandomWord() {
 
@@ -548,22 +666,18 @@
     }
 
 
-    /* -------------------------
-       MODE SWITCHING
-    ------------------------- */
+    /* ---------------------------------
+       MODES
+    --------------------------------- */
 
     function showDailyWord() {
 
-      currentMode =
-        "daily";
-
+      currentMode = "daily";
 
       updateModeButtons();
 
-
       currentWord =
         getDailyWord();
-
 
       renderWord();
 
@@ -572,16 +686,12 @@
 
     function showFlashcardWord() {
 
-      currentMode =
-        "flashcard";
-
+      currentMode = "flashcard";
 
       updateModeButtons();
 
-
       currentWord =
         getRandomWord();
-
 
       renderWord();
 
@@ -614,9 +724,9 @@
     }
 
 
-    /* -------------------------
-       RENDER WORD
-    ------------------------- */
+    /* ---------------------------------
+       RENDER
+    --------------------------------- */
 
     function renderWord() {
 
@@ -635,7 +745,6 @@
       content.innerHTML = `
 
         <div class="word-card">
-
 
           <div class="label">
 
@@ -711,7 +820,6 @@
 
           </div>
 
-
         </div>
 
 
@@ -743,9 +851,9 @@
     }
 
 
-    /* -------------------------
-       REVEAL MEANING
-    ------------------------- */
+    /* ---------------------------------
+       DEFINITION
+    --------------------------------- */
 
     function toggleDefinition() {
 
@@ -762,8 +870,7 @@
 
 
       const hidden =
-        box.style.display !==
-        "block";
+        box.style.display !== "block";
 
 
       box.style.display =
@@ -780,9 +887,9 @@
     }
 
 
-    /* -------------------------
-       TEXT HELPERS
-    ------------------------- */
+    /* ---------------------------------
+       HELPERS
+    --------------------------------- */
 
     function formatText(text) {
 
@@ -824,9 +931,9 @@
     }
 
 
-    /* -------------------------
-       ERROR MESSAGE
-    ------------------------- */
+    /* ---------------------------------
+       ERROR
+    --------------------------------- */
 
     function showError(message) {
 
@@ -847,9 +954,9 @@
     }
 
 
-    /* -------------------------
-       BUTTON EVENTS
-    ------------------------- */
+    /* ---------------------------------
+       EVENTS
+    --------------------------------- */
 
     document
       .getElementById(
@@ -871,13 +978,14 @@
       );
 
 
-    /* -------------------------
+    /* ---------------------------------
        START
-    ------------------------- */
+    --------------------------------- */
 
     loadWords();
 
   </script>
 
 </body>
+
 </html>

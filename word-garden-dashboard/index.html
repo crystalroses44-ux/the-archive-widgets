@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
@@ -34,37 +35,7 @@
       outline: 1px solid #DED5BD;
       outline-offset: -5px;
 
-      padding: 16px;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 14px;
-    }
-
-    .star {
-      color: #B68B45;
-      font-size: 9px;
-      margin-bottom: 3px;
-    }
-
-    .header h1 {
-      margin: 0;
-
-      font-size: 14px;
-      font-weight: normal;
-
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .header p {
-      margin: 3px 0 0;
-
-      font-size: 10px;
-      font-style: italic;
-
-      color: #829074;
+      padding: 14px;
     }
 
     .mode-tabs {
@@ -72,7 +43,7 @@
       justify-content: center;
       gap: 7px;
 
-      margin-bottom: 12px;
+      margin-bottom: 11px;
     }
 
     .mode-button {
@@ -85,6 +56,7 @@
       font-size: 9.5px;
 
       color: #70433F;
+
       cursor: pointer;
     }
 
@@ -97,20 +69,22 @@
       border: 1px solid #D8CFB7;
       background: #FAF8F1;
 
-      padding: 17px 14px;
+      padding: 15px 14px;
+
       text-align: center;
 
-      min-height: 205px;
+      min-height: 190px;
     }
 
     .label {
+      margin-bottom: 6px;
+
       font-size: 7.5px;
       letter-spacing: 0.12em;
+
       text-transform: uppercase;
 
       color: #829074;
-
-      margin-bottom: 6px;
     }
 
     .word {
@@ -133,6 +107,7 @@
 
     .rule {
       display: flex;
+
       align-items: center;
       justify-content: center;
 
@@ -162,33 +137,6 @@
       color: #6A6258;
     }
 
-    .definition-box {
-      display: none;
-
-      margin-top: 11px;
-      padding: 9px 10px;
-
-      background: #F7F3E8;
-      border: 1px solid #DDD2B8;
-
-      text-align: left;
-
-      font-size: 10px;
-      line-height: 1.45;
-    }
-
-    .definition-box strong {
-      display: block;
-
-      margin-bottom: 4px;
-
-      font-size: 7.5px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-
-      color: #829074;
-    }
-
     .button-row {
       display: flex;
       justify-content: center;
@@ -206,6 +154,7 @@
       font-size: 9.5px;
 
       color: #70433F;
+
       cursor: pointer;
     }
 
@@ -213,11 +162,41 @@
       background: #F7F3E8;
     }
 
+    .definition-box {
+      display: none;
+
+      margin-top: 11px;
+      padding: 9px 10px;
+
+      background: #F7F3E8;
+
+      border: 1px solid #DDD2B8;
+
+      text-align: left;
+
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .definition-box strong {
+      display: block;
+
+      margin-bottom: 4px;
+
+      font-size: 7.5px;
+      letter-spacing: 0.1em;
+
+      text-transform: uppercase;
+
+      color: #829074;
+    }
+
     .footer-link-wrap {
       display: flex;
       justify-content: flex-end;
 
-      margin-top: 9px;
+      margin-top: 8px;
+      padding-right: 2px;
     }
 
     .use-link {
@@ -235,44 +214,41 @@
 
     .loading,
     .error {
-      text-align: center;
-
       padding: 28px 10px;
+
+      text-align: center;
 
       font-size: 10.5px;
       font-style: italic;
 
       color: #829074;
     }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 6px;
+      }
+
+      .widget {
+        padding: 11px;
+      }
+
+      .word-card {
+        min-height: 175px;
+        padding: 13px 10px;
+      }
+
+      .word {
+        font-size: 22px;
+      }
+    }
   </style>
 </head>
+
 
 <body>
 
   <section class="widget">
-
-    <header class="header">
-
-      <div class="star">
-        ✦
-      </div>
-
-      <h1>
-        Word Garden
-      </h1>
-
-<header class="header">
-
-  <div class="star">
-    ✦
-  </div>
-
-  <h1>
-    Word Garden
-  </h1>
-
-</header>
-    </header>
 
 
     <div class="mode-tabs">
@@ -302,6 +278,7 @@
 
     </div>
 
+
   </section>
 
 
@@ -310,14 +287,17 @@
     const feedUrl =
       "https://archive-word-garden.crystalroses44.workers.dev/?widget=dashboard";
 
+
     const fullWidgetUrl =
       "https://crystalroses44-ux.github.io/the-archive-widgets/word-garden/";
+
 
     let words = [];
 
     let currentWord = null;
 
-    let currentMode = "daily";
+    let currentMode =
+      "daily";
 
 
     const todayKey =
@@ -327,50 +307,68 @@
 
 
     async function loadWords() {
+
       try {
+
         const response =
           await fetch(feedUrl);
 
+
         if (!response.ok) {
+
           throw new Error(
             `Worker returned ${response.status}`
           );
+
         }
+
 
         const data =
           await response.json();
+
 
         words =
           Array.isArray(data.words)
             ? data.words
             : [];
 
+
         if (!words.length) {
+
           showError(
             "No completed Word Garden entries are available yet."
           );
 
           return;
+
         }
+
 
         showDailyWord();
 
+
       } catch (error) {
+
         showError(
           "Unable to load the Word Garden right now."
         );
+
       }
+
     }
 
 
     function hashString(text) {
+
       let hash = 0;
+
 
       for (
         let i = 0;
         i < text.length;
         i++
       ) {
+
         hash =
           (
             (hash << 5)
@@ -378,32 +376,46 @@
           )
           + text.charCodeAt(i);
 
+
         hash |= 0;
+
       }
 
+
       return Math.abs(hash);
+
     }
 
 
     function getDailyWord() {
+
       const index =
         hashString(todayKey)
         % words.length;
 
+
       return words[index];
+
     }
 
 
     function getRandomWord() {
+
       if (words.length === 1) {
+
         return words[0];
+
       }
 
-      let next = currentWord;
+
+      let next =
+        currentWord;
+
 
       while (
         next === currentWord
       ) {
+
         next =
           words[
             Math.floor(
@@ -411,39 +423,53 @@
               * words.length
             )
           ];
+
       }
 
+
       return next;
+
     }
 
 
     function showDailyWord() {
+
       currentMode =
         "daily";
 
+
       updateModeButtons();
+
 
       currentWord =
         getDailyWord();
 
+
       renderWord();
+
     }
 
 
     function showFlashcardWord() {
+
       currentMode =
         "flashcard";
 
+
       updateModeButtons();
+
 
       currentWord =
         getRandomWord();
 
+
       renderWord();
+
     }
 
 
     function updateModeButtons() {
+
       document
         .getElementById(
           "dailyModeButton"
@@ -454,6 +480,7 @@
           currentMode === "daily"
         );
 
+
       document
         .getElementById(
           "flashcardModeButton"
@@ -463,10 +490,12 @@
           "active",
           currentMode === "flashcard"
         );
+
     }
 
 
     function renderWord() {
+
       const content =
         document.getElementById(
           "content"
@@ -483,26 +512,33 @@
 
         <div class="word-card">
 
+
           <div class="label">
+
             ${
               currentMode === "daily"
                 ? "Today's Word"
                 : "Review Card"
             }
+
           </div>
 
 
           <h2 class="word">
+
             ${escapeHtml(
               currentWord.word
             )}
+
           </h2>
 
 
           <div class="part-of-speech">
+
             ${escapeHtml(
               currentWord.partOfSpeech
             )}
+
           </div>
 
 
@@ -518,7 +554,9 @@
 
 
           <div class="prompt">
+
             Do you remember what this word means?
+
           </div>
 
 
@@ -549,6 +587,7 @@
 
           </div>
 
+
         </div>
 
 
@@ -564,6 +603,7 @@
           </a>
 
         </div>
+
       `;
 
 
@@ -575,47 +615,58 @@
           "click",
           toggleDefinition
         );
+
     }
 
 
     function toggleDefinition() {
+
       const box =
         document.getElementById(
           "definitionBox"
         );
+
 
       const button =
         document.getElementById(
           "revealButton"
         );
 
+
       const hidden =
-        box.style.display !== "block";
+        box.style.display !==
+        "block";
+
 
       box.style.display =
         hidden
           ? "block"
           : "none";
 
+
       button.textContent =
         hidden
           ? "Hide Meaning"
           : "Reveal Meaning";
+
     }
 
 
     function formatText(text) {
+
       return escapeHtml(text)
         .replace(
           /\n/g,
           "<br>"
         );
+
     }
 
 
     function escapeHtml(
       text = ""
     ) {
+
       return text
         .replaceAll(
           "&",
@@ -637,19 +688,26 @@
           "'",
           "&#039;"
         );
+
     }
 
 
     function showError(message) {
+
       document
         .getElementById(
           "content"
         )
         .innerHTML = `
+
           <div class="error">
+
             ${escapeHtml(message)}
+
           </div>
+
         `;
+
     }
 
 

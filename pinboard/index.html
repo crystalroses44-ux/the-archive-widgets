@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>The Archive Pinboard</title>
+
+  <style>
+
+    :root {
+      --ivory: #FFFDF8;
+      --paper: #FAF7F0;
+      --forest: #263D35;
+      --sage: #829074;
+      --gold: #B68B45;
+      --gold-soft: #D8C39A;
+      --brown: #51483D;
+      --rose: #B77B78;
+      --cork: #D7C3A2;
+      --cork-dark: #BFA37A;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: transparent;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      color: var(--brown);
+    }
+
+    body {
+      padding: 8px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+
+
+    /* ---------------------------------
+       WIDGET
+    --------------------------------- */
+
+    .widget {
+      width: 100%;
+
+      background: var(--ivory);
+
+      border: 1px solid var(--gold);
+
+      outline: 1px solid rgba(182, 139, 69, 0.28);
+      outline-offset: -5px;
+
+      padding: 15px;
+
+      position: relative;
+    }
+
+    .widget::before,
+    .widget::after {
+      content: "✦";
+
+      position: absolute;
+
+      top: 8px;
+
+      color: var(--gold-soft);
+
+      font-size: 9px;
+    }
+
+    .widget::before {
+      left: 10px;
+    }
+
+    .widget::after {
+      right: 10px;
+    }
+
+
+
+    /* ---------------------------------
+       HEADER
+    --------------------------------- */
+
+    .header {
+      text-align: center;
+
+      margin-bottom: 11px;
+    }
+
+    .header-star {
+      color: var(--gold);
+
+      font-size: 9px;
+
+      margin-bottom: 4px;
+    }
+
+    .header h1 {
+      margin: 0;
+
+      color: var(--forest);
+
+      font-size: 14px;
+
+      font-weight: normal;
+
+      letter-spacing: 0.16em;
+
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+
+      color: var(--sage);
+
+      font-size: 9px;
+
+      font-style: italic;
+    }
+
+
+
+    /* ---------------------------------
+       TOOLBAR
+    --------------------------------- */
+
+    .toolbar {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 8px;
+
+      margin-bottom: 9px;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+      display: flex;
+
+      align-items: center;
+
+      gap: 6px;
+    }
+
+    .tool-button {
+      border: 1px solid #D5CAB0;
+
+      background: #FBF8EF;
+
+      padding: 5px 8px;
+
+      color: #70433F;
+
+      font-size: 9px;
+
+      cursor: pointer;
+
+      transition:
+        background 150ms ease,
+        border-color 150ms ease;
+    }
+
+    .tool-button:hover {
+      background: #F3EEDF;
+
+      border-color: var(--gold);
+    }
+
+    .clear-button {
+      color: var(--rose);
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+
+
+    /* ---------------------------------
+       BOARD FRAME
+    --------------------------------- */
+
+    .board-frame {
+      border: 1px solid var(--gold-soft);
+
+      padding: 6px;
+
+      background: #F7F1E5;
+
+      box-shadow:
+        inset 0 0 0 1px rgba(182, 139, 69, 0.12);
+    }
+
+    .board {
+      width: 100%;
+
+      height: 500px;
+
+      position: relative;
+
+      overflow: hidden;
+
+      background:
+        radial-gradient(
+          circle at 20% 30%,
+          rgba(255,255,255,0.14),
+          transparent 24%
+        ),
+        radial-gradient(
+          circle at 80% 65%,
+          rgba(81,72,61,0.05),
+          transparent 26%
+        ),
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.02) 0px,
+          rgba(255,255,255,0.02) 3px,
+          rgba(81,72,61,0.025) 4px,
+          rgba(81,72,61,0.025) 5px
+        ),
+        linear-gradient(
+          135deg,
+          var(--cork),
+          #DCC8A8
+        );
+
+      border: 1px solid var(--cork-dark);
+    }
+
+
+
+    /* ---------------------------------
+       EMPTY STATE
+    --------------------------------- */
+
+    .empty-state {
+      position: absolute;
+
+      inset: 0;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      pointer-events: none;
+    }
+
+    .empty-card {
+      max-width: 240px;
+
+      padding: 16px 18px;
+
+      background: rgba(255, 253, 248, 0.82);
+
+      border: 1px solid rgba(182, 139, 69, 0.65);
+
+      text-align: center;
+
+      color: var(--sage);
+
+      font-size: 10px;
+
+      line-height: 1.5;
+
+      box-shadow:
+        0 4px 12px rgba(81, 72, 61, 0.08);
+    }
+
+    .empty-card strong {
+      display: block;
+
+      margin-bottom: 5px;
+
+      color: var(--forest);
+
+      font-weight: normal;
+
+      letter-spacing: 0.08em;
+
+      text-transform: uppercase;
+
+      font-size: 9px;
+    }
+
+
+
+    /* ---------------------------------
+       PHOTO
+    --------------------------------- */
+
+    .photo {
+      position: absolute;
+
+      left: 30px;
+      top: 30px;
+
+      width: 150px;
+
+      min-width: 80px;
+
+      user-select: none;
+
+      touch-action: none;
+
+      transform-origin: center center;
+    }
+
+    .photo-shell {
+      width: 100%;
+
+      position: relative;
+
+      padding: 6px 6px 17px;
+
+      background: #FFFDF8;
+
+      border: 1px solid rgba(81, 72, 61, 0.15);
+
+      box-shadow:
+        0 5px 11px rgba(81, 72, 61, 0.22);
+
+      cursor: grab;
+    }
+
+    .photo-shell:active {
+      cursor: grabbing;
+    }
+
+    .photo img {
+      display: block;
+
+      width: 100%;
+
+      max-height: 310px;
+
+      object-fit: cover;
+
+      pointer-events: none;
+    }
+
+
+
+    /* ---------------------------------
+       PIN
+    --------------------------------- */
+
+    .pin {
+      position: absolute;
+
+      width: 10px;
+      height: 10px;
+
+      left: 50%;
+      top: -5px;
+
+      transform: translateX(-50%);
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #F8E7BA,
+          var(--gold) 60%,
+          #84642D
+        );
+
+      box-shadow:
+        0 1px 2px rgba(81,72,61,0.35);
+
+      pointer-events: none;
+
+      z-index: 5;
+    }
+
+
+
+    /* ---------------------------------
+       CONTROLS
+    --------------------------------- */
+
+    .photo-controls {
+      position: absolute;
+
+      top: -25px;
+      right: 0;
+
+      display: flex;
+
+      gap: 3px;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transition: opacity 120ms ease;
+    }
+
+    .photo.active .photo-controls {
+      opacity: 1;
+
+      pointer-events: auto;
+    }
+
+    .photo-control {
+      width: 21px;
+      height: 21px;
+
+      display: grid;
+
+      place-items: center;
+
+      padding: 0;
+
+      border: 1px solid var(--gold-soft);
+
+      background: var(--ivory);
+
+      color: var(--brown);
+
+      font-size: 10px;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 2px 5px rgba(81,72,61,0.11);
+    }
+
+    .photo-control:hover {
+      background: #F4EEDF;
+    }
+
+    .photo-control.delete {
+      color: var(--rose);
+    }
+
+
+
+    /* ---------------------------------
+       RESIZE HANDLE
+    --------------------------------- */
+
+    .resize-handle {
+      position: absolute;
+
+      width: 15px;
+      height: 15px;
+
+      right: -6px;
+      bottom: -6px;
+
+      cursor: nwse-resize;
+
+      opacity: 0;
+
+      pointer-events: none;
+    }
+
+    .resize-handle::after {
+      content: "";
+
+      position: absolute;
+
+      right: 2px;
+      bottom: 2px;
+
+      width: 7px;
+      height: 7px;
+
+      border-right: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+    }
+
+    .photo.active .resize-handle {
+      opacity: 1;
+
+      pointer-events: auto;
+    }
+
+
+
+    /* ---------------------------------
+       FOOTER
+    --------------------------------- */
+
+    .footer {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-top: 8px;
+
+      color: var(--sage);
+
+      font-size: 8px;
+
+      letter-spacing: 0.04em;
+    }
+
+    .saved-status {
+      font-style: italic;
+    }
+
+
+
+    /* ---------------------------------
+       MOBILE
+    --------------------------------- */
+
+    @media (max-width: 500px) {
+
+      body {
+        padding: 4px;
+      }
+
+      .widget {
+        padding: 13px 10px 10px;
+      }
+
+      .board {
+        height: 470px;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .tool-button {
+        padding: 5px 6px;
+
+        font-size: 8px;
+      }
+
+      .photo {
+        width: 125px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+  <section class="widget">
+
+    <header class="header">
+
+      <div class="header-star">
+        ✦
+      </div>
+
+      <h1>
+        Pinboard
+      </h1>
+
+      <div class="subtitle">
+        fragments, references & things worth keeping
+      </div>
+
+    </header>
+
+
+    <div class="toolbar">
+
+      <div class="toolbar-left">
+
+        <label
+          class="tool-button"
+          for="fileInput"
+        >
+          + Add Images
+        </label>
+
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/*"
+          multiple
+        >
+
+      </div>
+
+
+      <div class="toolbar-right">
+
+        <button
+          class="tool-button clear-button"
+          id="clearBoardButton"
+          type="button"
+        >
+          Clear
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="board-frame">
+
+      <div
+        class="board"
+        id="board"
+      >
+
+        <div
+          class="empty-state"
+          id="emptyState"
+        >
+
+          <div class="empty-card">
+
+            <strong>
+              The board is waiting
+            </strong>
+
+            Add images, then drag them around
+            to build your collection.
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <footer class="footer">
+
+      <span>
+        CLICK A PHOTO TO EDIT ✦
+      </span>
+
+      <span
+        class="saved-status"
+        id="savedStatus"
+      >
+        Saved locally
+      </span>
+
+    </footer>
+
+  </section>
+
+
+
+  <script>
+
+    /* ---------------------------------
+       DATABASE
+    --------------------------------- */
+
+    const DB_NAME =
+      "archive-pinboard";
+
+    const STORE_NAME =
+      "photos";
+
+    const DB_VERSION = 1;
+
+    let database;
+
+
+
+    function openDatabase() {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const request =
+            indexedDB.open(
+              DB_NAME,
+              DB_VERSION
+            );
+
+
+          request.onupgradeneeded =
+            event => {
+
+              const db =
+                event.target.result;
+
+
+              if (
+                !db.objectStoreNames.contains(
+                  STORE_NAME
+                )
+              ) {
+
+                db.createObjectStore(
+                  STORE_NAME,
+                  {
+                    keyPath: "id"
+                  }
+                );
+
+              }
+
+            };
+
+
+          request.onsuccess =
+            event => {
+
+              database =
+                event.target.result;
+
+              resolve(database);
+
+            };
+
+
+          request.onerror =
+            () => {
+
+              reject(
+                request.error
+              );
+
+            };
+
+        }
+      );
+
+    }
+
+
+
+    function savePhotoData(photo) {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const transaction =
+            database.transaction(
+              STORE_NAME,
+              "readwrite"
+            );
+
+
+          const store =
+            transaction.objectStore(
+              STORE_NAME
+            );
+
+
+          store.put(photo);
+
+
+          transaction.oncomplete =
+            () => resolve();
+
+
+          transaction.onerror =
+            () => reject(
+              transaction.error
+            );
+
+        }
+      );
+
+    }
+
+
+
+    function getAllPhotos() {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const transaction =
+            database.transaction(
+              STORE_NAME,
+              "readonly"
+            );
+
+
+          const store =
+            transaction.objectStore(
+              STORE_NAME
+            );
+
+
+          const request =
+            store.getAll();
+
+
+          request.onsuccess =
+            () => {
+
+              resolve(
+                request.result || []
+              );
+
+            };
+
+
+          request.onerror =
+            () => {
+
+              reject(
+                request.error
+              );
+
+            };
+
+        }
+      );
+
+    }
+
+
+
+    function deletePhotoData(id) {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const transaction =
+            database.transaction(
+              STORE_NAME,
+              "readwrite"
+            );
+
+
+          transaction
+            .objectStore(
+              STORE_NAME
+            )
+            .delete(id);
+
+
+          transaction.oncomplete =
+            () => resolve();
+
+
+          transaction.onerror =
+            () => reject(
+              transaction.error
+            );
+
+        }
+      );
+
+    }
+
+
+
+    function clearPhotoData() {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const transaction =
+            database.transaction(
+              STORE_NAME,
+              "readwrite"
+            );
+
+
+          transaction
+            .objectStore(
+              STORE_NAME
+            )
+            .clear();
+
+
+          transaction.oncomplete =
+            () => resolve();
+
+
+          transaction.onerror =
+            () => reject(
+              transaction.error
+            );
+
+        }
+      );
+
+    }
+
+
+
+    /* ---------------------------------
+       STATE
+    --------------------------------- */
+
+    const board =
+      document.getElementById(
+        "board"
+      );
+
+    const fileInput =
+      document.getElementById(
+        "fileInput"
+      );
+
+    const emptyState =
+      document.getElementById(
+        "emptyState"
+      );
+
+    const clearBoardButton =
+      document.getElementById(
+        "clearBoardButton"
+      );
+
+    const savedStatus =
+      document.getElementById(
+        "savedStatus"
+      );
+
+
+    let activePhoto = null;
+
+    let highestZ = 1;
+
+
+
+    /* ---------------------------------
+       EMPTY STATE
+    --------------------------------- */
+
+    function updateEmptyState() {
+
+      const photos =
+        board.querySelectorAll(
+          ".photo"
+        );
+
+
+      emptyState.style.display =
+        photos.length
+          ? "none"
+          : "flex";
+
+    }
+
+
+
+    /* ---------------------------------
+       STATUS
+    --------------------------------- */
+
+    function showSaving() {
+
+      savedStatus.textContent =
+        "Saving…";
+
+    }
+
+
+    function showSaved() {
+
+      savedStatus.textContent =
+        "Saved locally";
+
+    }
+
+
+
+    /* ---------------------------------
+       IMAGE UPLOAD
+    --------------------------------- */
+
+    fileInput.addEventListener(
+      "change",
+      async event => {
+
+        const files =
+          Array.from(
+            event.target.files || []
+          );
+
+
+        for (
+          const file of files
+        ) {
+
+          if (
+            !file.type.startsWith(
+              "image/"
+            )
+          ) {
+
+            continue;
+
+          }
+
+
+          const id =
+            crypto.randomUUID();
+
+
+          const photoData = {
+
+            id,
+
+            file,
+
+            x:
+              20
+              + Math.random()
+              * 90,
+
+            y:
+              25
+              + Math.random()
+              * 85,
+
+            width:
+              135
+              + Math.random()
+              * 25,
+
+            rotation:
+              Math.random()
+              * 8
+              - 4,
+
+            z:
+              ++highestZ
+
+          };
+
+
+          await savePhotoData(
+            photoData
+          );
+
+
+          createPhotoElement(
+            photoData
+          );
+
+        }
+
+
+        fileInput.value = "";
+
+
+        updateEmptyState();
+
+      }
+    );
+
+
+
+    /* ---------------------------------
+       CREATE PHOTO
+    --------------------------------- */
+
+    function createPhotoElement(
+      photoData
+    ) {
+
+      const photo =
+        document.createElement(
+          "div"
+        );
+
+
+      photo.className =
+        "photo";
+
+
+      photo.dataset.id =
+        photoData.id;
+
+
+      photo.style.left =
+        `${photoData.x}px`;
+
+
+      photo.style.top =
+        `${photoData.y}px`;
+
+
+      photo.style.width =
+        `${photoData.width}px`;
+
+
+      photo.style.zIndex =
+        photoData.z;
+
+
+      photo.style.transform =
+        `rotate(${photoData.rotation}deg)`;
+
+
+      highestZ =
+        Math.max(
+          highestZ,
+          photoData.z || 1
+        );
+
+
+      const shell =
+        document.createElement(
+          "div"
+        );
+
+
+      shell.className =
+        "photo-shell";
+
+
+      const img =
+        document.createElement(
+          "img"
+        );
+
+
+      const objectUrl =
+        URL.createObjectURL(
+          photoData.file
+        );
+
+
+      img.src =
+        objectUrl;
+
+
+      img.alt =
+        "Pinned image";
+
+
+      img.onload =
+        () => {
+
+          URL.revokeObjectURL(
+            objectUrl
+          );
+
+        };
+
+
+      const pin =
+        document.createElement(
+          "div"
+        );
+
+
+      pin.className =
+        "pin";
+
+
+      const controls =
+        document.createElement(
+          "div"
+        );
+
+
+      controls.className =
+        "photo-controls";
+
+
+      controls.innerHTML = `
+
+        <button
+          class="photo-control rotate-left"
+          type="button"
+          title="Rotate left"
+        >
+          ↶
+        </button>
+
+        <button
+          class="photo-control rotate-right"
+          type="button"
+          title="Rotate right"
+        >
+          ↷
+        </button>
+
+        <button
+          class="photo-control delete"
+          type="button"
+          title="Delete"
+        >
+          ×
+        </button>
+
+      `;
+
+
+      const resizeHandle =
+        document.createElement(
+          "div"
+        );
+
+
+      resizeHandle.className =
+        "resize-handle";
+
+
+      shell.appendChild(img);
+      shell.appendChild(pin);
+      shell.appendChild(controls);
+      shell.appendChild(
+        resizeHandle
+      );
+
+
+      photo.appendChild(
+        shell
+      );
+
+
+      board.appendChild(
+        photo
+      );
+
+
+      setupPhotoInteractions(
+        photo,
+        photoData
+      );
+
+
+      updateEmptyState();
+
+    }
+
+
+
+    /* ---------------------------------
+       ACTIVATE PHOTO
+    --------------------------------- */
+
+    function activatePhoto(
+      photo,
+      photoData
+    ) {
+
+      if (
+        activePhoto
+        && activePhoto !== photo
+      ) {
+
+        activePhoto
+          .classList
+          .remove(
+            "active"
+          );
+
+      }
+
+
+      activePhoto =
+        photo;
+
+
+      photo
+        .classList
+        .add(
+          "active"
+        );
+
+
+      photo.style.zIndex =
+        ++highestZ;
+
+
+      photoData.z =
+        highestZ;
+
+
+      savePhotoData(
+        photoData
+      );
+
+    }
+
+
+
+    board.addEventListener(
+      "pointerdown",
+      event => {
+
+        if (
+          !event.target.closest(
+            ".photo"
+          )
+        ) {
+
+          if (
+            activePhoto
+          ) {
+
+            activePhoto
+              .classList
+              .remove(
+                "active"
+              );
+
+            activePhoto = null;
+
+          }
+
+        }
+
+      }
+    );
+
+
+
+    /* ---------------------------------
+       PHOTO INTERACTIONS
+    --------------------------------- */
+
+    function setupPhotoInteractions(
+      photo,
+      photoData
+    ) {
+
+      const shell =
+        photo.querySelector(
+          ".photo-shell"
+        );
+
+
+      const rotateLeft =
+        photo.querySelector(
+          ".rotate-left"
+        );
+
+
+      const rotateRight =
+        photo.querySelector(
+          ".rotate-right"
+        );
+
+
+      const deleteButton =
+        photo.querySelector(
+          ".delete"
+        );
+
+
+      const resizeHandle =
+        photo.querySelector(
+          ".resize-handle"
+        );
+
+
+      /* DRAG */
+
+      shell.addEventListener(
+        "pointerdown",
+        event => {
+
+          if (
+            event.target.closest(
+              ".photo-control"
+            )
+            ||
+            event.target.closest(
+              ".resize-handle"
+            )
+          ) {
+
+            return;
+
+          }
+
+
+          activatePhoto(
+            photo,
+            photoData
+          );
+
+
+          event.preventDefault();
+
+
+          const startX =
+            event.clientX;
+
+
+          const startY =
+            event.clientY;
+
+
+          const startLeft =
+            parseFloat(
+              photo.style.left
+            );
+
+
+          const startTop =
+            parseFloat(
+              photo.style.top
+            );
+
+
+          shell.setPointerCapture(
+            event.pointerId
+          );
+
+
+          const move =
+            moveEvent => {
+
+              const dx =
+                moveEvent.clientX
+                - startX;
+
+
+              const dy =
+                moveEvent.clientY
+                - startY;
+
+
+              let nextX =
+                startLeft
+                + dx;
+
+
+              let nextY =
+                startTop
+                + dy;
+
+
+              nextX =
+                Math.max(
+                  -photo.offsetWidth * 0.4,
+                  Math.min(
+                    board.clientWidth
+                    - photo.offsetWidth * 0.6,
+                    nextX
+                  )
+                );
+
+
+              nextY =
+                Math.max(
+                  -photo.offsetHeight * 0.3,
+                  Math.min(
+                    board.clientHeight
+                    - photo.offsetHeight * 0.5,
+                    nextY
+                  )
+                );
+
+
+              photo.style.left =
+                `${nextX}px`;
+
+
+              photo.style.top =
+                `${nextY}px`;
+
+
+              photoData.x =
+                nextX;
+
+
+              photoData.y =
+                nextY;
+
+            };
+
+
+          const up =
+            async upEvent => {
+
+              shell.removeEventListener(
+                "pointermove",
+                move
+              );
+
+
+              shell.removeEventListener(
+                "pointerup",
+                up
+              );
+
+
+              showSaving();
+
+
+              await savePhotoData(
+                photoData
+              );
+
+
+              showSaved();
+
+            };
+
+
+          shell.addEventListener(
+            "pointermove",
+            move
+          );
+
+
+          shell.addEventListener(
+            "pointerup",
+            up
+          );
+
+        }
+      );
+
+
+
+      /* RESIZE */
+
+      resizeHandle.addEventListener(
+        "pointerdown",
+        event => {
+
+          event.stopPropagation();
+
+          event.preventDefault();
+
+
+          activatePhoto(
+            photo,
+            photoData
+          );
+
+
+          const startX =
+            event.clientX;
+
+
+          const startWidth =
+            photo.offsetWidth;
+
+
+          resizeHandle
+            .setPointerCapture(
+              event.pointerId
+            );
+
+
+          const move =
+            moveEvent => {
+
+              const difference =
+                moveEvent.clientX
+                - startX;
+
+
+              const width =
+                Math.max(
+                  80,
+                  Math.min(
+                    330,
+                    startWidth
+                    + difference
+                  )
+                );
+
+
+              photo.style.width =
+                `${width}px`;
+
+
+              photoData.width =
+                width;
+
+            };
+
+
+          const up =
+            async () => {
+
+              resizeHandle
+                .removeEventListener(
+                  "pointermove",
+                  move
+                );
+
+
+              resizeHandle
+                .removeEventListener(
+                  "pointerup",
+                  up
+                );
+
+
+              showSaving();
+
+
+              await savePhotoData(
+                photoData
+              );
+
+
+              showSaved();
+
+            };
+
+
+          resizeHandle
+            .addEventListener(
+              "pointermove",
+              move
+            );
+
+
+          resizeHandle
+            .addEventListener(
+              "pointerup",
+              up
+            );
+
+        }
+      );
+
+
+
+      /* ROTATE LEFT */
+
+      rotateLeft.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+
+          photoData.rotation -= 3;
+
+
+          photo.style.transform =
+            `rotate(${photoData.rotation}deg)`;
+
+
+          showSaving();
+
+
+          await savePhotoData(
+            photoData
+          );
+
+
+          showSaved();
+
+        }
+      );
+
+
+
+      /* ROTATE RIGHT */
+
+      rotateRight.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+
+          photoData.rotation += 3;
+
+
+          photo.style.transform =
+            `rotate(${photoData.rotation}deg)`;
+
+
+          showSaving();
+
+
+          await savePhotoData(
+            photoData
+          );
+
+
+          showSaved();
+
+        }
+      );
+
+
+
+      /* DELETE */
+
+      deleteButton.addEventListener(
+        "click",
+        async event => {
+
+          event.stopPropagation();
+
+
+          photo.remove();
+
+
+          if (
+            activePhoto === photo
+          ) {
+
+            activePhoto = null;
+
+          }
+
+
+          await deletePhotoData(
+            photoData.id
+          );
+
+
+          updateEmptyState();
+
+          showSaved();
+
+        }
+      );
+
+    }
+
+
+
+    /* ---------------------------------
+       CLEAR BOARD
+    --------------------------------- */
+
+    clearBoardButton.addEventListener(
+      "click",
+      async () => {
+
+        const photos =
+          board.querySelectorAll(
+            ".photo"
+          );
+
+
+        if (
+          !photos.length
+        ) {
+
+          return;
+
+        }
+
+
+        const confirmed =
+          confirm(
+            "Clear every image from this pinboard?"
+          );
+
+
+        if (
+          !confirmed
+        ) {
+
+          return;
+
+        }
+
+
+        showSaving();
+
+
+        await clearPhotoData();
+
+
+        photos.forEach(
+          photo => photo.remove()
+        );
+
+
+        activePhoto = null;
+
+
+        updateEmptyState();
+
+        showSaved();
+
+      }
+    );
+
+
+
+    /* ---------------------------------
+       LOAD SAVED BOARD
+    --------------------------------- */
+
+    async function start() {
+
+      try {
+
+        await openDatabase();
+
+
+        const photos =
+          await getAllPhotos();
+
+
+        photos
+          .sort(
+            (a, b) =>
+              (a.z || 0)
+              - (b.z || 0)
+          )
+          .forEach(
+            photoData => {
+
+              createPhotoElement(
+                photoData
+              );
+
+            }
+          );
+
+
+        updateEmptyState();
+
+
+      } catch (error) {
+
+        console.error(
+          "Pinboard error:",
+          error
+        );
+
+
+        savedStatus.textContent =
+          "Storage unavailable";
+
+      }
+
+    }
+
+
+    start();
+
+  </script>
+
+</body>
+
+</html>

@@ -38,6 +38,39 @@
       padding: 14px;
     }
 
+
+    /* -------------------------
+       HEADER
+    ------------------------- */
+
+    .header {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .star {
+      color: #B68B45;
+      font-size: 9px;
+      margin-bottom: 3px;
+    }
+
+    .header h1 {
+      margin: 0;
+
+      font-size: 14px;
+      font-weight: normal;
+
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+
+      color: #51483D;
+    }
+
+
+    /* -------------------------
+       TABS
+    ------------------------- */
+
     .mode-tabs {
       display: flex;
       justify-content: center;
@@ -64,6 +97,15 @@
       background: #F2EEDC;
       border-color: #B68B45;
     }
+
+    .mode-button:hover {
+      background: #F7F3E8;
+    }
+
+
+    /* -------------------------
+       WORD CARD
+    ------------------------- */
 
     .word-card {
       border: 1px solid #D8CFB7;
@@ -105,6 +147,11 @@
       color: #829074;
     }
 
+
+    /* -------------------------
+       ORNAMENT
+    ------------------------- */
+
     .rule {
       display: flex;
 
@@ -130,12 +177,22 @@
       font-weight: normal;
     }
 
+
+    /* -------------------------
+       PROMPT
+    ------------------------- */
+
     .prompt {
       font-size: 10.5px;
       line-height: 1.45;
 
       color: #6A6258;
     }
+
+
+    /* -------------------------
+       REVEAL BUTTON
+    ------------------------- */
 
     .button-row {
       display: flex;
@@ -162,6 +219,11 @@
       background: #F7F3E8;
     }
 
+
+    /* -------------------------
+       DEFINITION
+    ------------------------- */
+
     .definition-box {
       display: none;
 
@@ -176,6 +238,8 @@
 
       font-size: 10px;
       line-height: 1.45;
+
+      color: #51483D;
     }
 
     .definition-box strong {
@@ -190,6 +254,11 @@
 
       color: #829074;
     }
+
+
+    /* -------------------------
+       USE THIS WORD LINK
+    ------------------------- */
 
     .footer-link-wrap {
       display: flex;
@@ -212,6 +281,11 @@
       text-decoration: underline;
     }
 
+
+    /* -------------------------
+       LOADING / ERROR
+    ------------------------- */
+
     .loading,
     .error {
       padding: 28px 10px;
@@ -224,13 +298,23 @@
       color: #829074;
     }
 
+
+    /* -------------------------
+       SMALL SCREENS
+    ------------------------- */
+
     @media (max-width: 520px) {
+
       body {
         padding: 6px;
       }
 
       .widget {
         padding: 11px;
+      }
+
+      .header {
+        margin-bottom: 10px;
       }
 
       .word-card {
@@ -242,6 +326,7 @@
         font-size: 22px;
       }
     }
+
   </style>
 </head>
 
@@ -250,6 +335,23 @@
 
   <section class="widget">
 
+
+    <!-- WORD GARDEN HEADING -->
+
+    <header class="header">
+
+      <div class="star">
+        ✦
+      </div>
+
+      <h1>
+        Word Garden
+      </h1>
+
+    </header>
+
+
+    <!-- MODE BUTTONS -->
 
     <div class="mode-tabs">
 
@@ -269,6 +371,8 @@
 
     </div>
 
+
+    <!-- WORD CONTENT -->
 
     <div id="content">
 
@@ -305,6 +409,10 @@
         .toISOString()
         .slice(0, 10);
 
+
+    /* -------------------------
+       LOAD WORDS
+    ------------------------- */
 
     async function loadWords() {
 
@@ -358,6 +466,10 @@
     }
 
 
+    /* -------------------------
+       DAILY WORD
+    ------------------------- */
+
     function hashString(text) {
 
       let hash = 0;
@@ -399,6 +511,10 @@
     }
 
 
+    /* -------------------------
+       RANDOM FLASHCARD
+    ------------------------- */
+
     function getRandomWord() {
 
       if (words.length === 1) {
@@ -431,6 +547,10 @@
 
     }
 
+
+    /* -------------------------
+       MODE SWITCHING
+    ------------------------- */
 
     function showDailyWord() {
 
@@ -493,6 +613,10 @@
 
     }
 
+
+    /* -------------------------
+       RENDER WORD
+    ------------------------- */
 
     function renderWord() {
 
@@ -619,6 +743,10 @@
     }
 
 
+    /* -------------------------
+       REVEAL MEANING
+    ------------------------- */
+
     function toggleDefinition() {
 
       const box =
@@ -652,6 +780,10 @@
     }
 
 
+    /* -------------------------
+       TEXT HELPERS
+    ------------------------- */
+
     function formatText(text) {
 
       return escapeHtml(text)
@@ -667,7 +799,7 @@
       text = ""
     ) {
 
-      return text
+      return String(text)
         .replaceAll(
           "&",
           "&amp;"
@@ -692,6 +824,10 @@
     }
 
 
+    /* -------------------------
+       ERROR MESSAGE
+    ------------------------- */
+
     function showError(message) {
 
       document
@@ -710,6 +846,10 @@
 
     }
 
+
+    /* -------------------------
+       BUTTON EVENTS
+    ------------------------- */
 
     document
       .getElementById(
@@ -730,6 +870,10 @@
         showFlashcardWord
       );
 
+
+    /* -------------------------
+       START
+    ------------------------- */
 
     loadWords();
 

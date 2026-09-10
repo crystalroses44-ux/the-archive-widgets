@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <style>
     * {
@@ -17,28 +21,23 @@
       color: #51483D;
     }
 
-    /* ─────────────────────────────
-       ATHENAEUM FRAME
-    ───────────────────────────── */
-
     .athenaeum-widget {
       width: 100%;
-      padding: 18px 20px 16px;
+      padding: 18px 20px 15px;
 
-      background: linear-gradient(
-        180deg,
-        #FFFFFF 0%,
-        #FDFCF8 100%
-      );
+      background:
+        linear-gradient(
+          180deg,
+          #FFFFFF 0%,
+          #FDFCF8 100%
+        );
 
       border: 1px solid #B68B45;
       outline: 1px solid #DED5BD;
       outline-offset: -5px;
     }
 
-    /* ─────────────────────────────
-       HEADER
-    ───────────────────────────── */
+    /* HEADER */
 
     .widget-heading {
       text-align: center;
@@ -53,117 +52,75 @@
 
     .widget-heading h1 {
       margin: 0;
-
-      font-family: Georgia, "Times New Roman", serif;
       font-size: 16px;
       font-weight: normal;
-
       letter-spacing: 0.14em;
       text-transform: uppercase;
-
       color: #51483D;
     }
 
     .widget-heading p {
       margin: 4px 0 0;
-
       font-size: 11px;
       font-style: italic;
-
       color: #829074;
     }
 
-    /* ─────────────────────────────
-       GOODREADS BOOKSHELF
-    ───────────────────────────── */
+    /* BOOK GRID */
 
-    .gr_custom_container_ {
-      width: 100% !important;
+    #bookshelf {
+      width: 100%;
 
-      padding: 0 !important;
-      margin: 0 !important;
+      display: grid;
 
-      border: none !important;
-      background: transparent !important;
+      grid-template-columns:
+        repeat(5, minmax(0, 1fr));
 
-      display: flex !important;
-      flex-wrap: wrap;
+      column-gap: 28px;
 
-      align-items: flex-start;
-      justify-content: space-between;
-
-      gap: 16px;
+      align-items: start;
     }
 
-    /* Hide Goodreads' own header/logo */
+    /* BOOK */
 
-    .gr_custom_header_,
-    .gr_custom_container_ > center,
-    .gr_custom_container_ > br {
-      display: none !important;
-    }
-
-    /* ─────────────────────────────
-       INDIVIDUAL BOOK
-    ───────────────────────────── */
-
-    .gr_custom_each_container_ {
-      width: calc(20% - 13px) !important;
+    .book {
       min-width: 0;
-
-      clear: none !important;
-      float: none !important;
-
-      margin: 0 !important;
-      padding: 0 !important;
-
-      border: none !important;
-      overflow: visible !important;
-
       text-align: center;
     }
 
-    /* ─────────────────────────────
-       BOOK COVER
-    ───────────────────────────── */
-
-    .gr_custom_book_container_ {
-      float: none !important;
-
-      width: 100% !important;
-      height: 180px !important;
-
-      margin: 0 0 8px !important;
+    .book-cover {
+      width: 100%;
+      height: 180px;
 
       display: flex;
-      justify-content: center;
       align-items: flex-end;
+      justify-content: center;
 
-      overflow: hidden !important;
+      margin-bottom: 8px;
+      overflow: hidden;
     }
 
-    .gr_custom_book_container_ img {
+    .book-cover img {
       display: block;
 
-      height: 175px !important;
-      width: auto !important;
-      max-width: 120px !important;
+      height: 175px;
+      width: auto;
+      max-width: 120px;
 
       object-fit: cover;
 
       margin: 0 auto;
+
+      box-shadow:
+        0 2px 5px rgba(81, 72, 61, 0.12);
     }
 
-    /* ─────────────────────────────
-       BOOK TITLE
-    ───────────────────────────── */
-
-    .gr_custom_title_ {
+    .book-title {
       height: 49px;
 
-      margin: 0 0 4px !important;
+      margin: 0 0 4px;
 
-      font-size: 13px !important;
+      font-size: 13px;
       line-height: 1.25;
 
       overflow: hidden;
@@ -173,139 +130,140 @@
       -webkit-box-orient: vertical;
     }
 
-    .gr_custom_title_ a {
-      color: #51483D !important;
-      text-decoration: none !important;
+    .book-title a {
+      color: #51483D;
+      text-decoration: none;
     }
 
-    .gr_custom_title_ a:hover {
-      text-decoration: underline !important;
+    .book-title a:hover {
+      text-decoration: underline;
     }
 
-    /* ─────────────────────────────
-       AUTHOR
-    ───────────────────────────── */
-
-    .gr_custom_author_ {
-      font-size: 10.5px !important;
+    .book-author {
+      font-size: 10.5px;
       line-height: 1.3;
-
-      color: #829074 !important;
+      color: #829074;
     }
 
-    .gr_custom_author_ a {
-      color: #829074 !important;
-      text-decoration: none !important;
-    }
-
-    /* ─────────────────────────────
-       HIDE GOODREADS CLUTTER
-    ───────────────────────────── */
-
-    .gr_custom_rating_,
-    .gr_custom_tags_,
-    .gr_custom_review_ {
-      display: none !important;
-    }
-
-    /* ─────────────────────────────
-       EXTRA BOOKS
-    ───────────────────────────── */
-
-    .extra-book {
-      display: none !important;
-    }
-
-    body.expanded .extra-book {
-      display: block !important;
-    }
-
-    /* ─────────────────────────────
-       FOOTER
-    ───────────────────────────── */
+    /* FOOTER */
 
     .widget-footer {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .footer-ornament {
       display: flex;
-
       justify-content: center;
       align-items: center;
 
       gap: 7px;
 
-      margin-bottom: 7px;
+      margin-bottom: 8px;
     }
 
     .footer-ornament span {
       display: block;
-
       width: 34px;
       height: 1px;
-
       background: #C8B788;
     }
 
     .footer-ornament b {
       color: #B68B45;
-
       font-size: 8px;
       font-weight: normal;
     }
 
-    /* ─────────────────────────────
-       SHOW MORE BUTTON
-    ───────────────────────────── */
+    /* PAGINATION */
 
-    #toggleBooks {
-      display: none;
+    .pagination {
+      min-height: 22px;
 
-      margin: 0 auto;
-      padding: 4px 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      gap: 13px;
+    }
+
+    .page-button {
+      padding: 3px 5px;
 
       border: none;
       background: transparent;
 
       color: #70433F;
 
-      font-family: Georgia, "Times New Roman", serif;
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
       font-size: 11px;
       font-style: italic;
 
       cursor: pointer;
     }
 
-    #toggleBooks:hover {
+    .page-button:hover:not(:disabled) {
       text-decoration: underline;
     }
 
-    /* ─────────────────────────────
-       RESPONSIVE
-    ───────────────────────────── */
+    .page-button:disabled {
+      opacity: 0.28;
+      cursor: default;
+    }
+
+    #pageIndicator {
+      min-width: 46px;
+
+      font-size: 9.5px;
+      letter-spacing: 0.05em;
+
+      color: #829074;
+    }
+
+    /* STATUS */
+
+    .status-message {
+      grid-column: 1 / -1;
+
+      padding: 28px 10px;
+
+      text-align: center;
+
+      font-size: 12px;
+      font-style: italic;
+
+      color: #829074;
+    }
+
+    /* RESPONSIVE */
 
     @media (max-width: 700px) {
-      .gr_custom_each_container_ {
-        width: calc(33.333% - 12px) !important;
+      #bookshelf {
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 460px) {
-      .gr_custom_each_container_ {
-        width: calc(50% - 8px) !important;
+      #bookshelf {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
     }
+
   </style>
 </head>
+
 
 <body>
 
   <section class="athenaeum-widget">
 
     <header class="widget-heading">
-
       <div class="ornament">
         ✦
       </div>
@@ -317,13 +275,13 @@
       <p>
         from my Goodreads shelf
       </p>
-
     </header>
 
 
-    <div id="gr_custom_widget_">
+    <div id="bookshelf">
 
-      <div class="gr_custom_container_">
+      <div class="status-message">
+        Gathering books from the shelves…
       </div>
 
     </div>
@@ -332,121 +290,563 @@
     <div class="widget-footer">
 
       <div class="footer-ornament">
-
         <span></span>
-
         <b>✦</b>
-
         <span></span>
-
       </div>
 
-      <button id="toggleBooks">
-        Show more
-      </button>
+
+      <div
+        class="pagination"
+        id="pagination"
+        style="display:none;"
+      >
+
+        <button
+          class="page-button"
+          id="previousButton"
+        >
+          ‹ Previous
+        </button>
+
+
+        <span id="pageIndicator">
+          1 of 1
+        </span>
+
+
+        <button
+          class="page-button"
+          id="nextButton"
+        >
+          Next ›
+        </button>
+
+      </div>
 
     </div>
 
   </section>
 
 
-  <!-- GOODREADS FEED -->
-
-  <script
-    src="https://www.goodreads.com/review/custom_widget/201101484.Faae's%20bookshelf:%20to-read?cover_position=left&cover_size=medium&num_books=100&order=d&shelf=to-read&sort=date_added&widget_bg_transparent=1"
-    type="text/javascript"
-    charset="utf-8">
-  </script>
-
-
-  <!-- SHOW MORE / SHOW LESS -->
-
   <script>
-    let initialized = false;
 
-    function setupBookToggle() {
+    const feedUrl =
+      "https://archive-goodreads.crystalroses44.workers.dev/";
 
-      if (initialized) return;
+    const booksPerPage = 5;
 
-      const books = document.querySelectorAll(
-        ".gr_custom_each_container_"
-      );
-
-      const button = document.getElementById(
-        "toggleBooks"
-      );
-
-      if (!books.length) return;
+    let books = [];
+    let currentPage = 1;
 
 
-      /* Hide everything after the
-         five newest books */
+    function getText(parent, tagName) {
+      const element =
+        parent.querySelector(tagName);
 
-      books.forEach((book, index) => {
-
-        if (index >= 5) {
-          book.classList.add("extra-book");
-        }
-
-      });
-
-
-      /* Only show button when
-         more than five books exist */
-
-      if (books.length > 5) {
-        button.style.display = "block";
-      }
-
-
-      /* Expand / collapse shelf */
-
-      button.addEventListener("click", () => {
-
-        const expanded =
-          document.body.classList.toggle(
-            "expanded"
-          );
-
-        button.textContent =
-          expanded
-            ? "Show less"
-            : "Show more";
-
-      });
-
-
-      initialized = true;
+      return element
+        ? element.textContent.trim()
+        : "";
     }
 
 
-    /* Goodreads injects the books
-       after the page loads, so wait
-       until they appear */
+    function extractAuthor(description) {
 
-    const observer =
-      new MutationObserver(() => {
+      const temp =
+        document.createElement("div");
 
-        const books =
-          document.querySelectorAll(
-            ".gr_custom_each_container_"
+      temp.innerHTML =
+        description;
+
+
+      const text =
+        temp.innerText
+          .replace(/\s+/g, " ")
+          .trim();
+
+
+      const match =
+        text.match(
+          /author:\s*(.*?)(?=\s+name:|\s+average rating:|\s+book published:|\s+rating:|\s+read at:|\s+date added:|\s+shelves:|$)/i
+        );
+
+
+      return match
+        ? match[1].trim()
+        : "";
+    }
+
+
+    function extractCover(description) {
+
+      const temp =
+        document.createElement("div");
+
+      temp.innerHTML =
+        description;
+
+
+      const image =
+        temp.querySelector("img");
+
+
+      if (!image) {
+        return "";
+      }
+
+
+      let url =
+        image.getAttribute("src") || "";
+
+
+      /*
+        Goodreads often provides a
+        tiny thumbnail.
+
+        Replace the size code with
+        a larger version.
+      */
+
+      url =
+        url.replace(
+          /_S[XY]\d+_/,
+          "_SX300_"
+        );
+
+
+      return url;
+    }
+
+
+    function parseFeed(xmlText) {
+
+      const parser =
+        new DOMParser();
+
+
+      const xml =
+        parser.parseFromString(
+          xmlText,
+          "application/xml"
+        );
+
+
+      const parserError =
+        xml.querySelector(
+          "parsererror"
+        );
+
+
+      if (parserError) {
+        throw new Error(
+          "Could not parse Goodreads feed."
+        );
+      }
+
+
+      const items =
+        Array.from(
+          xml.querySelectorAll("item")
+        );
+
+
+      return items.map(item => {
+
+        const title =
+          getText(item, "title");
+
+
+        const link =
+          getText(item, "link");
+
+
+        const description =
+          getText(
+            item,
+            "description"
           );
 
-        if (books.length > 0) {
-          setupBookToggle();
-        }
+
+        const pubDate =
+          getText(
+            item,
+            "pubDate"
+          );
+
+
+        return {
+          title,
+          link,
+          author:
+            extractAuthor(description),
+
+          cover:
+            extractCover(description),
+
+          date:
+            pubDate
+              ? new Date(pubDate)
+              : null
+        };
+
+      });
+
+    }
+
+
+    function createBookCard(book) {
+
+      const card =
+        document.createElement(
+          "article"
+        );
+
+      card.className =
+        "book";
+
+
+      const coverLink =
+        document.createElement(
+          "a"
+        );
+
+      coverLink.className =
+        "book-cover";
+
+      coverLink.href =
+        book.link;
+
+      coverLink.target =
+        "_blank";
+
+      coverLink.rel =
+        "noopener noreferrer";
+
+
+      if (book.cover) {
+
+        const image =
+          document.createElement(
+            "img"
+          );
+
+        image.src =
+          book.cover;
+
+        image.alt =
+          `${book.title} cover`;
+
+        image.loading =
+          "lazy";
+
+        coverLink.appendChild(
+          image
+        );
+
+      }
+
+
+      const title =
+        document.createElement(
+          "div"
+        );
+
+      title.className =
+        "book-title";
+
+
+      const titleLink =
+        document.createElement(
+          "a"
+        );
+
+      titleLink.href =
+        book.link;
+
+      titleLink.target =
+        "_blank";
+
+      titleLink.rel =
+        "noopener noreferrer";
+
+      titleLink.textContent =
+        book.title;
+
+
+      title.appendChild(
+        titleLink
+      );
+
+
+      const author =
+        document.createElement(
+          "div"
+        );
+
+      author.className =
+        "book-author";
+
+      author.textContent =
+        book.author;
+
+
+      card.appendChild(
+        coverLink
+      );
+
+      card.appendChild(
+        title
+      );
+
+      card.appendChild(
+        author
+      );
+
+
+      return card;
+    }
+
+
+    function renderPage() {
+
+      const bookshelf =
+        document.getElementById(
+          "bookshelf"
+        );
+
+
+      bookshelf.innerHTML =
+        "";
+
+
+      const totalPages =
+        Math.ceil(
+          books.length
+          / booksPerPage
+        );
+
+
+      const start =
+        (currentPage - 1)
+        * booksPerPage;
+
+
+      const pageBooks =
+        books.slice(
+          start,
+          start + booksPerPage
+        );
+
+
+      pageBooks.forEach(book => {
+
+        bookshelf.appendChild(
+          createBookCard(book)
+        );
 
       });
 
 
-    observer.observe(
-      document.body,
-      {
-        childList: true,
-        subtree: true
+      const indicator =
+        document.getElementById(
+          "pageIndicator"
+        );
+
+
+      indicator.textContent =
+        `${currentPage} of ${totalPages}`;
+
+
+      document
+        .getElementById(
+          "previousButton"
+        )
+        .disabled =
+          currentPage === 1;
+
+
+      document
+        .getElementById(
+          "nextButton"
+        )
+        .disabled =
+          currentPage === totalPages;
+
+    }
+
+
+    async function loadBooks() {
+
+      const bookshelf =
+        document.getElementById(
+          "bookshelf"
+        );
+
+
+      try {
+
+        const response =
+          await fetch(
+            feedUrl,
+            {
+              cache:
+                "no-store"
+            }
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Feed returned ${response.status}`
+          );
+
+        }
+
+
+        const xmlText =
+          await response.text();
+
+
+        books =
+          parseFeed(xmlText);
+
+
+        /*
+          Sort newest additions first.
+        */
+
+        books.sort(
+          (a, b) => {
+
+            if (
+              !a.date ||
+              !b.date
+            ) {
+              return 0;
+            }
+
+            return (
+              b.date.getTime()
+              -
+              a.date.getTime()
+            );
+
+          }
+        );
+
+
+        if (!books.length) {
+
+          bookshelf.innerHTML =
+            `
+            <div class="status-message">
+              No books found on this shelf.
+            </div>
+            `;
+
+          return;
+        }
+
+
+        const totalPages =
+          Math.ceil(
+            books.length
+            / booksPerPage
+          );
+
+
+        if (totalPages > 1) {
+
+          document
+            .getElementById(
+              "pagination"
+            )
+            .style.display =
+              "flex";
+
+        }
+
+
+        renderPage();
+
       }
-    );
+
+      catch (error) {
+
+        console.error(
+          error
+        );
+
+
+        bookshelf.innerHTML =
+          `
+          <div class="status-message">
+            The shelves could not be loaded right now.
+          </div>
+          `;
+
+      }
+
+    }
+
+
+    document
+      .getElementById(
+        "previousButton"
+      )
+      .addEventListener(
+        "click",
+        () => {
+
+          if (
+            currentPage > 1
+          ) {
+
+            currentPage--;
+
+            renderPage();
+
+          }
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        "nextButton"
+      )
+      .addEventListener(
+        "click",
+        () => {
+
+          const totalPages =
+            Math.ceil(
+              books.length
+              / booksPerPage
+            );
+
+
+          if (
+            currentPage
+            < totalPages
+          ) {
+
+            currentPage++;
+
+            renderPage();
+
+          }
+
+        }
+      );
+
+
+    loadBooks();
+
   </script>
 
 </body>
+
 </html>

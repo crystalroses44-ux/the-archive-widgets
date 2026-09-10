@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 10px;
+      background: transparent;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      color: #51483D;
+    }
+
+    .widget {
+      width: 100%;
+      background: #FFFDF8;
+
+      border: 1px solid #B68B45;
+      outline: 1px solid #DED5BD;
+      outline-offset: -5px;
+
+      padding: 18px 18px 16px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .star {
+      color: #B68B45;
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .header h1 {
+      margin: 0;
+
+      font-size: 15px;
+      font-weight: normal;
+
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .header p {
+      margin: 4px 0 0;
+
+      font-size: 10.5px;
+      font-style: italic;
+
+      color: #829074;
+    }
+
+    .mode-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .mode-button {
+      border: 1px solid #D5CAB0;
+      background: #FBF8EF;
+
+      padding: 5px 10px;
+
+      font-family: inherit;
+      font-size: 10px;
+
+      color: #70433F;
+      cursor: pointer;
+    }
+
+    .mode-button.active {
+      background: #F2EEDC;
+      border-color: #B68B45;
+    }
+
+    .word-card {
+      border: 1px solid #D8CFB7;
+      background: #FAF8F1;
+
+      padding: 18px 16px;
+      text-align: center;
+
+      min-height: 230px;
+    }
+
+    .label {
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+
+      color: #829074;
+
+      margin-bottom: 7px;
+    }
+
+    .word {
+      margin: 0;
+
+      font-size: 25px;
+      font-weight: normal;
+
+      color: #51483D;
+    }
+
+    .part-of-speech {
+      margin-top: 5px;
+
+      font-size: 10.5px;
+      font-style: italic;
+
+      color: #829074;
+    }
+
+    .rule {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 7px;
+
+      margin: 13px 0;
+    }
+
+    .rule span {
+      display: block;
+      width: 36px;
+      height: 1px;
+
+      background: #C8B788;
+    }
+
+    .rule b {
+      color: #B68B45;
+      font-size: 7px;
+      font-weight: normal;
+    }
+
+    .prompt {
+      font-size: 11px;
+      line-height: 1.45;
+
+      color: #6A6258;
+    }
+
+    .definition-box,
+    .example-box {
+      display: none;
+
+      margin-top: 12px;
+      padding: 10px 12px;
+
+      background: #F7F3E8;
+      border: 1px solid #DDD2B8;
+
+      text-align: left;
+
+      font-size: 10.5px;
+      line-height: 1.5;
+    }
+
+    .definition-box strong,
+    .example-box strong {
+      display: block;
+
+      margin-bottom: 4px;
+
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+
+      color: #829074;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+
+      justify-content: center;
+      gap: 7px;
+
+      margin-top: 13px;
+    }
+
+    button {
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+    }
+
+    .action-button {
+      border: 1px solid #CDBE99;
+      background: #FFFDF8;
+
+      padding: 6px 10px;
+
+      font-size: 10px;
+
+      color: #70433F;
+      cursor: pointer;
+    }
+
+    .action-button:hover {
+      background: #F7F3E8;
+    }
+
+    .practice-section {
+      margin-top: 15px;
+    }
+
+    .practice-title {
+      margin-bottom: 6px;
+
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+
+      color: #829074;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 82px;
+
+      resize: vertical;
+
+      padding: 10px;
+
+      border: 1px solid #D8CFB7;
+      background: #FFFDF8;
+
+      color: #51483D;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: 11px;
+      line-height: 1.5;
+
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #B68B45;
+    }
+
+    .rating-row {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+
+      margin-top: 9px;
+    }
+
+    .rating-button {
+      border: 1px solid #D2C6AA;
+      background: #F9F6ED;
+
+      padding: 5px 9px;
+
+      font-size: 9.5px;
+
+      cursor: pointer;
+
+      color: #51483D;
+    }
+
+    .rating-button:hover {
+      border-color: #B68B45;
+    }
+
+    .stats {
+      margin-top: 12px;
+
+      text-align: center;
+
+      font-size: 9px;
+      color: #829074;
+    }
+
+    .message {
+      margin-top: 8px;
+
+      text-align: center;
+
+      min-height: 15px;
+
+      font-size: 9.5px;
+      font-style: italic;
+
+      color: #70433F;
+    }
+
+    .loading,
+    .error {
+      text-align: center;
+
+      padding: 30px 10px;
+
+      font-size: 11px;
+      font-style: italic;
+
+      color: #829074;
+    }
+
+    @media (max-width: 520px) {
+      .word {
+        font-size: 22px;
+      }
+
+      .widget {
+        padding: 15px 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="widget">
+
+    <header class="header">
+      <div class="star">✦</div>
+
+      <h1>Word Garden</h1>
+
+      <p>
+        a daily return to words worth keeping
+      </p>
+    </header>
+
+    <div class="mode-tabs">
+
+      <button
+        class="mode-button active"
+        id="dailyModeButton"
+      >
+        Word of the Day
+      </button>
+
+      <button
+        class="mode-button"
+        id="flashcardModeButton"
+      >
+        Flashcards
+      </button>
+
+    </div>
+
+    <div id="content">
+
+      <div class="loading">
+        Gathering words from the garden...
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <script>
+
+    const feedUrl =
+      "https://archive-word-garden.crystalroses44.workers.dev/?widget=1";
+
+    let words = [];
+    let currentWord = null;
+    let currentMode = "daily";
+
+    const storageKey =
+      "archive-word-garden-review";
+
+    const todayKey =
+      new Date()
+        .toISOString()
+        .slice(0, 10);
+
+
+    async function loadWords() {
+      try {
+        const response =
+          await fetch(feedUrl);
+
+        if (!response.ok) {
+          throw new Error(
+            `Worker returned ${response.status}`
+          );
+        }
+
+        const data =
+          await response.json();
+
+        words =
+          Array.isArray(data.words)
+            ? data.words
+            : [];
+
+        if (!words.length) {
+          showError(
+            "No completed Word Garden entries are available yet."
+          );
+
+          return;
+        }
+
+        showDailyWord();
+
+      } catch (error) {
+        showError(
+          "Unable to load the Word Garden right now."
+        );
+      }
+    }
+
+
+    function hashString(text) {
+      let hash = 0;
+
+      for (
+        let i = 0;
+        i < text.length;
+        i++
+      ) {
+        hash =
+          (
+            (hash << 5)
+            - hash
+          )
+          + text.charCodeAt(i);
+
+        hash |= 0;
+      }
+
+      return Math.abs(hash);
+    }
+
+
+    function getDailyWord() {
+      const index =
+        hashString(todayKey)
+        % words.length;
+
+      return words[index];
+    }
+
+
+    function getRandomWord() {
+      if (words.length === 1) {
+        return words[0];
+      }
+
+      let next = currentWord;
+
+      while (
+        next === currentWord
+      ) {
+        next =
+          words[
+            Math.floor(
+              Math.random()
+              * words.length
+            )
+          ];
+      }
+
+      return next;
+    }
+
+
+    function showDailyWord() {
+      currentMode = "daily";
+
+      updateModeButtons();
+
+      currentWord =
+        getDailyWord();
+
+      renderWord();
+    }
+
+
+    function showFlashcardWord() {
+      currentMode = "flashcard";
+
+      updateModeButtons();
+
+      currentWord =
+        getRandomWord();
+
+      renderWord();
+    }
+
+
+    function updateModeButtons() {
+      document
+        .getElementById(
+          "dailyModeButton"
+        )
+        .classList
+        .toggle(
+          "active",
+          currentMode === "daily"
+        );
+
+      document
+        .getElementById(
+          "flashcardModeButton"
+        )
+        .classList
+        .toggle(
+          "active",
+          currentMode === "flashcard"
+        );
+    }
+
+
+    function renderWord() {
+      const content =
+        document.getElementById(
+          "content"
+        );
+
+      const hasExample =
+        currentWord.example
+        && currentWord.example.trim();
+
+      content.innerHTML = `
+
+        <div class="word-card">
+
+          <div class="label">
+            ${
+              currentMode === "daily"
+                ? "Today's Word"
+                : "Review Card"
+            }
+          </div>
+
+          <h2 class="word">
+            ${escapeHtml(
+              currentWord.word
+            )}
+          </h2>
+
+          <div class="part-of-speech">
+            ${escapeHtml(
+              currentWord.partOfSpeech
+            )}
+          </div>
+
+
+          <div class="rule">
+            <span></span>
+            <b>✦</b>
+            <span></span>
+          </div>
+
+
+          <div class="prompt">
+            Do you remember what this word means?
+          </div>
+
+
+          <div class="button-row">
+
+            <button
+              class="action-button"
+              id="revealButton"
+            >
+              Reveal Meaning
+            </button>
+
+            ${
+              hasExample
+                ? `
+                <button
+                  class="action-button"
+                  id="exampleButton"
+                >
+                  Show Example
+                </button>
+                `
+                : ""
+            }
+
+          </div>
+
+
+          <div
+            class="definition-box"
+            id="definitionBox"
+          >
+
+            <strong>
+              Meaning
+            </strong>
+
+            ${formatText(
+              currentWord.definition
+            )}
+
+          </div>
+
+
+          ${
+            hasExample
+              ? `
+              <div
+                class="example-box"
+                id="exampleBox"
+              >
+
+                <strong>
+                  Example
+                </strong>
+
+                ${formatText(
+                  currentWord.example
+                )}
+
+              </div>
+              `
+              : ""
+          }
+
+        </div>
+
+
+        <div class="practice-section">
+
+          <div class="practice-title">
+            Use It
+          </div>
+
+          <textarea
+            id="practiceText"
+            placeholder="Write a sentence or tiny drabble using “${escapeAttribute(
+              currentWord.word
+            )}”..."
+          ></textarea>
+
+
+          <div class="rating-row">
+
+            <button
+              class="rating-button"
+              data-rating="got"
+            >
+              Got it
+            </button>
+
+            <button
+              class="rating-button"
+              data-rating="unsure"
+            >
+              Unsure
+            </button>
+
+            <button
+              class="rating-button"
+              data-rating="missed"
+            >
+              Missed it
+            </button>
+
+          </div>
+
+
+          <div
+            class="message"
+            id="message"
+          ></div>
+
+
+          <div class="stats">
+            Reviewed today:
+            <span id="reviewCount">
+              ${getTodayReviewCount()}
+            </span>
+          </div>
+
+
+          ${
+            currentMode === "flashcard"
+              ? `
+              <div class="button-row">
+                <button
+                  class="action-button"
+                  id="anotherWordButton"
+                >
+                  Another Word →
+                </button>
+              </div>
+              `
+              : `
+              <div class="button-row">
+                <button
+                  class="action-button"
+                  id="practiceMoreButton"
+                >
+                  Practice Another Word →
+                </button>
+              </div>
+              `
+          }
+
+        </div>
+      `;
+
+
+      document
+        .getElementById(
+          "revealButton"
+        )
+        .addEventListener(
+          "click",
+          toggleDefinition
+        );
+
+
+      if (hasExample) {
+        document
+          .getElementById(
+            "exampleButton"
+          )
+          .addEventListener(
+            "click",
+            toggleExample
+          );
+      }
+
+
+      document
+        .querySelectorAll(
+          ".rating-button"
+        )
+        .forEach(button => {
+
+          button
+            .addEventListener(
+              "click",
+              () => {
+                recordReview(
+                  button.dataset.rating
+                );
+              }
+            );
+
+        });
+
+
+      const nextButton =
+        document.getElementById(
+          "anotherWordButton"
+        )
+        ||
+        document.getElementById(
+          "practiceMoreButton"
+        );
+
+      nextButton
+        .addEventListener(
+          "click",
+          showFlashcardWord
+        );
+    }
+
+
+    function toggleDefinition() {
+      const box =
+        document.getElementById(
+          "definitionBox"
+        );
+
+      const button =
+        document.getElementById(
+          "revealButton"
+        );
+
+      const hidden =
+        box.style.display !== "block";
+
+      box.style.display =
+        hidden
+          ? "block"
+          : "none";
+
+      button.textContent =
+        hidden
+          ? "Hide Meaning"
+          : "Reveal Meaning";
+    }
+
+
+    function toggleExample() {
+      const box =
+        document.getElementById(
+          "exampleBox"
+        );
+
+      const button =
+        document.getElementById(
+          "exampleButton"
+        );
+
+      const hidden =
+        box.style.display !== "block";
+
+      box.style.display =
+        hidden
+          ? "block"
+          : "none";
+
+      button.textContent =
+        hidden
+          ? "Hide Example"
+          : "Show Example";
+    }
+
+
+    function getReviewData() {
+      try {
+        return JSON.parse(
+          localStorage.getItem(
+            storageKey
+          )
+        ) || {};
+      } catch {
+        return {};
+      }
+    }
+
+
+    function saveReviewData(data) {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify(data)
+      );
+    }
+
+
+    function recordReview(rating) {
+      const data =
+        getReviewData();
+
+      if (!data[todayKey]) {
+        data[todayKey] = [];
+      }
+
+      data[todayKey].push({
+        word:
+          currentWord.word,
+
+        rating,
+
+        text:
+          document
+            .getElementById(
+              "practiceText"
+            )
+            .value
+            .trim(),
+
+        time:
+          new Date()
+            .toISOString()
+      });
+
+      saveReviewData(data);
+
+      document
+        .getElementById(
+          "reviewCount"
+        )
+        .textContent =
+          getTodayReviewCount();
+
+      const messages = {
+        got:
+          "Shelved as remembered. ✦",
+
+        unsure:
+          "Marked for another visit.",
+
+        missed:
+          "No worries — this one can return again."
+      };
+
+      document
+        .getElementById(
+          "message"
+        )
+        .textContent =
+          messages[rating];
+    }
+
+
+    function getTodayReviewCount() {
+      const data =
+        getReviewData();
+
+      return Array.isArray(
+        data[todayKey]
+      )
+        ? data[todayKey].length
+        : 0;
+    }
+
+
+    function formatText(text) {
+      return escapeHtml(text)
+        .replace(
+          /\n/g,
+          "<br>"
+        );
+    }
+
+
+    function escapeHtml(text = "") {
+      return text
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+    }
+
+
+    function escapeAttribute(
+      text = ""
+    ) {
+      return escapeHtml(text);
+    }
+
+
+    function showError(message) {
+      document
+        .getElementById(
+          "content"
+        )
+        .innerHTML = `
+          <div class="error">
+            ${escapeHtml(message)}
+          </div>
+        `;
+    }
+
+
+    document
+      .getElementById(
+        "dailyModeButton"
+      )
+      .addEventListener(
+        "click",
+        showDailyWord
+      );
+
+
+    document
+      .getElementById(
+        "flashcardModeButton"
+      )
+      .addEventListener(
+        "click",
+        showFlashcardWord
+      );
+
+
+    loadWords();
+
+  </script>
+
+</body>
+</html>

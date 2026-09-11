@@ -208,6 +208,10 @@
     cursor:pointer;
   }
   button.action:hover{background:rgba(182,139,69,.08)}
+  button.action:disabled{
+    opacity:.58;
+    cursor:wait;
+  }
   button.action.primary{
     background:var(--gold);
     color:white;
@@ -339,7 +343,7 @@
 
   <div class="inner">
     <div class="eyebrow">✦ choose a thread ✦</div>
-    <h1>THE CURIOSITY CABINET</h1
+    <h1>THE CURIOSITY CABINET</h1>
     <div class="rule"></div>
 
     <div class="filters" id="filters"></div>
@@ -367,7 +371,8 @@
     </div>
 
     <div class="controls">
-      <button class="action primary" id="anotherBtn">Another Topic</button>
+      <button class="action primary" id="studyBtn">🏛 Study This Topic →</button>
+      <button class="action" id="anotherBtn">Another Topic</button>
       <button class="action" id="keepBtn">♡ Keep This</button>
       <button class="action" id="addBtn">＋ Add</button>
     </div>
@@ -867,12 +872,16 @@ const FILTERS = [
 
 const LS_CUSTOM = "archive-curiosity-cabinet-custom-v2";
 const LS_KEPT = "archive-curiosity-cabinet-kept-v2";
+const LS_STUDY_LINKS = "archive-curiosity-cabinet-study-links-v1";
+const EDIFICE_STUDY_URL = "https://archive-edifice.crystalroses44.workers.dev/study";
 
 let custom = JSON.parse(localStorage.getItem(LS_CUSTOM) || "[]");
 let kept = new Set(JSON.parse(localStorage.getItem(LS_KEPT) || "[]"));
+let studyLinks = JSON.parse(localStorage.getItem(LS_STUDY_LINKS) || "{}");
 let activeFilter = "Surprise Me";
 let current = null;
 let lastKey = null;
+let studyBusy = false;
 
 const topicEl = document.getElementById("topic");
 const catEl = document.getElementById("categoryLabel");
@@ -882,6 +891,7 @@ const threadEl = document.getElementById("followThread");
 const sourceEl = document.getElementById("sourceNote");
 const filtersEl = document.getElementById("filters");
 const keepBtn = document.getElementById("keepBtn");
+const studyBtn = document.getElementById("studyBtn");
 const countText = document.getElementById("countText");
 const keptCount = document.getElementById("keptCount");
 
@@ -948,7 +958,34 @@ function renderCurrent(){
   sourceEl.textContent=current.s || (current.mine ? "from your cabinet" : "");
   keepBtn.classList.toggle("kept",kept.has(current.id));
   keepBtn.textContent=kept.has(current.id) ? "♥ Kept" : "♡ Keep This";
+  renderStudyButton();
   updateMeta();
+}
+
+function renderStudyButton(){
+  if(!studyBtn) return;
+
+  if(!current){
+    studyBtn.disabled=true;
+    studyBtn.textContent="🏛 Study This Topic →";
+    return;
+  }
+
+  const existing=studyLinks[current.id];
+
+  if(existing){
+    studyBtn.disabled=false;
+    studyBtn.textContent="Open in The Edifice ↗";
+    studyBtn.dataset.mode="open";
+  }else if(studyBusy){
+    studyBtn.disabled=true;
+    studyBtn.textContent="Creating study page…";
+    studyBtn.dataset.mode="busy";
+  }else{
+    studyBtn.disabled=false;
+    studyBtn.textContent="🏛 Study This Topic →";
+    studyBtn.dataset.mode="create";
+  }
 }
 
 function updateMeta(){
@@ -976,6 +1013,55 @@ function renderFilters(){
     filtersEl.appendChild(b);
   });
 }
+
+
+studyBtn.onclick=async()=>{
+  if(!current || studyBusy) return;
+
+  const existing=studyLinks[current.id];
+
+  if(existing){
+    window.open(existing,"_blank","noopener,noreferrer");
+    return;
+  }
+
+  studyBusy=true;
+  renderStudyButton();
+
+  try{
+    const response=await fetch(EDIFICE_STUDY_URL,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        topic:current.t,
+        category:current.c,
+        startHere:current.a || autoStart(current.t),
+        goDeeper:current.b || autoDeep(current.t),
+        followThread:current.d || autoThread(current.t)
+      })
+    });
+
+    const result=await response.json();
+
+    if(!response.ok || !result.ok || !result.notionUrl){
+      throw new Error(result.error || "The Edifice could not create this page.");
+    }
+
+    studyLinks[current.id]=result.notionUrl;
+    localStorage.setItem(LS_STUDY_LINKS,JSON.stringify(studyLinks));
+
+    studyBusy=false;
+    renderStudyButton();
+
+  }catch(error){
+    studyBusy=false;
+    renderStudyButton();
+    studyBtn.textContent="Couldn’t create page — try again";
+    console.error(error);
+  }
+};
 
 document.getElementById("anotherBtn").onclick=draw;
 

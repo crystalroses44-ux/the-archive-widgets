@@ -1,6 +1,6 @@
 /* =========================================
    LOOSE LEAVES
-   Complete merged stylesheet
+   Complete stylesheet
    ========================================= */
 
 * {
@@ -69,16 +69,25 @@ body {
   pointer-events: none;
 }
 
+/* Top left */
 .corner-tl {
   top: 7px;
   left: 9px;
 }
 
+/* Top right */
 .corner-tr {
   top: 7px;
   right: 9px;
 }
 
+/* Bottom left */
+.corner-bl {
+  bottom: 7px;
+  left: 9px;
+}
+
+/* Bottom right */
 .corner-br {
   right: 9px;
   bottom: 7px;
@@ -177,9 +186,10 @@ body {
   /*
     Ruled paper.
 
-    background-attachment: local means the lines
+    background-attachment: local makes the lines
     scroll together with the text.
   */
+
   background-color: transparent;
 
   background-image:
@@ -206,8 +216,8 @@ body {
 
 
 /*
-  IMPORTANT:
-  The JS toggles the hidden attribute.
+  JavaScript switches between editing
+  and clean reading mode using hidden.
 */
 
 #looseLeaves[hidden],

@@ -71,11 +71,6 @@ textarea.addEventListener("blur", async () => {
    ========================================= */
 
 display.addEventListener("click", event => {
-  /*
-    Clicking a saved link should open the link.
-    Clicking anywhere else returns to edit mode.
-  */
-
   if (event.target.closest("a")) return;
 
   showEditor();
@@ -133,9 +128,6 @@ function renderDisplay(text) {
   lines.forEach(line => {
     const trimmed = line.trim();
 
-    /*
-      Blank lines preserve spacing.
-    */
     if (!trimmed) {
       const spacer = document.createElement("div");
       spacer.className = "leaf-spacer";
@@ -144,17 +136,11 @@ function renderDisplay(text) {
       return;
     }
 
-    /*
-      Entire line is a URL.
-    */
     if (isUrl(trimmed)) {
       display.appendChild(createUrlLeaf(trimmed));
       return;
     }
 
-    /*
-      Ordinary written note.
-    */
     const note = document.createElement("div");
 
     note.className = "leaf-note";
@@ -180,34 +166,19 @@ function createUrlLeaf(url) {
   const info = describeUrl(url);
   const capture = getCaptureRecord(url);
 
-
-  /*
-    Gold star
-  */
   const marker = document.createElement("span");
-
   marker.className = "leaf-marker";
   marker.textContent = "✦";
 
-
-  /*
-    Label + small source text
-  */
   const text = document.createElement("span");
-
   text.className = "leaf-link-text";
 
-
   const label = document.createElement("span");
-
   label.className = "leaf-link-label";
   label.textContent = info.label;
 
-
   const source = document.createElement("span");
-
   source.className = "leaf-link-source";
-
 
   if (capture?.status === "archived") {
     source.textContent = `${info.source} · archived`;
@@ -219,16 +190,10 @@ function createUrlLeaf(url) {
     source.textContent = info.source;
   }
 
-
   text.appendChild(label);
   text.appendChild(source);
 
-
-  /*
-    Right-side symbol
-  */
   const arrow = document.createElement("span");
-
   arrow.className = "leaf-arrow";
 
   if (capture?.status === "archived") {
@@ -236,7 +201,6 @@ function createUrlLeaf(url) {
   } else {
     arrow.textContent = "↗";
   }
-
 
   anchor.appendChild(marker);
   anchor.appendChild(text);
@@ -256,28 +220,18 @@ async function captureUrlsFromText(text) {
     .map(line => line.trim())
     .filter(line => isUrl(line));
 
-
   for (const url of urls) {
     const existingRecord = getCaptureRecord(url);
 
-    /*
-      Already archived successfully.
-      Don't send it again.
-    */
     if (existingRecord?.status === "archived") {
       continue;
     }
 
-
-    /*
-      Mark as in progress.
-    */
     setCaptureRecord(url, {
       status: "capturing"
     });
 
     renderDisplay(text);
-
 
     try {
       const response = await fetch(
@@ -295,9 +249,7 @@ async function captureUrlsFromText(text) {
         }
       );
 
-
       const result = await response.json();
-
 
       if (!response.ok || !result.ok) {
         throw new Error(
@@ -305,19 +257,12 @@ async function captureUrlsFromText(text) {
         );
       }
 
-
       setCaptureRecord(url, {
         status: "archived",
-
         duplicate: Boolean(result.duplicate),
-
-        notionUrl:
-          result.notionUrl || "",
-
-        pageId:
-          result.pageId || ""
+        notionUrl: result.notionUrl || "",
+        pageId: result.pageId || ""
       });
-
 
     } catch (error) {
       console.error(
@@ -329,7 +274,6 @@ async function captureUrlsFromText(text) {
         status: "error"
       });
     }
-
 
     renderDisplay(text);
   }
@@ -428,10 +372,6 @@ function describeUrl(url) {
     const hostname =
       parsed.hostname.replace(/^www\./, "");
 
-
-    /*
-      Substack
-    */
     if (
       hostname === "substack.com" ||
       hostname.endsWith(".substack.com")
@@ -444,7 +384,6 @@ function describeUrl(url) {
         pathParts.find(
           part => part.startsWith("@")
         ) ||
-
         (
           hostname.endsWith(".substack.com")
             ? `@${hostname.replace(
@@ -463,10 +402,6 @@ function describeUrl(url) {
       };
     }
 
-
-    /*
-      YouTube
-    */
     if (
       hostname.includes("youtube.com") ||
       hostname === "youtu.be"
@@ -477,14 +412,8 @@ function describeUrl(url) {
       };
     }
 
-
-    /*
-      AO3
-    */
     if (
-      hostname.includes(
-        "archiveofourown.org"
-      )
+      hostname.includes("archiveofourown.org")
     ) {
       return {
         label: "Archive of Our Own",
@@ -492,10 +421,6 @@ function describeUrl(url) {
       };
     }
 
-
-    /*
-      Goodreads
-    */
     if (
       hostname.includes("goodreads.com")
     ) {
@@ -505,10 +430,6 @@ function describeUrl(url) {
       };
     }
 
-
-    /*
-      Generic website
-    */
     const domainName = hostname
       .split(".")[0]
       .replace(/[-_]/g, " ")
@@ -517,12 +438,10 @@ function describeUrl(url) {
         letter => letter.toUpperCase()
       );
 
-
     return {
       label: domainName,
       source: hostname
     };
-
 
   } catch {
     return {

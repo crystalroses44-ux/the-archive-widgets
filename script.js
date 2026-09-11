@@ -558,24 +558,33 @@ async function captureToDestination(
 
 
     setCaptureRecord(
-      url,
-      {
-        status: "archived",
+  url,
+  {
+    status: "archived",
 
-        destination,
+    destination,
 
-        duplicate:
-          Boolean(
-            result.duplicate
-          ),
+    duplicate:
+      Boolean(
+        result.duplicate
+      ),
 
-        notionUrl:
-          result.notionUrl || "",
+    notionUrl:
+      result.notionUrl || "",
 
-        pageId:
-          result.pageId || ""
-      }
-    );
+    pageId:
+      result.pageId || "",
+
+    resource:
+      result.resource || "",
+
+    creator:
+      result.creator || "",
+
+    type:
+      result.type || ""
+  }
+);
 
 
   } catch (error) {

@@ -1,7 +1,8 @@
-/* -----------------------------
-   Loose Leaves editable + reading paper
------------------------------- */
+/* =========================================
+   Loose Leaves — final styles
+   ========================================= */
 
+/* Editing textarea + clean reading display */
 #looseLeaves,
 .loose-leaves-display {
   width: 100%;
@@ -12,6 +13,8 @@
 
   padding: 8px 10px;
 
+  box-sizing: border-box;
+
   font-family: Georgia, "Times New Roman", serif;
   font-size: 11px;
   line-height: 22px;
@@ -19,9 +22,9 @@
   color: #51483d;
 
   /*
-    Ruled paper lines.
-    Because this background belongs to the scrollable element itself,
-    the lines move with the text when the element scrolls.
+    Ruled-paper effect.
+    The background belongs to the scrollable content,
+    so the lines move with the text.
   */
   background-image:
     repeating-linear-gradient(
@@ -36,18 +39,18 @@
   background-position: 0 8px;
 }
 
-/* Keep textarea visually clean */
+/* Textarea */
 #looseLeaves {
   resize: none;
   border: none;
   outline: none;
-  box-sizing: border-box;
+  background-color: transparent;
 }
 
-/* Clean display view */
+/* Clean reading view */
 .loose-leaves-display {
   cursor: text;
-  box-sizing: border-box;
+  background-color: transparent;
 }
 
 /* Ordinary written notes */
@@ -55,18 +58,21 @@
   min-height: 22px;
   line-height: 22px;
 
+  margin: 0;
+
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-/*
-  Blank lines preserve the ruled-paper rhythm.
-*/
+/* Preserve blank handwritten-style spacing */
 .leaf-spacer {
   height: 22px;
 }
 
-/* URL entry */
+/* -----------------------------
+   Saved URL leaves
+------------------------------ */
+
 .leaf-link {
   display: flex;
   align-items: center;
@@ -76,6 +82,8 @@
   min-height: 44px;
 
   padding: 0 4px;
+
+  box-sizing: border-box;
 
   color: #51483d;
   text-decoration: none;
@@ -87,13 +95,17 @@
   background: rgba(182, 139, 69, 0.05);
 }
 
+/* Tiny gold star beside links */
 .leaf-marker {
   flex: 0 0 auto;
 
   font-size: 8px;
+  line-height: 1;
+
   color: #b68b45;
 }
 
+/* Link text stack */
 .leaf-link-text {
   display: flex;
   flex: 1;
@@ -103,6 +115,7 @@
   justify-content: center;
 }
 
+/* Main readable label */
 .leaf-link-label {
   overflow: hidden;
 
@@ -113,7 +126,10 @@
   text-overflow: ellipsis;
 }
 
+/* Small source text */
 .leaf-link-source {
+  margin-top: 1px;
+
   font-size: 8px;
   line-height: 14px;
   font-style: italic;
@@ -121,9 +137,37 @@
   color: #829074;
 }
 
+/* External-link arrow */
 .leaf-arrow {
   flex: 0 0 auto;
 
   font-size: 9px;
+  line-height: 1;
+
   color: #b68b45;
+}
+
+/* -----------------------------
+   Scrollbar
+------------------------------ */
+
+#looseLeaves::-webkit-scrollbar,
+.loose-leaves-display::-webkit-scrollbar {
+  width: 5px;
+}
+
+#looseLeaves::-webkit-scrollbar-track,
+.loose-leaves-display::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#looseLeaves::-webkit-scrollbar-thumb,
+.loose-leaves-display::-webkit-scrollbar-thumb {
+  background: rgba(182, 139, 69, 0.28);
+  border-radius: 999px;
+}
+
+#looseLeaves::-webkit-scrollbar-thumb:hover,
+.loose-leaves-display::-webkit-scrollbar-thumb:hover {
+  background: rgba(182, 139, 69, 0.42);
 }

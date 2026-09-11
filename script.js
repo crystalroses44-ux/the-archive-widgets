@@ -290,7 +290,15 @@ function createUrlLeaf(url) {
   label.className =
     "leaf-link-label";
 
+  /*
+    If the Worker returned the real
+    title, use it after archiving.
+
+    Otherwise use the normal URL label.
+  */
+
   label.textContent =
+    capture?.resource ||
     info.label;
 
 
@@ -301,6 +309,10 @@ function createUrlLeaf(url) {
     "leaf-link-source";
 
 
+  /* =====================================
+     ARCHIVED
+     ===================================== */
+
   if (
     capture?.status === "archived"
   ) {
@@ -309,15 +321,74 @@ function createUrlLeaf(url) {
         ? "Art Repository"
         : "Edifice";
 
-    if (capture.duplicate) {
-      source.textContent =
-        `${info.source} · already in ${destinationLabel}`;
+    const details = [];
+
+
+    /*
+      Use the actual channel / creator
+      returned by the Worker when available.
+    */
+
+    if (capture.creator) {
+      details.push(
+        capture.creator
+      );
     } else {
-      source.textContent =
-        `${info.source} · archived to ${destinationLabel}`;
+      details.push(
+        info.source
+      );
     }
 
-  } else if (
+
+    /*
+      Add the resource type.
+    */
+
+    if (capture.type) {
+      const type =
+        capture.type.toLowerCase();
+
+      /*
+        Avoid duplicate wording like:
+        "video · video"
+      */
+
+      if (
+        !details
+          .join(" ")
+          .toLowerCase()
+          .includes(type)
+      ) {
+        details.push(type);
+      }
+    }
+
+
+    /*
+      Archive status
+    */
+
+    if (capture.duplicate) {
+      details.push(
+        `already in ${destinationLabel}`
+      );
+    } else {
+      details.push(
+        `archived to ${destinationLabel}`
+      );
+    }
+
+
+    source.textContent =
+      details.join(" · ");
+  }
+
+
+  /* =====================================
+     CAPTURING
+     ===================================== */
+
+  else if (
     capture?.status === "capturing"
   ) {
     const destinationLabel =
@@ -327,14 +398,26 @@ function createUrlLeaf(url) {
 
     source.textContent =
       `${info.source} · sending to ${destinationLabel}…`;
+  }
 
-  } else if (
+
+  /* =====================================
+     ERROR
+     ===================================== */
+
+  else if (
     capture?.status === "error"
   ) {
     source.textContent =
       `${info.source} · archive failed`;
+  }
 
-  } else {
+
+  /* =====================================
+     NOT YET ARCHIVED
+     ===================================== */
+
+  else {
     source.textContent =
       info.source;
   }
@@ -558,33 +641,38 @@ async function captureToDestination(
 
 
     setCaptureRecord(
-  url,
-  {
-    status: "archived",
+      url,
+      {
+        status: "archived",
 
-    destination,
+        destination,
 
-    duplicate:
-      Boolean(
-        result.duplicate
-      ),
+        duplicate:
+          Boolean(
+            result.duplicate
+          ),
 
-    notionUrl:
-      result.notionUrl || "",
+        notionUrl:
+          result.notionUrl || "",
 
-    pageId:
-      result.pageId || "",
+        pageId:
+          result.pageId || "",
 
-    resource:
-      result.resource || "",
+        /*
+          Metadata returned by
+          the destination Worker.
+        */
 
-    creator:
-      result.creator || "",
+        resource:
+          result.resource || "",
 
-    type:
-      result.type || ""
-  }
-);
+        creator:
+          result.creator || "",
+
+        type:
+          result.type || ""
+      }
+    );
 
 
   } catch (error) {

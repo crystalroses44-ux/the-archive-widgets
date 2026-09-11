@@ -46,8 +46,8 @@
   }
 
   .clock{
-    width:158px;
-    height:158px;
+    width:190px;
+    height:190px;
     margin:0 auto;
     border-radius:50%;
     position:relative;
@@ -126,19 +126,19 @@
   }
   .hour{
     width:2px;
-    height:37px;
+    height:44px;
     margin-left:-1px;
     background:var(--forest);
   }
   .minute{
     width:1.5px;
-    height:50px;
+    height:60px;
     margin-left:-.75px;
     background:var(--ink);
   }
   .second{
     width:1px;
-    height:53px;
+    height:64px;
     margin-left:-.5px;
     background:var(--gold);
     opacity:.75;
@@ -192,10 +192,10 @@
   }
 
   @media(max-width:350px){
-    .clock{width:146px;height:146px}
-    .hour{height:34px}
-    .minute{height:46px}
-    .second{height:49px}
+    .clock{width:176px;height:176px}
+    .hour{height:41px}
+    .minute{height:55px}
+    .second{height:59px}
   }
 </style>
 </head>
@@ -225,7 +225,7 @@ for(let i=0;i<60;i++){
   const tick=document.createElement("span");
   tick.className="tick";
   const angle=i*6;
-  const radius=64;
+  const radius=77;
   const rad=(angle-90)*Math.PI/180;
   const x=Math.cos(rad)*radius;
   const y=Math.sin(rad)*radius;
@@ -240,7 +240,7 @@ romans.forEach((roman,i)=>{
   n.className="numeral";
   n.textContent=roman;
   const angle=i*30;
-  const radius=57;
+  const radius=69;
   const rad=(angle-90)*Math.PI/180;
   const x=Math.cos(rad)*radius;
   const y=Math.sin(rad)*radius;

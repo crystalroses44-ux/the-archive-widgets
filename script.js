@@ -9,16 +9,30 @@ const CAPTURED_KEY = "archive-loose-leaves-captured-v1";
 const EDIFICE_CAPTURE_URL =
   "https://archive-edifice.crystalroses44.workers.dev/capture";
 
+const ART_CAPTURE_URL =
+  "https://archive-art-repository.crystalroses44.workers.dev/capture";
+
 let saveTimer;
+
+
+/* =========================================
+   ROUTING CONTROL STYLES
+   ========================================= */
+
+injectRoutingStyles();
 
 
 /* =========================================
    LOAD
    ========================================= */
 
-const savedNotes = localStorage.getItem(STORAGE_KEY) || "";
+const savedNotes =
+  localStorage.getItem(STORAGE_KEY) || "";
 
 textarea.value = savedNotes;
+
+migrateOldCaptureRecords();
+
 renderDisplay(savedNotes);
 
 if (savedNotes.trim()) {
@@ -29,7 +43,7 @@ if (savedNotes.trim()) {
 
 
 /* =========================================
-   AUTOSAVE + ARCHIVE
+   AUTOSAVE
    ========================================= */
 
 textarea.addEventListener("input", () => {
@@ -37,21 +51,18 @@ textarea.addEventListener("input", () => {
 
   clearTimeout(saveTimer);
 
-  saveTimer = setTimeout(async () => {
+  saveTimer = setTimeout(() => {
     const value = textarea.value;
 
-    localStorage.setItem(STORAGE_KEY, value);
+    localStorage.setItem(
+      STORAGE_KEY,
+      value
+    );
 
-    saveStatus.textContent = "saved locally";
-
-    /*
-      After the note is safely saved,
-      check for URLs and archive them.
-    */
-    await captureUrlsFromText(value);
+    saveStatus.textContent =
+      "saved locally";
 
     renderDisplay(value);
-
   }, 1000);
 });
 
@@ -60,82 +71,108 @@ textarea.addEventListener("input", () => {
    WHEN LEAVING EDIT MODE
    ========================================= */
 
-textarea.addEventListener("blur", async () => {
-  clearTimeout(saveTimer);
+textarea.addEventListener(
+  "blur",
+  () => {
+    clearTimeout(saveTimer);
 
-  const value = textarea.value;
+    const value = textarea.value;
 
-  localStorage.setItem(STORAGE_KEY, value);
+    localStorage.setItem(
+      STORAGE_KEY,
+      value
+    );
 
-  saveStatus.textContent = "saved locally";
+    saveStatus.textContent =
+      "saved locally";
 
-  /*
-    Blur gives us a second opportunity to
-    capture anything that hasn't been sent yet.
-  */
-  await captureUrlsFromText(value);
+    renderDisplay(value);
 
-  renderDisplay(value);
-
-  if (value.trim()) {
-    showDisplay();
+    if (value.trim()) {
+      showDisplay();
+    }
   }
-});
+);
 
 
 /* =========================================
    CLICK DISPLAY TO EDIT
    ========================================= */
 
-display.addEventListener("click", event => {
-  /*
-    Links remain clickable.
-    Clicking normal note space opens editor.
-  */
-  if (event.target.closest("a")) return;
+display.addEventListener(
+  "click",
+  event => {
+    /*
+      Links and destination buttons
+      stay interactive.
 
-  showEditor();
-  textarea.focus();
-});
+      Clicking anywhere else opens
+      the editor.
+    */
+
+    if (
+      event.target.closest("a") ||
+      event.target.closest("button")
+    ) {
+      return;
+    }
+
+    showEditor();
+    textarea.focus();
+  }
+);
 
 
-display.addEventListener("keydown", event => {
-  if (
-    event.key === "Enter" ||
-    event.key === " "
-  ) {
-    if (!event.target.closest("a")) {
-      event.preventDefault();
+display.addEventListener(
+  "keydown",
+  event => {
+    if (
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
+      if (
+        !event.target.closest("a") &&
+        !event.target.closest("button")
+      ) {
+        event.preventDefault();
 
-      showEditor();
-      textarea.focus();
+        showEditor();
+        textarea.focus();
+      }
     }
   }
-});
+);
 
 
 /* =========================================
    CLEAR
    ========================================= */
 
-clearButton.addEventListener("click", () => {
-  clearTimeout(saveTimer);
+clearButton.addEventListener(
+  "click",
+  () => {
+    clearTimeout(saveTimer);
 
-  textarea.value = "";
+    textarea.value = "";
 
-  localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(
+      STORAGE_KEY
+    );
 
-  renderDisplay("");
-  showEditor();
+    renderDisplay("");
+    showEditor();
 
-  saveStatus.textContent = "cleared";
+    saveStatus.textContent =
+      "cleared";
 
-  setTimeout(() => {
-    saveStatus.textContent = "saved locally";
-  }, 1200);
+    setTimeout(() => {
+      saveStatus.textContent =
+        "saved locally";
+    }, 1200);
 
-  textarea.focus();
-});
+    textarea.focus();
+  }
+);
 
 
 /* =========================================
@@ -154,22 +191,24 @@ function renderDisplay(text) {
   lines.forEach(line => {
     const trimmed = line.trim();
 
-    /*
-      Blank line
-    */
-    if (!trimmed) {
-      const spacer = document.createElement("div");
 
-      spacer.className = "leaf-spacer";
+    /* Blank line */
+
+    if (!trimmed) {
+      const spacer =
+        document.createElement("div");
+
+      spacer.className =
+        "leaf-spacer";
 
       display.appendChild(spacer);
+
       return;
     }
 
 
-    /*
-      URL on its own line
-    */
+    /* URL on its own line */
+
     if (isUrl(trimmed)) {
       display.appendChild(
         createUrlLeaf(trimmed)
@@ -179,13 +218,14 @@ function renderDisplay(text) {
     }
 
 
-    /*
-      Regular note
-    */
+    /* Regular note */
+
     const note =
       document.createElement("div");
 
-    note.className = "leaf-note";
+    note.className =
+      "leaf-note";
+
     note.textContent = line;
 
     display.appendChild(note);
@@ -194,20 +234,34 @@ function renderDisplay(text) {
 
 
 /* =========================================
-   CLEAN URL DISPLAY
+   URL LEAF
    ========================================= */
 
 function createUrlLeaf(url) {
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.className =
+    "leaf-resource";
+
+
   const anchor =
     document.createElement("a");
 
   anchor.href = url;
   anchor.target = "_blank";
-  anchor.rel = "noopener noreferrer";
-  anchor.className = "leaf-link";
+  anchor.rel =
+    "noopener noreferrer";
 
-  const info = describeUrl(url);
-  const capture = getCaptureRecord(url);
+  anchor.className =
+    "leaf-link";
+
+
+  const info =
+    describeUrl(url);
+
+  const capture =
+    getCaptureRecord(url);
 
 
   /* Gold star */
@@ -215,7 +269,9 @@ function createUrlLeaf(url) {
   const marker =
     document.createElement("span");
 
-  marker.className = "leaf-marker";
+  marker.className =
+    "leaf-marker";
+
   marker.textContent = "✦";
 
 
@@ -224,36 +280,53 @@ function createUrlLeaf(url) {
   const text =
     document.createElement("span");
 
-  text.className = "leaf-link-text";
+  text.className =
+    "leaf-link-text";
 
 
   const label =
     document.createElement("span");
 
-  label.className = "leaf-link-label";
-  label.textContent = info.label;
+  label.className =
+    "leaf-link-label";
+
+  label.textContent =
+    info.label;
 
 
   const source =
     document.createElement("span");
 
-  source.className = "leaf-link-source";
+  source.className =
+    "leaf-link-source";
 
 
-  if (capture?.status === "archived") {
+  if (
+    capture?.status === "archived"
+  ) {
+    const destinationLabel =
+      capture.destination === "art"
+        ? "Art Repository"
+        : "Edifice";
+
     if (capture.duplicate) {
       source.textContent =
-        `${info.source} · already archived`;
+        `${info.source} · already in ${destinationLabel}`;
     } else {
       source.textContent =
-        `${info.source} · archived`;
+        `${info.source} · archived to ${destinationLabel}`;
     }
 
   } else if (
     capture?.status === "capturing"
   ) {
+    const destinationLabel =
+      capture.destination === "art"
+        ? "Art Repository"
+        : "Edifice";
+
     source.textContent =
-      `${info.source} · archiving…`;
+      `${info.source} · sending to ${destinationLabel}…`;
 
   } else if (
     capture?.status === "error"
@@ -262,7 +335,8 @@ function createUrlLeaf(url) {
       `${info.source} · archive failed`;
 
   } else {
-    source.textContent = info.source;
+    source.textContent =
+      info.source;
   }
 
 
@@ -270,14 +344,17 @@ function createUrlLeaf(url) {
   text.appendChild(source);
 
 
-  /* Right-hand symbol */
+  /* Right-side symbol */
 
   const arrow =
     document.createElement("span");
 
-  arrow.className = "leaf-arrow";
+  arrow.className =
+    "leaf-arrow";
 
-  if (capture?.status === "archived") {
+  if (
+    capture?.status === "archived"
+  ) {
     arrow.textContent = "✓";
   } else {
     arrow.textContent = "↗";
@@ -288,63 +365,168 @@ function createUrlLeaf(url) {
   anchor.appendChild(text);
   anchor.appendChild(arrow);
 
-  return anchor;
+  wrapper.appendChild(anchor);
+
+
+  /* =====================================
+     DESTINATION CHOICES
+     ===================================== */
+
+  if (
+    capture?.status !== "archived" &&
+    capture?.status !== "capturing"
+  ) {
+    const routing =
+      document.createElement("div");
+
+    routing.className =
+      "leaf-routing";
+
+
+    const edificeButton =
+      createRouteButton(
+        "Edifice",
+        "edifice",
+        url
+      );
+
+
+    const separator =
+      document.createElement("span");
+
+    separator.className =
+      "leaf-routing-separator";
+
+    separator.textContent = "·";
+
+
+    const artButton =
+      createRouteButton(
+        "Art Repository",
+        "art",
+        url
+      );
+
+
+    routing.appendChild(
+      edificeButton
+    );
+
+    routing.appendChild(
+      separator
+    );
+
+    routing.appendChild(
+      artButton
+    );
+
+    wrapper.appendChild(
+      routing
+    );
+  }
+
+
+  return wrapper;
 }
 
 
 /* =========================================
-   SEND URLS TO THE EDIFICE
+   ROUTE BUTTON
    ========================================= */
 
-async function captureUrlsFromText(text) {
+function createRouteButton(
+  label,
+  destination,
+  url
+) {
+  const button =
+    document.createElement("button");
+
+  button.type = "button";
+
+  button.className =
+    "leaf-route-button";
+
+  button.textContent = label;
+
+
+  button.addEventListener(
+    "click",
+    async event => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      await captureToDestination(
+        url,
+        destination
+      );
+    }
+  );
+
+
+  return button;
+}
+
+
+/* =========================================
+   SEND TO CHOSEN ARCHIVE
+   ========================================= */
+
+async function captureToDestination(
+  url,
+  destination
+) {
+  const existing =
+    getCaptureRecord(url);
+
+
   /*
-    Only URLs occupying their own line
-    are treated as research sources.
+    Prevent repeat clicks while
+    a request is already running.
   */
 
-  const urls = [
-    ...new Set(
-      text
-        .split("\n")
-        .map(line => line.trim())
-        .filter(line => isUrl(line))
-    )
-  ];
+  if (
+    existing?.status === "capturing"
+  ) {
+    return;
+  }
 
 
-  for (const url of urls) {
-    const existing =
-      getCaptureRecord(url);
+  /*
+    Already archived.
+  */
+
+  if (
+    existing?.status === "archived"
+  ) {
+    return;
+  }
 
 
-    /*
-      This browser already knows the
-      resource was archived.
-    */
-    if (existing?.status === "archived") {
-      continue;
+  const captureUrl =
+    destination === "art"
+      ? ART_CAPTURE_URL
+      : EDIFICE_CAPTURE_URL;
+
+
+  setCaptureRecord(
+    url,
+    {
+      status: "capturing",
+      destination
     }
+  );
 
 
-    /*
-      Prevent the same URL from being
-      submitted twice simultaneously.
-    */
-    if (existing?.status === "capturing") {
-      continue;
-    }
+  renderDisplay(
+    textarea.value
+  );
 
 
-    setCaptureRecord(url, {
-      status: "capturing"
-    });
-
-    renderDisplay(text);
-
-
-    try {
-      const response = await fetch(
-        EDIFICE_CAPTURE_URL,
+  try {
+    const response =
+      await fetch(
+        captureUrl,
         {
           method: "POST",
 
@@ -354,53 +536,70 @@ async function captureUrlsFromText(text) {
           },
 
           body: JSON.stringify({
-            url: url
+            url
           })
         }
       );
 
 
-      const result =
-        await response.json();
+    const result =
+      await response.json();
 
 
-      if (!response.ok || !result.ok) {
-        throw new Error(
-          result.error ||
-          "Could not archive source."
-        );
-      }
+    if (
+      !response.ok ||
+      !result.ok
+    ) {
+      throw new Error(
+        result.error ||
+        "Could not archive source."
+      );
+    }
 
 
-      setCaptureRecord(url, {
+    setCaptureRecord(
+      url,
+      {
         status: "archived",
 
+        destination,
+
         duplicate:
-          Boolean(result.duplicate),
+          Boolean(
+            result.duplicate
+          ),
 
         notionUrl:
           result.notionUrl || "",
 
         pageId:
           result.pageId || ""
-      });
+      }
+    );
 
 
-    } catch (error) {
-      console.error(
-        "Loose Leaves → Edifice:",
-        error
-      );
+  } catch (error) {
+    console.error(
+      destination === "art"
+        ? "Loose Leaves → Art Repository:"
+        : "Loose Leaves → Edifice:",
+      error
+    );
 
 
-      setCaptureRecord(url, {
-        status: "error"
-      });
-    }
-
-
-    renderDisplay(text);
+    setCaptureRecord(
+      url,
+      {
+        status: "error",
+        destination
+      }
+    );
   }
+
+
+  renderDisplay(
+    textarea.value
+  );
 }
 
 
@@ -431,17 +630,23 @@ function saveCapturedMap(map) {
 
 
 function getCaptureRecord(url) {
-  const map = getCapturedMap();
+  const map =
+    getCapturedMap();
 
   return (
-    map[normalizeLocalUrl(url)] ||
-    null
+    map[
+      normalizeLocalUrl(url)
+    ] || null
   );
 }
 
 
-function setCaptureRecord(url, record) {
-  const map = getCapturedMap();
+function setCaptureRecord(
+  url,
+  record
+) {
+  const map =
+    getCapturedMap();
 
   const key =
     normalizeLocalUrl(url);
@@ -452,6 +657,47 @@ function setCaptureRecord(url, record) {
   };
 
   saveCapturedMap(map);
+}
+
+
+/* =========================================
+   MIGRATE OLD EDIFICE RECORDS
+   ========================================= */
+
+function migrateOldCaptureRecords() {
+  const map =
+    getCapturedMap();
+
+  let changed = false;
+
+
+  Object.keys(map).forEach(key => {
+    const record = map[key];
+
+    /*
+      Before the destination picker
+      existed, every archived URL
+      automatically went to Edifice.
+
+      Give those older records their
+      proper destination label.
+    */
+
+    if (
+      record?.status === "archived" &&
+      !record.destination
+    ) {
+      record.destination =
+        "edifice";
+
+      changed = true;
+    }
+  });
+
+
+  if (changed) {
+    saveCapturedMap(map);
+  }
 }
 
 
@@ -467,18 +713,6 @@ function normalizeLocalUrl(value) {
     url.hash = "";
 
 
-    /*
-      Strip tracking parameters so:
-      
-      article?utm_source=x
-
-      and
-
-      article?utm_source=y
-
-      count as the same resource.
-    */
-
     const trackingParams = [
       "utm_source",
       "utm_medium",
@@ -493,9 +727,13 @@ function normalizeLocalUrl(value) {
     ];
 
 
-    trackingParams.forEach(param => {
-      url.searchParams.delete(param);
-    });
+    trackingParams.forEach(
+      param => {
+        url.searchParams.delete(
+          param
+        );
+      }
+    );
 
 
     url.searchParams.sort();
@@ -514,7 +752,8 @@ function normalizeLocalUrl(value) {
 
 function describeUrl(url) {
   try {
-    const parsed = new URL(url);
+    const parsed =
+      new URL(url);
 
     const hostname =
       parsed.hostname.replace(
@@ -526,8 +765,11 @@ function describeUrl(url) {
     /* Substack */
 
     if (
-      hostname === "substack.com" ||
-      hostname.endsWith(".substack.com")
+      hostname ===
+        "substack.com" ||
+      hostname.endsWith(
+        ".substack.com"
+      )
     ) {
       const pathParts =
         parsed.pathname
@@ -558,7 +800,8 @@ function describeUrl(url) {
           ? `Substack · ${handle}`
           : "Substack",
 
-        source: "saved reading"
+        source:
+          "saved reading"
       };
     }
 
@@ -566,7 +809,9 @@ function describeUrl(url) {
     /* YouTube */
 
     if (
-      hostname.includes("youtube.com") ||
+      hostname.includes(
+        "youtube.com"
+      ) ||
       hostname === "youtu.be"
     ) {
       return {
@@ -584,8 +829,11 @@ function describeUrl(url) {
       )
     ) {
       return {
-        label: "Archive of Our Own",
-        source: "saved work"
+        label:
+          "Archive of Our Own",
+
+        source:
+          "saved work"
       };
     }
 
@@ -609,7 +857,10 @@ function describeUrl(url) {
     const domainName =
       hostname
         .split(".")[0]
-        .replace(/[-_]/g, " ")
+        .replace(
+          /[-_]/g,
+          " "
+        )
         .replace(
           /\b\w/g,
           letter =>
@@ -665,4 +916,91 @@ function showDisplay() {
 function showEditor() {
   display.hidden = true;
   textarea.hidden = false;
+}
+
+
+/* =========================================
+   ROUTING CONTROL CSS
+   ========================================= */
+
+function injectRoutingStyles() {
+  if (
+    document.getElementById(
+      "loose-leaves-routing-styles"
+    )
+  ) {
+    return;
+  }
+
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "loose-leaves-routing-styles";
+
+
+  style.textContent = `
+    .leaf-resource {
+      width: 100%;
+    }
+
+    .leaf-routing {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      margin:
+        -2px 0 5px 19px;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: 8px;
+      line-height: 1.2;
+
+      color: #829074;
+    }
+
+    .leaf-route-button {
+      appearance: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+
+      background: transparent;
+
+      font: inherit;
+      color: #829074;
+
+      cursor: pointer;
+
+      text-decoration: none;
+    }
+
+    .leaf-route-button:hover {
+      color: #b68b45;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .leaf-route-button:focus-visible {
+      outline:
+        1px solid #b68b45;
+
+      outline-offset: 2px;
+    }
+
+    .leaf-routing-separator {
+      color: #b68b45;
+      opacity: 0.7;
+    }
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
 }

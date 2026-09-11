@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Archive Clock</title>
+<style>
+  :root{
+    --ivory:#fbf8f0;
+    --paper:#fffdf8;
+    --ink:#51483d;
+    --forest:#263d35;
+    --sage:#829074;
+    --gold:#b68b45;
+    --gold-soft:#d8c69f;
+  }
+
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:transparent;
+  }
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Georgia,"Times New Roman",serif;
+    color:var(--ink);
+    padding:4px;
+  }
+
+  .clock-wrap{
+    width:min(100%, 270px);
+    text-align:center;
+    position:relative;
+    padding:8px 8px 6px;
+  }
+
+  .ornament{
+    color:var(--gold);
+    font-size:9px;
+    letter-spacing:.35em;
+    margin-bottom:4px;
+    opacity:.9;
+  }
+
+  .clock{
+    width:158px;
+    height:158px;
+    margin:0 auto;
+    border-radius:50%;
+    position:relative;
+    background:
+      radial-gradient(circle at center,
+        var(--paper) 0 58%,
+        rgba(216,198,159,.16) 59% 62%,
+        var(--paper) 63% 69%,
+        rgba(182,139,69,.14) 70% 72%,
+        var(--paper) 73%);
+    border:1px solid var(--gold);
+    box-shadow:
+      inset 0 0 0 4px var(--ivory),
+      inset 0 0 0 5px var(--gold-soft);
+  }
+
+  .clock::before,
+  .clock::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+  }
+  .clock::before{
+    inset:10px;
+    border:1px solid rgba(182,139,69,.45);
+  }
+  .clock::after{
+    inset:17px;
+    border:1px solid rgba(182,139,69,.20);
+  }
+
+  .celestial{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    color:rgba(182,139,69,.18);
+    font-size:27px;
+    z-index:1;
+  }
+
+  .numeral{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:22px;
+    margin-left:-11px;
+    margin-top:-6px;
+    text-align:center;
+    color:var(--ink);
+    font-size:9px;
+    z-index:2;
+  }
+
+  .tick{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:1px;
+    height:4px;
+    margin-left:-.5px;
+    margin-top:-2px;
+    background:rgba(182,139,69,.65);
+    transform-origin:0 0;
+    z-index:2;
+  }
+
+  .hand{
+    position:absolute;
+    left:50%;
+    bottom:50%;
+    transform-origin:50% 100%;
+    border-radius:2px;
+    z-index:4;
+  }
+  .hour{
+    width:2px;
+    height:37px;
+    margin-left:-1px;
+    background:var(--forest);
+  }
+  .minute{
+    width:1.5px;
+    height:50px;
+    margin-left:-.75px;
+    background:var(--ink);
+  }
+  .second{
+    width:1px;
+    height:53px;
+    margin-left:-.5px;
+    background:var(--gold);
+    opacity:.75;
+  }
+
+  .pin{
+    position:absolute;
+    width:8px;
+    height:8px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:var(--gold);
+    border:2px solid var(--paper);
+    z-index:6;
+  }
+
+  .date{
+    margin-top:8px;
+    color:var(--forest);
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  .time{
+    margin-top:3px;
+    color:var(--sage);
+    font-size:9px;
+    letter-spacing:.16em;
+  }
+
+  .bottom-ornament{
+    width:74px;
+    height:1px;
+    margin:7px auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold-soft),var(--gold),var(--gold-soft),transparent);
+    position:relative;
+  }
+  .bottom-ornament::after{
+    content:"✦";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-53%);
+    background:white;
+    color:var(--gold);
+    padding:0 5px;
+    font-size:7px;
+  }
+
+  @media(max-width:350px){
+    .clock{width:146px;height:146px}
+    .hour{height:34px}
+    .minute{height:46px}
+    .second{height:49px}
+  }
+</style>
+</head>
+<body>
+  <main class="clock-wrap" aria-label="Archive Clock">
+    <div class="ornament">✦ ☾ ✦</div>
+
+    <div class="clock" id="clock">
+      <div class="celestial">✦</div>
+      <div class="hand hour" id="hour"></div>
+      <div class="hand minute" id="minute"></div>
+      <div class="hand second" id="second"></div>
+      <div class="pin"></div>
+    </div>
+
+    <div class="date" id="date"></div>
+    <div class="time" id="time"></div>
+    <div class="bottom-ornament"></div>
+  </main>
+
+<script>
+const clock = document.getElementById("clock");
+const romans = ["XII","I","II","III","IV","V","VI","VII","VIII","IX","X","XI"];
+
+for(let i=0;i<60;i++){
+  if(i%5===0) continue;
+  const tick=document.createElement("span");
+  tick.className="tick";
+  const angle=i*6;
+  const radius=64;
+  const rad=(angle-90)*Math.PI/180;
+  const x=Math.cos(rad)*radius;
+  const y=Math.sin(rad)*radius;
+  tick.style.left=`calc(50% + ${x}px)`;
+  tick.style.top=`calc(50% + ${y}px)`;
+  tick.style.transform=`rotate(${angle}deg)`;
+  clock.appendChild(tick);
+}
+
+romans.forEach((roman,i)=>{
+  const n=document.createElement("span");
+  n.className="numeral";
+  n.textContent=roman;
+  const angle=i*30;
+  const radius=57;
+  const rad=(angle-90)*Math.PI/180;
+  const x=Math.cos(rad)*radius;
+  const y=Math.sin(rad)*radius;
+  n.style.transform=`translate(${x}px,${y}px)`;
+  clock.appendChild(n);
+});
+
+const hour=document.getElementById("hour");
+const minute=document.getElementById("minute");
+const second=document.getElementById("second");
+const dateEl=document.getElementById("date");
+const timeEl=document.getElementById("time");
+
+function updateClock(){
+  const now=new Date();
+  const s=now.getSeconds();
+  const m=now.getMinutes();
+  const h=now.getHours();
+
+  second.style.transform=`rotate(${s*6}deg)`;
+  minute.style.transform=`rotate(${m*6+s*.1}deg)`;
+  hour.style.transform=`rotate(${(h%12)*30+m*.5}deg)`;
+
+  dateEl.textContent=new Intl.DateTimeFormat(undefined,{
+    weekday:"long",
+    month:"long",
+    day:"numeric"
+  }).format(now);
+
+  timeEl.textContent=new Intl.DateTimeFormat(undefined,{
+    hour:"numeric",
+    minute:"2-digit"
+  }).format(now);
+}
+
+updateClock();
+setInterval(updateClock,1000);
+</script>
+</body>
+</html>

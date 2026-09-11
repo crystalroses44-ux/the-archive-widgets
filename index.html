@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="style.css">
+
 <div class="loose-leaves-widget">
   <div class="inner-frame">
     <div class="corner corner-tl">✦</div>
@@ -13,11 +14,23 @@
 
     <div class="divider">
       <span></span>
-  
       <span></span>
     </div>
 
-    <textarea id="looseLeaves" placeholder="Begin writing..." aria-label="Loose Leaves notes"></textarea>
+    <!-- Editing view -->
+    <textarea
+      id="looseLeaves"
+      placeholder="Begin writing..."
+      aria-label="Loose Leaves notes"
+    ></textarea>
+
+    <!-- Clean reading view -->
+    <div
+      id="looseLeavesDisplay"
+      class="loose-leaves-display"
+      aria-label="Saved Loose Leaves notes"
+      tabindex="0"
+    ></div>
 
     <div class="footer">
       <span id="saveStatus">saved locally</span>
@@ -25,8 +38,8 @@
       <button id="clearNotes" type="button">clear</button>
     </div>
 
-  
     <div class="corner corner-br">✦</div>
   </div>
 </div>
+
 <script src="script.js"></script>

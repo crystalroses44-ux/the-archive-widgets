@@ -17,8 +17,8 @@ let saveTimer;
    ========================================= */
 
 const savedNotes = localStorage.getItem(STORAGE_KEY) || "";
-textarea.value = savedNotes;
 
+textarea.value = savedNotes;
 renderDisplay(savedNotes);
 
 if (savedNotes.trim()) {
@@ -29,7 +29,7 @@ if (savedNotes.trim()) {
 
 
 /* =========================================
-   SAVE
+   AUTOSAVE + ARCHIVE
    ========================================= */
 
 textarea.addEventListener("input", () => {
@@ -37,32 +37,49 @@ textarea.addEventListener("input", () => {
 
   clearTimeout(saveTimer);
 
-  saveTimer = setTimeout(() => {
-    localStorage.setItem(STORAGE_KEY, textarea.value);
+  saveTimer = setTimeout(async () => {
+    const value = textarea.value;
+
+    localStorage.setItem(STORAGE_KEY, value);
+
     saveStatus.textContent = "saved locally";
-  }, 300);
+
+    /*
+      After the note is safely saved,
+      check for URLs and archive them.
+    */
+    await captureUrlsFromText(value);
+
+    renderDisplay(value);
+
+  }, 1000);
 });
 
 
 /* =========================================
-   SAVE + CAPTURE WHEN LEAVING EDIT MODE
+   WHEN LEAVING EDIT MODE
    ========================================= */
 
 textarea.addEventListener("blur", async () => {
+  clearTimeout(saveTimer);
+
   const value = textarea.value;
 
   localStorage.setItem(STORAGE_KEY, value);
+
   saveStatus.textContent = "saved locally";
+
+  /*
+    Blur gives us a second opportunity to
+    capture anything that hasn't been sent yet.
+  */
+  await captureUrlsFromText(value);
 
   renderDisplay(value);
 
   if (value.trim()) {
     showDisplay();
   }
-
-  await captureUrlsFromText(value);
-
-  renderDisplay(value);
 });
 
 
@@ -71,6 +88,10 @@ textarea.addEventListener("blur", async () => {
    ========================================= */
 
 display.addEventListener("click", event => {
+  /*
+    Links remain clickable.
+    Clicking normal note space opens editor.
+  */
   if (event.target.closest("a")) return;
 
   showEditor();
@@ -79,7 +100,10 @@ display.addEventListener("click", event => {
 
 
 display.addEventListener("keydown", event => {
-  if (event.key === "Enter" || event.key === " ") {
+  if (
+    event.key === "Enter" ||
+    event.key === " "
+  ) {
     if (!event.target.closest("a")) {
       event.preventDefault();
 
@@ -95,6 +119,8 @@ display.addEventListener("keydown", event => {
    ========================================= */
 
 clearButton.addEventListener("click", () => {
+  clearTimeout(saveTimer);
+
   textarea.value = "";
 
   localStorage.removeItem(STORAGE_KEY);
@@ -128,20 +154,36 @@ function renderDisplay(text) {
   lines.forEach(line => {
     const trimmed = line.trim();
 
+    /*
+      Blank line
+    */
     if (!trimmed) {
       const spacer = document.createElement("div");
+
       spacer.className = "leaf-spacer";
 
       display.appendChild(spacer);
       return;
     }
 
+
+    /*
+      URL on its own line
+    */
     if (isUrl(trimmed)) {
-      display.appendChild(createUrlLeaf(trimmed));
+      display.appendChild(
+        createUrlLeaf(trimmed)
+      );
+
       return;
     }
 
-    const note = document.createElement("div");
+
+    /*
+      Regular note
+    */
+    const note =
+      document.createElement("div");
 
     note.className = "leaf-note";
     note.textContent = line;
@@ -152,11 +194,12 @@ function renderDisplay(text) {
 
 
 /* =========================================
-   CREATE CLEAN URL LEAF
+   CLEAN URL DISPLAY
    ========================================= */
 
 function createUrlLeaf(url) {
-  const anchor = document.createElement("a");
+  const anchor =
+    document.createElement("a");
 
   anchor.href = url;
   anchor.target = "_blank";
@@ -166,34 +209,72 @@ function createUrlLeaf(url) {
   const info = describeUrl(url);
   const capture = getCaptureRecord(url);
 
-  const marker = document.createElement("span");
+
+  /* Gold star */
+
+  const marker =
+    document.createElement("span");
+
   marker.className = "leaf-marker";
   marker.textContent = "✦";
 
-  const text = document.createElement("span");
+
+  /* Text stack */
+
+  const text =
+    document.createElement("span");
+
   text.className = "leaf-link-text";
 
-  const label = document.createElement("span");
+
+  const label =
+    document.createElement("span");
+
   label.className = "leaf-link-label";
   label.textContent = info.label;
 
-  const source = document.createElement("span");
+
+  const source =
+    document.createElement("span");
+
   source.className = "leaf-link-source";
 
+
   if (capture?.status === "archived") {
-    source.textContent = `${info.source} · archived`;
-  } else if (capture?.status === "capturing") {
-    source.textContent = `${info.source} · archiving…`;
-  } else if (capture?.status === "error") {
-    source.textContent = `${info.source} · not archived`;
+    if (capture.duplicate) {
+      source.textContent =
+        `${info.source} · already archived`;
+    } else {
+      source.textContent =
+        `${info.source} · archived`;
+    }
+
+  } else if (
+    capture?.status === "capturing"
+  ) {
+    source.textContent =
+      `${info.source} · archiving…`;
+
+  } else if (
+    capture?.status === "error"
+  ) {
+    source.textContent =
+      `${info.source} · archive failed`;
+
   } else {
     source.textContent = info.source;
   }
 
+
   text.appendChild(label);
   text.appendChild(source);
 
-  const arrow = document.createElement("span");
+
+  /* Right-hand symbol */
+
+  const arrow =
+    document.createElement("span");
+
   arrow.className = "leaf-arrow";
 
   if (capture?.status === "archived") {
@@ -201,6 +282,7 @@ function createUrlLeaf(url) {
   } else {
     arrow.textContent = "↗";
   }
+
 
   anchor.appendChild(marker);
   anchor.appendChild(text);
@@ -211,27 +293,54 @@ function createUrlLeaf(url) {
 
 
 /* =========================================
-   CAPTURE URLS INTO THE EDIFICE
+   SEND URLS TO THE EDIFICE
    ========================================= */
 
 async function captureUrlsFromText(text) {
-  const urls = text
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => isUrl(line));
+  /*
+    Only URLs occupying their own line
+    are treated as research sources.
+  */
+
+  const urls = [
+    ...new Set(
+      text
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => isUrl(line))
+    )
+  ];
+
 
   for (const url of urls) {
-    const existingRecord = getCaptureRecord(url);
+    const existing =
+      getCaptureRecord(url);
 
-    if (existingRecord?.status === "archived") {
+
+    /*
+      This browser already knows the
+      resource was archived.
+    */
+    if (existing?.status === "archived") {
       continue;
     }
+
+
+    /*
+      Prevent the same URL from being
+      submitted twice simultaneously.
+    */
+    if (existing?.status === "capturing") {
+      continue;
+    }
+
 
     setCaptureRecord(url, {
       status: "capturing"
     });
 
     renderDisplay(text);
+
 
     try {
       const response = await fetch(
@@ -240,40 +349,55 @@ async function captureUrlsFromText(text) {
           method: "POST",
 
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type":
+              "application/json"
           },
 
           body: JSON.stringify({
-            url
+            url: url
           })
         }
       );
 
-      const result = await response.json();
+
+      const result =
+        await response.json();
+
 
       if (!response.ok || !result.ok) {
         throw new Error(
-          result.error || "Could not archive source."
+          result.error ||
+          "Could not archive source."
         );
       }
 
+
       setCaptureRecord(url, {
         status: "archived",
-        duplicate: Boolean(result.duplicate),
-        notionUrl: result.notionUrl || "",
-        pageId: result.pageId || ""
+
+        duplicate:
+          Boolean(result.duplicate),
+
+        notionUrl:
+          result.notionUrl || "",
+
+        pageId:
+          result.pageId || ""
       });
+
 
     } catch (error) {
       console.error(
-        "Loose Leaves capture failed:",
+        "Loose Leaves → Edifice:",
         error
       );
+
 
       setCaptureRecord(url, {
         status: "error"
       });
     }
+
 
     renderDisplay(text);
   }
@@ -281,14 +405,17 @@ async function captureUrlsFromText(text) {
 
 
 /* =========================================
-   CAPTURE STORAGE
+   ARCHIVE STATUS STORAGE
    ========================================= */
 
 function getCapturedMap() {
   try {
     return JSON.parse(
-      localStorage.getItem(CAPTURED_KEY) || "{}"
+      localStorage.getItem(
+        CAPTURED_KEY
+      ) || "{}"
     );
+
   } catch {
     return {};
   }
@@ -306,14 +433,18 @@ function saveCapturedMap(map) {
 function getCaptureRecord(url) {
   const map = getCapturedMap();
 
-  return map[normalizeLocalUrl(url)] || null;
+  return (
+    map[normalizeLocalUrl(url)] ||
+    null
+  );
 }
 
 
 function setCaptureRecord(url, record) {
   const map = getCapturedMap();
 
-  const key = normalizeLocalUrl(url);
+  const key =
+    normalizeLocalUrl(url);
 
   map[key] = {
     ...map[key],
@@ -325,14 +456,28 @@ function setCaptureRecord(url, record) {
 
 
 /* =========================================
-   LOCAL URL NORMALIZATION
+   URL NORMALIZATION
    ========================================= */
 
 function normalizeLocalUrl(value) {
   try {
-    const url = new URL(value.trim());
+    const url =
+      new URL(value.trim());
 
     url.hash = "";
+
+
+    /*
+      Strip tracking parameters so:
+      
+      article?utm_source=x
+
+      and
+
+      article?utm_source=y
+
+      count as the same resource.
+    */
 
     const trackingParams = [
       "utm_source",
@@ -347,9 +492,11 @@ function normalizeLocalUrl(value) {
       "mc_eid"
     ];
 
+
     trackingParams.forEach(param => {
       url.searchParams.delete(param);
     });
+
 
     url.searchParams.sort();
 
@@ -362,7 +509,7 @@ function normalizeLocalUrl(value) {
 
 
 /* =========================================
-   URL DISPLAY HELPERS
+   HUMAN-READABLE URL DISPLAY
    ========================================= */
 
 function describeUrl(url) {
@@ -370,28 +517,41 @@ function describeUrl(url) {
     const parsed = new URL(url);
 
     const hostname =
-      parsed.hostname.replace(/^www\./, "");
+      parsed.hostname.replace(
+        /^www\./,
+        ""
+      );
+
+
+    /* Substack */
 
     if (
       hostname === "substack.com" ||
       hostname.endsWith(".substack.com")
     ) {
-      const pathParts = parsed.pathname
-        .split("/")
-        .filter(Boolean);
+      const pathParts =
+        parsed.pathname
+          .split("/")
+          .filter(Boolean);
+
 
       const handle =
         pathParts.find(
-          part => part.startsWith("@")
+          part =>
+            part.startsWith("@")
         ) ||
+
         (
-          hostname.endsWith(".substack.com")
+          hostname.endsWith(
+            ".substack.com"
+          )
             ? `@${hostname.replace(
                 ".substack.com",
                 ""
               )}`
             : ""
         );
+
 
       return {
         label: handle
@@ -401,6 +561,9 @@ function describeUrl(url) {
         source: "saved reading"
       };
     }
+
+
+    /* YouTube */
 
     if (
       hostname.includes("youtube.com") ||
@@ -412,8 +575,13 @@ function describeUrl(url) {
       };
     }
 
+
+    /* AO3 */
+
     if (
-      hostname.includes("archiveofourown.org")
+      hostname.includes(
+        "archiveofourown.org"
+      )
     ) {
       return {
         label: "Archive of Our Own",
@@ -421,8 +589,13 @@ function describeUrl(url) {
       };
     }
 
+
+    /* Goodreads */
+
     if (
-      hostname.includes("goodreads.com")
+      hostname.includes(
+        "goodreads.com"
+      )
     ) {
       return {
         label: "Goodreads",
@@ -430,18 +603,25 @@ function describeUrl(url) {
       };
     }
 
-    const domainName = hostname
-      .split(".")[0]
-      .replace(/[-_]/g, " ")
-      .replace(
-        /\b\w/g,
-        letter => letter.toUpperCase()
-      );
+
+    /* Generic site */
+
+    const domainName =
+      hostname
+        .split(".")[0]
+        .replace(/[-_]/g, " ")
+        .replace(
+          /\b\w/g,
+          letter =>
+            letter.toUpperCase()
+        );
+
 
     return {
       label: domainName,
       source: hostname
     };
+
 
   } catch {
     return {
@@ -453,12 +633,13 @@ function describeUrl(url) {
 
 
 /* =========================================
-   URL CHECK
+   URL VALIDATION
    ========================================= */
 
 function isUrl(value) {
   try {
-    const url = new URL(value);
+    const url =
+      new URL(value);
 
     return (
       url.protocol === "http:" ||

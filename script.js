@@ -4,10 +4,17 @@ const saveStatus = document.getElementById("saveStatus");
 const clearButton = document.getElementById("clearNotes");
 
 const STORAGE_KEY = "archive-loose-leaves-v1";
+const CAPTURED_KEY = "archive-loose-leaves-captured-v1";
+
+const EDIFICE_CAPTURE_URL =
+  "https://archive-edifice.crystalroses44.workers.dev/capture";
 
 let saveTimer;
 
-/* ---------- load ---------- */
+
+/* =========================================
+   LOAD
+   ========================================= */
 
 const savedNotes = localStorage.getItem(STORAGE_KEY) || "";
 textarea.value = savedNotes;
@@ -20,7 +27,10 @@ if (savedNotes.trim()) {
   showEditor();
 }
 
-/* ---------- save ---------- */
+
+/* =========================================
+   SAVE
+   ========================================= */
 
 textarea.addEventListener("input", () => {
   saveStatus.textContent = "saving…";
@@ -33,9 +43,12 @@ textarea.addEventListener("input", () => {
   }, 300);
 });
 
-/* ---------- switching views ---------- */
 
-textarea.addEventListener("blur", () => {
+/* =========================================
+   SAVE + CAPTURE WHEN LEAVING EDIT MODE
+   ========================================= */
+
+textarea.addEventListener("blur", async () => {
   const value = textarea.value;
 
   localStorage.setItem(STORAGE_KEY, value);
@@ -46,33 +59,49 @@ textarea.addEventListener("blur", () => {
   if (value.trim()) {
     showDisplay();
   }
+
+  await captureUrlsFromText(value);
+
+  renderDisplay(value);
 });
+
+
+/* =========================================
+   CLICK DISPLAY TO EDIT
+   ========================================= */
 
 display.addEventListener("click", event => {
   /*
-    Clicking a URL should open the link.
-    Clicking anywhere else returns to editing.
+    Clicking a saved link should open the link.
+    Clicking anywhere else returns to edit mode.
   */
+
   if (event.target.closest("a")) return;
 
   showEditor();
   textarea.focus();
 });
 
+
 display.addEventListener("keydown", event => {
   if (event.key === "Enter" || event.key === " ") {
     if (!event.target.closest("a")) {
       event.preventDefault();
+
       showEditor();
       textarea.focus();
     }
   }
 });
 
-/* ---------- clear ---------- */
+
+/* =========================================
+   CLEAR
+   ========================================= */
 
 clearButton.addEventListener("click", () => {
   textarea.value = "";
+
   localStorage.removeItem(STORAGE_KEY);
 
   renderDisplay("");
@@ -87,7 +116,10 @@ clearButton.addEventListener("click", () => {
   textarea.focus();
 });
 
-/* ---------- rendering ---------- */
+
+/* =========================================
+   RENDER DISPLAY
+   ========================================= */
 
 function renderDisplay(text) {
   display.innerHTML = "";
@@ -102,17 +134,18 @@ function renderDisplay(text) {
     const trimmed = line.trim();
 
     /*
-      Blank lines remain subtle spacing between notes.
+      Blank lines preserve spacing.
     */
     if (!trimmed) {
       const spacer = document.createElement("div");
       spacer.className = "leaf-spacer";
+
       display.appendChild(spacer);
       return;
     }
 
     /*
-      If an entire line is a URL, turn it into a clean bookmark-style leaf.
+      Entire line is a URL.
     */
     if (isUrl(trimmed)) {
       display.appendChild(createUrlLeaf(trimmed));
@@ -120,15 +153,21 @@ function renderDisplay(text) {
     }
 
     /*
-      Ordinary written notes remain unchanged.
+      Ordinary written note.
     */
     const note = document.createElement("div");
+
     note.className = "leaf-note";
     note.textContent = line;
 
     display.appendChild(note);
   });
 }
+
+
+/* =========================================
+   CREATE CLEAN URL LEAF
+   ========================================= */
 
 function createUrlLeaf(url) {
   const anchor = document.createElement("a");
@@ -139,28 +178,65 @@ function createUrlLeaf(url) {
   anchor.className = "leaf-link";
 
   const info = describeUrl(url);
+  const capture = getCaptureRecord(url);
 
+
+  /*
+    Gold star
+  */
   const marker = document.createElement("span");
+
   marker.className = "leaf-marker";
   marker.textContent = "✦";
 
+
+  /*
+    Label + small source text
+  */
   const text = document.createElement("span");
+
   text.className = "leaf-link-text";
 
+
   const label = document.createElement("span");
+
   label.className = "leaf-link-label";
   label.textContent = info.label;
 
+
   const source = document.createElement("span");
+
   source.className = "leaf-link-source";
-  source.textContent = info.source;
+
+
+  if (capture?.status === "archived") {
+    source.textContent = `${info.source} · archived`;
+  } else if (capture?.status === "capturing") {
+    source.textContent = `${info.source} · archiving…`;
+  } else if (capture?.status === "error") {
+    source.textContent = `${info.source} · not archived`;
+  } else {
+    source.textContent = info.source;
+  }
+
 
   text.appendChild(label);
   text.appendChild(source);
 
+
+  /*
+    Right-side symbol
+  */
   const arrow = document.createElement("span");
+
   arrow.className = "leaf-arrow";
-  arrow.textContent = "↗";
+
+  if (capture?.status === "archived") {
+    arrow.textContent = "✓";
+  } else {
+    arrow.textContent = "↗";
+  }
+
 
   anchor.appendChild(marker);
   anchor.appendChild(text);
@@ -169,32 +245,228 @@ function createUrlLeaf(url) {
   return anchor;
 }
 
+
+/* =========================================
+   CAPTURE URLS INTO THE EDIFICE
+   ========================================= */
+
+async function captureUrlsFromText(text) {
+  const urls = text
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => isUrl(line));
+
+
+  for (const url of urls) {
+    const existingRecord = getCaptureRecord(url);
+
+    /*
+      Already archived successfully.
+      Don't send it again.
+    */
+    if (existingRecord?.status === "archived") {
+      continue;
+    }
+
+
+    /*
+      Mark as in progress.
+    */
+    setCaptureRecord(url, {
+      status: "capturing"
+    });
+
+    renderDisplay(text);
+
+
+    try {
+      const response = await fetch(
+        EDIFICE_CAPTURE_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            url
+          })
+        }
+      );
+
+
+      const result = await response.json();
+
+
+      if (!response.ok || !result.ok) {
+        throw new Error(
+          result.error || "Could not archive source."
+        );
+      }
+
+
+      setCaptureRecord(url, {
+        status: "archived",
+
+        duplicate: Boolean(result.duplicate),
+
+        notionUrl:
+          result.notionUrl || "",
+
+        pageId:
+          result.pageId || ""
+      });
+
+
+    } catch (error) {
+      console.error(
+        "Loose Leaves capture failed:",
+        error
+      );
+
+      setCaptureRecord(url, {
+        status: "error"
+      });
+    }
+
+
+    renderDisplay(text);
+  }
+}
+
+
+/* =========================================
+   CAPTURE STORAGE
+   ========================================= */
+
+function getCapturedMap() {
+  try {
+    return JSON.parse(
+      localStorage.getItem(CAPTURED_KEY) || "{}"
+    );
+  } catch {
+    return {};
+  }
+}
+
+
+function saveCapturedMap(map) {
+  localStorage.setItem(
+    CAPTURED_KEY,
+    JSON.stringify(map)
+  );
+}
+
+
+function getCaptureRecord(url) {
+  const map = getCapturedMap();
+
+  return map[normalizeLocalUrl(url)] || null;
+}
+
+
+function setCaptureRecord(url, record) {
+  const map = getCapturedMap();
+
+  const key = normalizeLocalUrl(url);
+
+  map[key] = {
+    ...map[key],
+    ...record
+  };
+
+  saveCapturedMap(map);
+}
+
+
+/* =========================================
+   LOCAL URL NORMALIZATION
+   ========================================= */
+
+function normalizeLocalUrl(value) {
+  try {
+    const url = new URL(value.trim());
+
+    url.hash = "";
+
+    const trackingParams = [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_term",
+      "utm_content",
+      "utm_id",
+      "gclid",
+      "fbclid",
+      "mc_cid",
+      "mc_eid"
+    ];
+
+    trackingParams.forEach(param => {
+      url.searchParams.delete(param);
+    });
+
+    url.searchParams.sort();
+
+    return url.toString();
+
+  } catch {
+    return value.trim();
+  }
+}
+
+
+/* =========================================
+   URL DISPLAY HELPERS
+   ========================================= */
+
 function describeUrl(url) {
   try {
     const parsed = new URL(url);
-    const hostname = parsed.hostname.replace(/^www\./, "");
 
-    /* Substack */
-    if (hostname === "substack.com" || hostname.endsWith(".substack.com")) {
+    const hostname =
+      parsed.hostname.replace(/^www\./, "");
+
+
+    /*
+      Substack
+    */
+    if (
+      hostname === "substack.com" ||
+      hostname.endsWith(".substack.com")
+    ) {
       const pathParts = parsed.pathname
         .split("/")
         .filter(Boolean);
 
       const handle =
-        pathParts.find(part => part.startsWith("@")) ||
-        (hostname.endsWith(".substack.com")
-          ? `@${hostname.replace(".substack.com", "")}`
-          : "");
+        pathParts.find(
+          part => part.startsWith("@")
+        ) ||
+
+        (
+          hostname.endsWith(".substack.com")
+            ? `@${hostname.replace(
+                ".substack.com",
+                ""
+              )}`
+            : ""
+        );
 
       return {
         label: handle
           ? `Substack · ${handle}`
           : "Substack",
+
         source: "saved reading"
       };
     }
 
-    /* YouTube */
+
+    /*
+      YouTube
+    */
     if (
       hostname.includes("youtube.com") ||
       hostname === "youtu.be"
@@ -205,35 +477,53 @@ function describeUrl(url) {
       };
     }
 
-    /* AO3 */
-    if (hostname.includes("archiveofourown.org")) {
+
+    /*
+      AO3
+    */
+    if (
+      hostname.includes(
+        "archiveofourown.org"
+      )
+    ) {
       return {
         label: "Archive of Our Own",
         source: "saved work"
       };
     }
 
-    /* Goodreads */
-    if (hostname.includes("goodreads.com")) {
+
+    /*
+      Goodreads
+    */
+    if (
+      hostname.includes("goodreads.com")
+    ) {
       return {
         label: "Goodreads",
         source: "book"
       };
     }
 
+
     /*
-      Generic website:
-      example.com -> Example
+      Generic website
     */
     const domainName = hostname
       .split(".")[0]
       .replace(/[-_]/g, " ")
-      .replace(/\b\w/g, letter => letter.toUpperCase());
+      .replace(
+        /\b\w/g,
+        letter => letter.toUpperCase()
+      );
+
 
     return {
       label: domainName,
       source: hostname
     };
+
+
   } catch {
     return {
       label: "Saved Link",
@@ -242,21 +532,35 @@ function describeUrl(url) {
   }
 }
 
+
+/* =========================================
+   URL CHECK
+   ========================================= */
+
 function isUrl(value) {
   try {
     const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
+
+    return (
+      url.protocol === "http:" ||
+      url.protocol === "https:"
+    );
+
   } catch {
     return false;
   }
 }
 
-/* ---------- helpers ---------- */
+
+/* =========================================
+   VIEW HELPERS
+   ========================================= */
 
 function showDisplay() {
   textarea.hidden = true;
   display.hidden = false;
 }
+
 
 function showEditor() {
   display.hidden = true;

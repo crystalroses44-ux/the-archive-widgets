@@ -1,44 +1,22 @@
-const textarea =
-  document.getElementById(
-    "looseLeaves"
-  );
+const textarea = document.getElementById("looseLeaves");
+const display = document.getElementById("looseLeavesDisplay");
+const saveStatus = document.getElementById("saveStatus");
+const clearButton = document.getElementById("clearNotes");
 
-const display =
-  document.getElementById(
-    "looseLeavesDisplay"
-  );
-
-const saveStatus =
-  document.getElementById(
-    "saveStatus"
-  );
-
-const clearButton =
-  document.getElementById(
-    "clearNotes"
-  );
-
-
-const STORAGE_KEY =
-  "archive-loose-leaves-v1";
-
-const CAPTURED_KEY =
-  "archive-loose-leaves-captured-v1";
-
+const STORAGE_KEY = "archive-loose-leaves-v1";
+const CAPTURED_KEY = "archive-loose-leaves-captured-v1";
 
 const EDIFICE_CAPTURE_URL =
   "https://archive-edifice.crystalroses44.workers.dev/capture";
 
-
 const ART_CAPTURE_URL =
   "https://archive-art-repository.crystalroses44.workers.dev/capture";
-
 
 let saveTimer;
 
 
 /* =========================================
-   ROUTING STYLES
+   ROUTING CONTROL STYLES
    ========================================= */
 
 injectRoutingStyles();
@@ -49,22 +27,13 @@ injectRoutingStyles();
    ========================================= */
 
 const savedNotes =
-  localStorage.getItem(
-    STORAGE_KEY
-  ) || "";
+  localStorage.getItem(STORAGE_KEY) || "";
 
-
-textarea.value =
-  savedNotes;
-
+textarea.value = savedNotes;
 
 migrateOldCaptureRecords();
 
-
-renderDisplay(
-  savedNotes
-);
-
+renderDisplay(savedNotes);
 
 if (savedNotes.trim()) {
   showDisplay();
@@ -77,79 +46,47 @@ if (savedNotes.trim()) {
    AUTOSAVE
    ========================================= */
 
-textarea.addEventListener(
-  "input",
-  () => {
+textarea.addEventListener("input", () => {
+  saveStatus.textContent = "saving…";
 
-    saveStatus.textContent =
-      "saving…";
+  clearTimeout(saveTimer);
 
-
-    clearTimeout(
-      saveTimer
-    );
-
-
-    saveTimer =
-      setTimeout(
-        () => {
-
-          const value =
-            textarea.value;
-
-
-          localStorage.setItem(
-            STORAGE_KEY,
-            value
-          );
-
-
-          saveStatus.textContent =
-            "saved locally";
-
-
-          renderDisplay(
-            value
-          );
-
-        },
-        1000
-      );
-  }
-);
-
-
-/* =========================================
-   LEAVE EDIT MODE
-   ========================================= */
-
-textarea.addEventListener(
-  "blur",
-  () => {
-
-    clearTimeout(
-      saveTimer
-    );
-
-
-    const value =
-      textarea.value;
-
+  saveTimer = setTimeout(() => {
+    const value = textarea.value;
 
     localStorage.setItem(
       STORAGE_KEY,
       value
     );
 
+    saveStatus.textContent =
+      "saved locally";
+
+    renderDisplay(value);
+  }, 1000);
+});
+
+
+/* =========================================
+   WHEN LEAVING EDIT MODE
+   ========================================= */
+
+textarea.addEventListener(
+  "blur",
+  () => {
+    clearTimeout(saveTimer);
+
+    const value = textarea.value;
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      value
+    );
 
     saveStatus.textContent =
       "saved locally";
 
-
-    renderDisplay(
-      value
-    );
-
+    renderDisplay(value);
 
     if (value.trim()) {
       showDisplay();
@@ -165,6 +102,13 @@ textarea.addEventListener(
 display.addEventListener(
   "click",
   event => {
+    /*
+      Links and destination buttons
+      stay interactive.
+
+      Clicking anywhere else opens
+      the editor.
+    */
 
     if (
       event.target.closest("a") ||
@@ -173,36 +117,26 @@ display.addEventListener(
       return;
     }
 
-
     showEditor();
-
     textarea.focus();
   }
 );
 
 
-/* =========================================
-   KEYBOARD DISPLAY TO EDIT
-   ========================================= */
-
 display.addEventListener(
   "keydown",
   event => {
-
     if (
       event.key === "Enter" ||
       event.key === " "
     ) {
-
       if (
         !event.target.closest("a") &&
         !event.target.closest("button")
       ) {
-
         event.preventDefault();
 
         showEditor();
-
         textarea.focus();
       }
     }
@@ -217,40 +151,24 @@ display.addEventListener(
 clearButton.addEventListener(
   "click",
   () => {
-
-    clearTimeout(
-      saveTimer
-    );
-
+    clearTimeout(saveTimer);
 
     textarea.value = "";
-
 
     localStorage.removeItem(
       STORAGE_KEY
     );
 
-
     renderDisplay("");
-
-
     showEditor();
-
 
     saveStatus.textContent =
       "cleared";
 
-
-    setTimeout(
-      () => {
-
-        saveStatus.textContent =
-          "saved locally";
-
-      },
-      1200
-    );
-
+    setTimeout(() => {
+      saveStatus.textContent =
+        "saved locally";
+    }, 1200);
 
     textarea.focus();
   }
@@ -258,127 +176,82 @@ clearButton.addEventListener(
 
 
 /* =========================================
-   RENDER
+   RENDER DISPLAY
    ========================================= */
 
 function renderDisplay(text) {
-
   display.innerHTML = "";
-
 
   if (!text.trim()) {
     return;
   }
 
+  const lines = text.split("\n");
 
-  const lines =
-    text.split("\n");
-
-
-  lines.forEach(
-    line => {
-
-      const trimmed =
-        line.trim();
+  lines.forEach(line => {
+    const trimmed = line.trim();
 
 
-      /* Blank line */
+    /* Blank line */
 
-      if (!trimmed) {
+    if (!trimmed) {
+      const spacer =
+        document.createElement("div");
 
-        const spacer =
-          document.createElement(
-            "div"
-          );
+      spacer.className =
+        "leaf-spacer";
 
+      display.appendChild(spacer);
 
-        spacer.className =
-          "leaf-spacer";
-
-
-        display.appendChild(
-          spacer
-        );
-
-
-        return;
-      }
-
-
-      /* URL */
-
-      if (
-        isUrl(trimmed)
-      ) {
-
-        display.appendChild(
-          createUrlLeaf(
-            trimmed
-          )
-        );
-
-
-        return;
-      }
-
-
-      /* Normal text */
-
-      const note =
-        document.createElement(
-          "div"
-        );
-
-
-      note.className =
-        "leaf-note";
-
-
-      note.textContent =
-        line;
-
-
-      display.appendChild(
-        note
-      );
+      return;
     }
-  );
+
+
+    /* URL on its own line */
+
+    if (isUrl(trimmed)) {
+      display.appendChild(
+        createUrlLeaf(trimmed)
+      );
+
+      return;
+    }
+
+
+    /* Regular note */
+
+    const note =
+      document.createElement("div");
+
+    note.className =
+      "leaf-note";
+
+    note.textContent = line;
+
+    display.appendChild(note);
+  });
 }
 
 
 /* =========================================
-   CREATE URL LEAF
+   URL LEAF
    ========================================= */
 
 function createUrlLeaf(url) {
-
   const wrapper =
-    document.createElement(
-      "div"
-    );
-
+    document.createElement("div");
 
   wrapper.className =
     "leaf-resource";
 
 
   const anchor =
-    document.createElement(
-      "a"
-    );
+    document.createElement("a");
 
-
-  anchor.href =
-    url;
-
-
-  anchor.target =
-    "_blank";
-
-
+  anchor.href = url;
+  anchor.target = "_blank";
   anchor.rel =
     "noopener noreferrer";
-
 
   anchor.className =
     "leaf-link";
@@ -387,7 +260,6 @@ function createUrlLeaf(url) {
   const info =
     describeUrl(url);
 
-
   const capture =
     getCaptureRecord(url);
 
@@ -395,134 +267,117 @@ function createUrlLeaf(url) {
   /* Gold star */
 
   const marker =
-    document.createElement(
-      "span"
-    );
-
+    document.createElement("span");
 
   marker.className =
     "leaf-marker";
 
-
-  marker.textContent =
-    "✦";
+  marker.textContent = "✦";
 
 
-  /* Text */
+  /* Text stack */
 
   const text =
-    document.createElement(
-      "span"
-    );
-
+    document.createElement("span");
 
   text.className =
     "leaf-link-text";
 
 
   const label =
-    document.createElement(
-      "span"
-    );
-
+    document.createElement("span");
 
   label.className =
     "leaf-link-label";
 
-
-  /*
-    Once archived, use the actual
-    resource title returned by Worker.
-  */
-
   label.textContent =
-    capture?.resource ||
     info.label;
 
 
   const source =
-    document.createElement(
-      "span"
-    );
-
+    document.createElement("span");
 
   source.className =
     "leaf-link-source";
 
 
-  source.textContent =
-    getSourceLine(
-      info,
-      capture
-    );
+  if (
+    capture?.status === "archived"
+  ) {
+    const destinationLabel =
+      capture.destination === "art"
+        ? "Art Repository"
+        : "Edifice";
+
+    if (capture.duplicate) {
+      source.textContent =
+        `${info.source} · already in ${destinationLabel}`;
+    } else {
+      source.textContent =
+        `${info.source} · archived to ${destinationLabel}`;
+    }
+
+  } else if (
+    capture?.status === "capturing"
+  ) {
+    const destinationLabel =
+      capture.destination === "art"
+        ? "Art Repository"
+        : "Edifice";
+
+    source.textContent =
+      `${info.source} · sending to ${destinationLabel}…`;
+
+  } else if (
+    capture?.status === "error"
+  ) {
+    source.textContent =
+      `${info.source} · archive failed`;
+
+  } else {
+    source.textContent =
+      info.source;
+  }
 
 
-  text.appendChild(
-    label
-  );
+  text.appendChild(label);
+  text.appendChild(source);
 
 
-  text.appendChild(
-    source
-  );
-
-
-  /* Arrow / check */
+  /* Right-side symbol */
 
   const arrow =
-    document.createElement(
-      "span"
-    );
-
+    document.createElement("span");
 
   arrow.className =
     "leaf-arrow";
 
-
-  arrow.textContent =
-    capture?.status ===
-    "archived"
-      ? "✓"
-      : "↗";
-
-
-  anchor.appendChild(
-    marker
-  );
+  if (
+    capture?.status === "archived"
+  ) {
+    arrow.textContent = "✓";
+  } else {
+    arrow.textContent = "↗";
+  }
 
 
-  anchor.appendChild(
-    text
-  );
+  anchor.appendChild(marker);
+  anchor.appendChild(text);
+  anchor.appendChild(arrow);
 
-
-  anchor.appendChild(
-    arrow
-  );
-
-
-  wrapper.appendChild(
-    anchor
-  );
+  wrapper.appendChild(anchor);
 
 
   /* =====================================
-     ROUTING OPTIONS
+     DESTINATION CHOICES
      ===================================== */
 
   if (
-    capture?.status !==
-      "archived" &&
-
-    capture?.status !==
-      "capturing"
+    capture?.status !== "archived" &&
+    capture?.status !== "capturing"
   ) {
-
     const routing =
-      document.createElement(
-        "div"
-      );
-
+      document.createElement("div");
 
     routing.className =
       "leaf-routing";
@@ -537,17 +392,12 @@ function createUrlLeaf(url) {
 
 
     const separator =
-      document.createElement(
-        "span"
-      );
-
+      document.createElement("span");
 
     separator.className =
       "leaf-routing-separator";
 
-
-    separator.textContent =
-      "·";
+    separator.textContent = "·";
 
 
     const artButton =
@@ -562,16 +412,13 @@ function createUrlLeaf(url) {
       edificeButton
     );
 
-
     routing.appendChild(
       separator
     );
 
-
     routing.appendChild(
       artButton
     );
-
 
     wrapper.appendChild(
       routing
@@ -584,165 +431,6 @@ function createUrlLeaf(url) {
 
 
 /* =========================================
-   SOURCE LINE
-   ========================================= */
-
-function getSourceLine(
-  info,
-  capture
-) {
-
-  /*
-    Before routing
-  */
-
-  if (!capture) {
-    return info.source;
-  }
-
-
-  /*
-    Capturing
-  */
-
-  if (
-    capture.status ===
-    "capturing"
-  ) {
-
-    const destination =
-      capture.destination ===
-      "art"
-        ? "Art Repository"
-        : "Edifice";
-
-
-    return (
-      `${info.source} · ` +
-      `sending to ${destination}…`
-    );
-  }
-
-
-  /*
-    Error
-  */
-
-  if (
-    capture.status ===
-    "error"
-  ) {
-
-    return (
-      `${info.source} · ` +
-      "archive failed"
-    );
-  }
-
-
-  /*
-    Archived
-  */
-
-  if (
-    capture.status ===
-    "archived"
-  ) {
-
-    const destination =
-      capture.destination ===
-      "art"
-        ? "Art Repository"
-        : "Edifice";
-
-
-    const parts = [];
-
-
-    /*
-      Actual creator/channel
-    */
-
-    if (
-      capture.creator
-    ) {
-
-      parts.push(
-        capture.creator
-      );
-
-    } else {
-
-      /*
-        If no creator was found,
-        retain the generic source.
-      */
-
-      parts.push(
-        info.source
-      );
-    }
-
-
-    /*
-      Resource type
-    */
-
-    if (
-      capture.type
-    ) {
-
-      const typeText =
-        capture.type
-          .toLowerCase();
-
-
-      /*
-        Avoid saying
-        "video · video"
-      */
-
-      if (
-        !parts
-          .join(" ")
-          .toLowerCase()
-          .includes(typeText)
-      ) {
-
-        parts.push(
-          typeText
-        );
-      }
-    }
-
-
-    if (
-      capture.duplicate
-    ) {
-
-      parts.push(
-        `already in ${destination}`
-      );
-
-    } else {
-
-      parts.push(
-        `archived to ${destination}`
-      );
-    }
-
-
-    return parts.join(
-      " · "
-    );
-  }
-
-
-  return info.source;
-}
-
-
-/* =========================================
    ROUTE BUTTON
    ========================================= */
 
@@ -751,33 +439,22 @@ function createRouteButton(
   destination,
   url
 ) {
-
   const button =
-    document.createElement(
-      "button"
-    );
+    document.createElement("button");
 
-
-  button.type =
-    "button";
-
+  button.type = "button";
 
   button.className =
     "leaf-route-button";
 
-
-  button.textContent =
-    label;
+  button.textContent = label;
 
 
   button.addEventListener(
     "click",
     async event => {
-
       event.preventDefault();
-
       event.stopPropagation();
-
 
       await captureToDestination(
         url,
@@ -792,31 +469,35 @@ function createRouteButton(
 
 
 /* =========================================
-   CAPTURE TO DESTINATION
+   SEND TO CHOSEN ARCHIVE
    ========================================= */
 
 async function captureToDestination(
   url,
   destination
 ) {
-
   const existing =
-    getCaptureRecord(
-      url
-    );
+    getCaptureRecord(url);
 
+
+  /*
+    Prevent repeat clicks while
+    a request is already running.
+  */
 
   if (
-    existing?.status ===
-    "capturing"
+    existing?.status === "capturing"
   ) {
     return;
   }
 
 
+  /*
+    Already archived.
+  */
+
   if (
-    existing?.status ===
-    "archived"
+    existing?.status === "archived"
   ) {
     return;
   }
@@ -831,9 +512,7 @@ async function captureToDestination(
   setCaptureRecord(
     url,
     {
-      status:
-        "capturing",
-
+      status: "capturing",
       destination
     }
   );
@@ -845,23 +524,20 @@ async function captureToDestination(
 
 
   try {
-
     const response =
       await fetch(
         captureUrl,
         {
-          method:
-            "POST",
+          method: "POST",
 
           headers: {
             "Content-Type":
               "application/json"
           },
 
-          body:
-            JSON.stringify({
-              url
-            })
+          body: JSON.stringify({
+            url
+          })
         }
       );
 
@@ -874,7 +550,6 @@ async function captureToDestination(
       !response.ok ||
       !result.ok
     ) {
-
       throw new Error(
         result.error ||
         "Could not archive source."
@@ -885,8 +560,7 @@ async function captureToDestination(
     setCaptureRecord(
       url,
       {
-        status:
-          "archived",
+        status: "archived",
 
         destination,
 
@@ -896,41 +570,19 @@ async function captureToDestination(
           ),
 
         notionUrl:
-          result.notionUrl ||
-          "",
+          result.notionUrl || "",
 
         pageId:
-          result.pageId ||
-          "",
-
-        /*
-          NEW:
-          save metadata returned
-          by the Worker.
-        */
-
-        resource:
-          result.resource ||
-          "",
-
-        creator:
-          result.creator ||
-          "",
-
-        type:
-          result.type ||
-          ""
+          result.pageId || ""
       }
     );
 
 
   } catch (error) {
-
     console.error(
       destination === "art"
         ? "Loose Leaves → Art Repository:"
         : "Loose Leaves → Edifice:",
-
       error
     );
 
@@ -938,9 +590,7 @@ async function captureToDestination(
     setCaptureRecord(
       url,
       {
-        status:
-          "error",
-
+        status: "error",
         destination
       }
     );
@@ -954,29 +604,24 @@ async function captureToDestination(
 
 
 /* =========================================
-   CAPTURE STORAGE
+   ARCHIVE STATUS STORAGE
    ========================================= */
 
 function getCapturedMap() {
-
   try {
-
     return JSON.parse(
       localStorage.getItem(
         CAPTURED_KEY
       ) || "{}"
     );
 
-
   } catch {
-
     return {};
   }
 }
 
 
 function saveCapturedMap(map) {
-
   localStorage.setItem(
     CAPTURED_KEY,
     JSON.stringify(map)
@@ -985,18 +630,13 @@ function saveCapturedMap(map) {
 
 
 function getCaptureRecord(url) {
-
   const map =
     getCapturedMap();
 
-
   return (
     map[
-      normalizeLocalUrl(
-        url
-      )
-    ] ||
-    null
+      normalizeLocalUrl(url)
+    ] || null
   );
 }
 
@@ -1005,94 +645,70 @@ function setCaptureRecord(
   url,
   record
 ) {
-
   const map =
     getCapturedMap();
 
-
   const key =
-    normalizeLocalUrl(
-      url
-    );
-
+    normalizeLocalUrl(url);
 
   map[key] = {
     ...map[key],
     ...record
   };
 
-
-  saveCapturedMap(
-    map
-  );
+  saveCapturedMap(map);
 }
 
 
 /* =========================================
-   MIGRATE OLD RECORDS
+   MIGRATE OLD EDIFICE RECORDS
    ========================================= */
 
 function migrateOldCaptureRecords() {
-
   const map =
     getCapturedMap();
 
-
-  let changed =
-    false;
+  let changed = false;
 
 
-  Object.keys(
-    map
-  ).forEach(
-    key => {
+  Object.keys(map).forEach(key => {
+    const record = map[key];
 
-      const record =
-        map[key];
+    /*
+      Before the destination picker
+      existed, every archived URL
+      automatically went to Edifice.
 
+      Give those older records their
+      proper destination label.
+    */
 
-      if (
-        record?.status ===
-          "archived" &&
+    if (
+      record?.status === "archived" &&
+      !record.destination
+    ) {
+      record.destination =
+        "edifice";
 
-        !record.destination
-      ) {
-
-        record.destination =
-          "edifice";
-
-
-        changed =
-          true;
-      }
+      changed = true;
     }
-  );
+  });
 
 
   if (changed) {
-
-    saveCapturedMap(
-      map
-    );
+    saveCapturedMap(map);
   }
 }
 
 
 /* =========================================
-   NORMALIZE URL
+   URL NORMALIZATION
    ========================================= */
 
-function normalizeLocalUrl(
-  value
-) {
-
+function normalizeLocalUrl(value) {
   try {
-
     const url =
-      new URL(
-        value.trim()
-      );
-
+      new URL(value.trim());
 
     url.hash = "";
 
@@ -1113,7 +729,6 @@ function normalizeLocalUrl(
 
     trackingParams.forEach(
       param => {
-
         url.searchParams.delete(
           param
         );
@@ -1123,28 +738,22 @@ function normalizeLocalUrl(
 
     url.searchParams.sort();
 
-
     return url.toString();
 
-
   } catch {
-
     return value.trim();
   }
 }
 
 
 /* =========================================
-   HUMAN URL DESCRIPTION
+   HUMAN-READABLE URL DISPLAY
    ========================================= */
 
 function describeUrl(url) {
-
   try {
-
     const parsed =
       new URL(url);
-
 
     const hostname =
       parsed.hostname.replace(
@@ -1158,12 +767,10 @@ function describeUrl(url) {
     if (
       hostname ===
         "substack.com" ||
-
       hostname.endsWith(
         ".substack.com"
       )
     ) {
-
       const pathParts =
         parsed.pathname
           .split("/")
@@ -1173,30 +780,25 @@ function describeUrl(url) {
       const handle =
         pathParts.find(
           part =>
-            part.startsWith(
-              "@"
-            )
+            part.startsWith("@")
         ) ||
 
         (
           hostname.endsWith(
             ".substack.com"
           )
-
             ? `@${hostname.replace(
                 ".substack.com",
                 ""
               )}`
-
             : ""
         );
 
 
       return {
-        label:
-          handle
-            ? `Substack · ${handle}`
-            : "Substack",
+        label: handle
+          ? `Substack · ${handle}`
+          : "Substack",
 
         source:
           "saved reading"
@@ -1210,17 +812,11 @@ function describeUrl(url) {
       hostname.includes(
         "youtube.com"
       ) ||
-
-      hostname ===
-        "youtu.be"
+      hostname === "youtu.be"
     ) {
-
       return {
-        label:
-          "YouTube",
-
-        source:
-          "video"
+        label: "YouTube",
+        source: "video"
       };
     }
 
@@ -1232,7 +828,6 @@ function describeUrl(url) {
         "archiveofourown.org"
       )
     ) {
-
       return {
         label:
           "Archive of Our Own",
@@ -1250,18 +845,14 @@ function describeUrl(url) {
         "goodreads.com"
       )
     ) {
-
       return {
-        label:
-          "Goodreads",
-
-        source:
-          "book"
+        label: "Goodreads",
+        source: "book"
       };
     }
 
 
-    /* Generic */
+    /* Generic site */
 
     const domainName =
       hostname
@@ -1278,22 +869,15 @@ function describeUrl(url) {
 
 
     return {
-      label:
-        domainName,
-
-      source:
-        hostname
+      label: domainName,
+      source: hostname
     };
 
 
   } catch {
-
     return {
-      label:
-        "Saved Link",
-
-      source:
-        "reference"
+      label: "Saved Link",
+      source: "reference"
     };
   }
 }
@@ -1304,24 +888,16 @@ function describeUrl(url) {
    ========================================= */
 
 function isUrl(value) {
-
   try {
-
     const url =
       new URL(value);
 
-
     return (
-      url.protocol ===
-        "http:" ||
-
-      url.protocol ===
-        "https:"
+      url.protocol === "http:" ||
+      url.protocol === "https:"
     );
 
-
   } catch {
-
     return false;
   }
 }
@@ -1332,48 +908,33 @@ function isUrl(value) {
    ========================================= */
 
 function showDisplay() {
-
-  textarea.hidden =
-    true;
-
-
-  display.hidden =
-    false;
+  textarea.hidden = true;
+  display.hidden = false;
 }
 
 
 function showEditor() {
-
-  display.hidden =
-    true;
-
-
-  textarea.hidden =
-    false;
+  display.hidden = true;
+  textarea.hidden = false;
 }
 
 
 /* =========================================
-   ROUTING CSS
+   ROUTING CONTROL CSS
    ========================================= */
 
 function injectRoutingStyles() {
-
   if (
     document.getElementById(
       "loose-leaves-routing-styles"
     )
   ) {
-
     return;
   }
 
 
   const style =
-    document.createElement(
-      "style"
-    );
-
+    document.createElement("style");
 
   style.id =
     "loose-leaves-routing-styles";
@@ -1405,46 +966,35 @@ function injectRoutingStyles() {
 
     .leaf-route-button {
       appearance: none;
-
       border: 0;
-
       padding: 0;
       margin: 0;
 
-      background:
-        transparent;
+      background: transparent;
 
       font: inherit;
-
       color: #829074;
 
       cursor: pointer;
 
-      text-decoration:
-        none;
+      text-decoration: none;
     }
 
     .leaf-route-button:hover {
       color: #b68b45;
-
-      text-decoration:
-        underline;
-
-      text-underline-offset:
-        2px;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     .leaf-route-button:focus-visible {
       outline:
         1px solid #b68b45;
 
-      outline-offset:
-        2px;
+      outline-offset: 2px;
     }
 
     .leaf-routing-separator {
       color: #b68b45;
-
       opacity: 0.7;
     }
   `;
